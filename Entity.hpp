@@ -3,10 +3,11 @@
 #include <Utility/Utility.hpp>
 #include <SFML/Graphics.hpp>
 #include "Cage.hpp"
+#include "Application.hpp"
 
 class Entity
 {
-protected:
+private:
     Vec2d position;
     sf::Time age;
     Angle orientation;        //radians
@@ -21,6 +22,8 @@ public:
     Angle getOrientation() ;
     double getEnergy() ;
     Cage* getCage() ;
+
+     void drawEnergy(sf::RenderTarget& target);
 
 };
 
