@@ -22,8 +22,14 @@ public:
     Angle getOrientation() ;
     double getEnergy() ;
     Cage* getCage() ;
+ virtual   sf::Time getLongevity();
 
      void drawEnergy(sf::RenderTarget& target);
+     bool increaseAge(sf::Time time);
+     void substractEnergy(double);
+
+     virtual ~Entity()=default;
+
 
 };
 

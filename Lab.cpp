@@ -3,6 +3,7 @@
 #include <Utility/Utility.hpp>
 #include "Hamster.hpp"
 #include "Pellets.hpp"
+#include "Config.hpp"
 
 unsigned int Lab::maxCageNumber(){
     double min_size(getAppConfig().simulation_lab_min_box_size);
@@ -71,8 +72,20 @@ void Lab::removeCageFromRow(){
 }
 
 void Lab::update(sf::Time dt){
-    //change the contents of the cages over time
-}
+    if(hamster!=nullptr) {
+        if(hamster->increaseAge(dt)){
+        delete hamster;
+        hamster=nullptr;
+        }
+    if(pellet!=nullptr) {
+        if(pellet->increaseAge(dt)){
+            delete pellet;
+            pellet = nullptr;
+        }
+    }
+
+
+}}
 
 void Lab::drawOn(sf::RenderTarget& targetWindow){
     drawOnCages(targetWindow);
@@ -91,6 +104,7 @@ void Lab::drawOnCages(sf::RenderTarget& targetWindow){
 }
 
 void Lab::reset(bool reset){
+    if(isDebugOn()) getAppConfig().switchDebug();
     if (reset){
         clearCages();
         makeBoxes(getAppConfig().simulation_lab_nb_boxes);

@@ -12,3 +12,6 @@ void Hamster::drawOn(sf::RenderTarget& target){
 
     drawEnergy( target);
 }
+sf::Time Hamster::getLongevity(){
+    return getAppConfig().hamster_longevity;
+}

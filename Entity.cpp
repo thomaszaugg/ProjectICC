@@ -20,9 +20,22 @@ Cage* Entity::getCage(){return cage;}
           auto text = buildText(to_nice_string(energy),
                                 position,
                                 getAppFont(),
-                                getAppConfig().default_debug_text_size,
+                                getAppConfig().default_debug_text_size*5,   //why so small
                                 sf::Color::Blue,
                                 0 / DEG_TO_RAD); // if you want to rotate the text
           target.draw(text);
       }
+ }
+
+ bool Entity::increaseAge(sf::Time time){
+     age+=time;
+     return (age>= this->getLongevity() or getEnergy()<=0);
+ }
+
+ sf::Time Entity::getLongevity(){
+     return sf::seconds(1E+9);
+ }
+
+ void Entity::substractEnergy(double e){
+     energy -=e;
  }

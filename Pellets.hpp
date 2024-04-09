@@ -10,6 +10,7 @@ class Pellets : public Entity
 public:
     Pellets(Vec2d position);
     void drawOn(sf::RenderTarget& target);
+    Quantity provideEnergy(Quantity qte);
 };
 
 #endif // PELLETS_HPP
