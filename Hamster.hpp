@@ -1,8 +1,9 @@
 #ifndef HAMSTER_HPP
 #define HAMSTER_HPP
 #include <Utility/Utility.hpp>
-#include "Env/Animal.hpp"
-#include "Application.hpp"
+#include "Animal.cpp"
+
+class Animal;
 
 class Hamster : public Animal
 {
