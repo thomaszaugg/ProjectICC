@@ -39,3 +39,10 @@ Cage* Entity::getCage(){return cage;}
  void Entity::substractEnergy(double e){
      energy -=e;
  }
+
+ void Entity::drawOn(sf::RenderTarget& target){
+     sf::Sprite  entitySprite = buildSprite( getPosition(), getSize(), getTexture(),getOrientation()/ DEG_TO_RAD); // conversion degree to radians becauce SFML uses these units
+     target.draw(entitySprite);
+
+     drawEnergy(target);
+ }

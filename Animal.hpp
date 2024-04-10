@@ -2,6 +2,7 @@
 #define ANIMAL_HPP
 #include <Utility/Utility.hpp>
 #include "Env/Entity.hpp"
+#pragma once
 
 class Animal : public Entity
 {

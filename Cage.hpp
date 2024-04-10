@@ -2,6 +2,7 @@
 #define CAGE_HPP
 #include <Utility/Vec2d.hpp>
 #include "SFML/Graphics.hpp"
+#pragma once
 
 
 typedef std::pair <Vec2d, Vec2d> Wall; //bottom right corner, top left corner

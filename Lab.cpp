@@ -4,6 +4,7 @@
 #include "Hamster.hpp"
 #include "Pellets.hpp"
 #include "Config.hpp"
+#include <algorithm>
 
 unsigned int Lab::maxCageNumber(){
     double min_size(getAppConfig().simulation_lab_min_box_size);
@@ -71,27 +72,25 @@ void Lab::removeCageFromRow(){
 
 }
 
+//3.1
 void Lab::update(sf::Time dt){
-    if(hamster!=nullptr) {
-        if(hamster->increaseAge(dt)){
-        delete hamster;
-        hamster=nullptr;
-        }
-    if(pellet!=nullptr) {
-        if(pellet->increaseAge(dt)){
-            delete pellet;
-            pellet = nullptr;
+    for (auto& entity: entities){
+        if(entity!=nullptr){
+            if(entity->increaseAge(dt)){
+                delete entity;
+                entity = nullptr;
+            }
         }
     }
-
-
-}}
+}
 
 void Lab::drawOn(sf::RenderTarget& targetWindow){
     drawOnCages(targetWindow);
-
-    if(hamster!=nullptr) hamster->drawOn(targetWindow);
-    if(pellet!=nullptr) pellet->drawOn(targetWindow);
+    for (const auto& entity: entities){
+        if(entity!=nullptr){
+            entity->drawOn(targetWindow);
+        }
+    }
 }
 
 void Lab::drawOnCages(sf::RenderTarget& targetWindow){
@@ -114,12 +113,13 @@ void Lab::reset(bool reset){
 }
 
 void Lab::clearEntities(){
-    delete hamster;
-    hamster=nullptr;
-
-    delete pellet;
-    pellet=nullptr;
+    for (auto& entity: entities){
+        delete entity;
+        entity=nullptr;
+    }
+    entities.erase(std::remove(entities.begin(), entities.end(), nullptr), entities.end());
 }
+
 void Lab::clearCages(){
     clearEntities();
     for (unsigned int i(0); i < cages.size(); ++i){
@@ -135,6 +135,25 @@ Lab::~Lab(){
     clearCages();
 };
 
+//3.1
+bool Lab::addEntity(Entity* e){
+    if(e!=nullptr){
+        entities.push_back(e);
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool Lab::addAnimal(Hamster* h){
+    return addEntity(h);
+}
+
+bool Lab::addFood(Pellets* p){
+    return addEntity(p);
+}
+
+/* 3.1
 bool Lab::addAnimal(Hamster* h){
      if(h!=nullptr and hamster==nullptr){
          hamster=h;
@@ -149,3 +168,4 @@ bool Lab::addAnimal(Hamster* h){
      return true;}
  return false;
  }
+*/
