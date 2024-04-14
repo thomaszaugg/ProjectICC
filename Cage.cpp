@@ -1,5 +1,7 @@
 #include "Cage.hpp"
 #include "Application.hpp"
+#include "Animal.hpp"
+#include "Lab.hpp"
 
 Cage::Cage(Vec2d position, double width, double height, double wallWidth)
     : position(position), width(width), height(height), wallWidth(wallWidth){
@@ -8,7 +10,7 @@ Cage::Cage(Vec2d position, double width, double height, double wallWidth)
     h2+=position;
     Vec2d h1(width/2-wallWidth, -height/2+wallWidth);
     h1+=position;
-    Wall top(h1, h2);top;
+    Wall top(h1, h2);
     walls.push_back(top);
 
     Vec2d h4(width/2-wallWidth, -height/2);
@@ -130,3 +132,8 @@ void Cage::drawOn(sf::RenderTarget& targetWindow){
             sf::RectangleShape left = buildRectangle(this->getLeft().second, this->getLeft().first, &getAppTexture(getAppConfig().simulation_lab_fence));
             targetWindow.draw(left);
         }
+
+// idea: go throught all animals and check whether i have something in this cage
+bool Cage::isEmpty(){
+    //can I call a function of Lab here?
+}

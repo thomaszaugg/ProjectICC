@@ -153,6 +153,20 @@ bool Lab::addFood(Pellets* p){
     return addEntity(p);
 }
 
+
+bool isCageEmptyHelper(Lab& lab, Cage* cage){
+    return lab.isCageEmpty(cage);
+}
+
+bool Lab::isCageEmpty(Cage* cage){
+    for (auto& entity: entities){
+        if (entity->isAnimal() and entity->getCage() == cage){
+            return false;
+        }
+    }
+    return true;
+}
+
 /* 3.1
 bool Lab::addAnimal(Hamster* h){
      if(h!=nullptr and hamster==nullptr){

@@ -12,8 +12,9 @@ public:
     Pellets(Vec2d position);
     Quantity provideEnergy(Quantity qte);
 
-    virtual double getSize() override;
-    virtual sf::Texture getTexture() override;
+    virtual double getSize() const override; //3.1 const
+    virtual sf::Texture& getTexture() override;
+    virtual double getRadius() const override; //3.1 const
 };
 
 #endif // PELLETS_HPP

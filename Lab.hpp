@@ -8,9 +8,11 @@
 class Pellets;
 class Hamster;
 class Entity;
+class Animal;
 
 typedef std::vector<std::vector<Cage*>> Cages;
-typedef std::vector<Entity*> Entities; // circular dependece
+typedef std::vector<Entity*> Entities;
+
 
 
 class Lab
@@ -103,8 +105,13 @@ public:
    bool addAnimal(Hamster* h);
    bool addFood(Pellets* p);
 
+   bool isCageEmpty(Cage* cage);
+
+
 
 };
+
+bool isCageEmptyHelper(Lab& lab, Cage* cage);
 
 #endif // LAB_HPP
 

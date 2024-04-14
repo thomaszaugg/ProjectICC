@@ -10,6 +10,12 @@ public:
     Animal(const Vec2d& position, double energy)
         : Entity(position, energy){}
     virtual   ~Animal() {}
+
+    //3.1
+    bool isAnimal() override {return true;}
+/*
+    bool canBeConfined(Cage* cage) override;
+*/
 };
 
 

@@ -21,10 +21,10 @@ private:
 public:
     Entity(const Vec2d& position, double energy);
 
-    Vec2d getPosition() ;
+    virtual Vec2d getCenter() const override ; //3.1 -> changed name from getCenter to getPosition
     sf::Time getAge() ;
     Angle getOrientation() ;
-    double getEnergy() ;
+    double getEnergy() const ; //3.1 const
     Cage* getCage() ;
     virtual sf::Time getLongevity();
 
@@ -35,10 +35,16 @@ public:
      //3.1
      void drawOn(sf::RenderTarget& targetWindow);
 
-     virtual double getSize() =0;
-     virtual sf::Texture getTexture()=0;
+     virtual double getSize() const =0; //3.1 const
+     virtual sf::Texture& getTexture()=0;
 
      virtual ~Entity()=default;
+     virtual bool isAnimal(){return false;}
+
+     /*
+     virtual bool canBeConfined(Cage* cage);
+*/
+
 
 
 

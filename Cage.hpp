@@ -78,6 +78,8 @@ public:
     * @brief Draw a cage
     */
     void drawOn(sf::RenderTarget& targetWindow);
+
+    bool isEmpty();
 };
 
 #endif // CAGE_HPP

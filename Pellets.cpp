@@ -10,10 +10,14 @@ Quantity Pellets::provideEnergy(Quantity qte){
     return qte;
 }
 
-double Pellets::getSize(){
+double Pellets::getSize() const{
     return getEnergy();
 }
 
-sf::Texture Pellets::getTexture(){
+sf::Texture& Pellets::getTexture(){
     return getAppTexture(getAppConfig().food_texture);
+}
+
+double Pellets::getRadius() const {
+    return getSize()/2;
 }

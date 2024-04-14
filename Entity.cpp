@@ -3,16 +3,17 @@
 #include <Random/Random.hpp>
 #include "Cage.hpp"
 
+
+
 Entity::Entity(const Vec2d& position, double energy)
     : position(position), age(sf::Time::Zero), energy(energy), cage(nullptr){
     orientation = uniform(0.0, TAU);
-
 }
 
-Vec2d Entity::getPosition(){return position;}
+Vec2d Entity::getCenter() const {return position;}
 sf::Time Entity::getAge(){return age;}
 Angle Entity::getOrientation(){return orientation;}
-double Entity::getEnergy(){return energy;}
+double Entity::getEnergy() const {return energy;}
 Cage* Entity::getCage(){return cage;}
 
  void Entity::drawEnergy(sf::RenderTarget& target){
@@ -24,6 +25,10 @@ Cage* Entity::getCage(){return cage;}
                                 sf::Color::Blue,
                                 0 / DEG_TO_RAD); // if you want to rotate the text
           target.draw(text);
+          //3.1
+          auto circle(buildCircle(getCenter(), getRadius(), sf::Color(20,150,20,30)));
+          target.draw(circle);
+          //3.1
       }
  }
 
@@ -41,8 +46,14 @@ Cage* Entity::getCage(){return cage;}
  }
 
  void Entity::drawOn(sf::RenderTarget& target){
-     sf::Sprite  entitySprite = buildSprite( getPosition(), getSize(), getTexture(),getOrientation()/ DEG_TO_RAD); // conversion degree to radians becauce SFML uses these units
+     sf::Sprite  entitySprite = buildSprite( getCenter(), 2*getRadius(), getTexture(),getOrientation()/ DEG_TO_RAD); // conversion degree to radians becauce SFML uses these units
      target.draw(entitySprite);
 
      drawEnergy(target);
  }
+
+ /*
+ bool Entity::canBeConfined(Cage* cage){
+     return true;
+ }
+*/
