@@ -21,3 +21,4 @@ sf::Texture& Pellets::getTexture(){
 double Pellets::getRadius() const {
     return getSize()/2;
 }
+

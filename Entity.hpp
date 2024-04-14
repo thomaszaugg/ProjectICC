@@ -38,12 +38,13 @@ public:
      virtual double getSize() const =0; //3.1 const
      virtual sf::Texture& getTexture()=0;
 
-     virtual ~Entity()=default;
-     virtual bool isAnimal(){return false;}
+     virtual bool isAnimal();
 
-     /*
+
      virtual bool canBeConfined(Cage* cage);
-*/
+
+     virtual ~Entity()=default;
+
 
 
 

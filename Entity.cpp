@@ -52,8 +52,11 @@ Cage* Entity::getCage(){return cage;}
      drawEnergy(target);
  }
 
- /*
+ bool Entity::isAnimal(){
+     return false;
+ }
+
  bool Entity::canBeConfined(Cage* cage){
      return true;
  }
-*/
+

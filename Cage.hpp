@@ -79,7 +79,10 @@ public:
     */
     void drawOn(sf::RenderTarget& targetWindow);
 
+   // bool addOcccupant(Animal* a);
     bool isEmpty();
+
+    Vec2d adjustPostition(Vec2d position, double size);
 };
 
 #endif // CAGE_HPP

@@ -15,6 +15,8 @@ public:
     virtual double getSize() const override; //3.1 const
     virtual sf::Texture& getTexture() override;
     virtual double getRadius() const override; //3.1 const
+
+
 };
 
 #endif // PELLETS_HPP

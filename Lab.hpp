@@ -107,6 +107,8 @@ public:
 
    bool isCageEmpty(Cage* cage);
 
+   bool PositionLab(Entity* e);
+
 
 
 };

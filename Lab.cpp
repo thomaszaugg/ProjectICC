@@ -137,12 +137,16 @@ Lab::~Lab(){
 
 //3.1
 bool Lab::addEntity(Entity* e){
-    if(e!=nullptr){
-        entities.push_back(e);
-        return true;
-    } else {
-        return false;
+    if (e->canBeConfined(e->getCage()) and PositionLab(e)){
+        if(e!=nullptr){
+            //ajust position
+            entities.push_back(e);
+            return true;
+        } else {
+            return false;
+        }
     }
+    return false;
 }
 
 bool Lab::addAnimal(Hamster* h){
@@ -183,3 +187,16 @@ bool Lab::addAnimal(Hamster* h){
  return false;
  }
 */
+
+bool Lab::PositionLab(Entity* e){
+    Cage* cage(e->getCage());
+    Vec2d center(e->getCenter());
+    for (unsigned int i(0); i < cages.size(); ++i){
+        for (unsigned int j(0); j < cages.size(); ++j){
+            if(cage == cages[i][j]){
+                return (cages[i][j]->isPositionInside(center));
+            }
+        }
+    }
+    return false;
+}

@@ -37,8 +37,9 @@
             return  object1 | circlePoint;                  //so the operator | can be used
         }
 */
+        //3.1 -> not possible anymore to construct a CircularBody here (abstract class)
         bool operator>(const CircularBody& object1, const Vec2d& point){
             Vec2d distance(object1.getCenter() - point);
-                return  object1.getRadius() > distance.length();                 //so the operator | can be used
+                return  object1.getRadius() > distance.length();
         }
 
