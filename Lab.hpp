@@ -105,15 +105,17 @@ public:
    bool addAnimal(Hamster* h);
    bool addFood(Pellets* p);
 
-   bool isCageEmpty(Cage* cage);
+   //bool isCageEmpty(Cage* cage);
 
    bool PositionLab(Entity* e);
+
+   void addOccupant(Entity* e);
 
 
 
 };
 
-bool isCageEmptyHelper(Lab& lab, Cage* cage);
+//bool isCageEmptyHelper(Lab& lab, Cage* cage);
 
 #endif // LAB_HPP
 

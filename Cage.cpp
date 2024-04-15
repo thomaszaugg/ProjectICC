@@ -2,8 +2,8 @@
 #include "Application.hpp"
 //#include "Lab.hpp"
 
-Cage::Cage(Vec2d position, double width, double height, double wallWidth)
-    : position(position), width(width), height(height), wallWidth(wallWidth){
+Cage::Cage(Vec2d position, double width, double height, double wallWidth, bool occupied)
+    : position(position), width(width), height(height), wallWidth(wallWidth), occupied(occupied){
 
     Vec2d h2(-width/2, -height/2);
     h2+=position;
@@ -65,6 +65,10 @@ Wall Cage::getBottom(){
 
 Wall Cage::getLeft(){
     return walls[3];
+}
+
+void Cage::setOccupied(bool o){
+    occupied = o;
 }
 
 double Cage::getLeftLimit(bool intern){
@@ -132,33 +136,10 @@ void Cage::drawOn(sf::RenderTarget& targetWindow){
             targetWindow.draw(left);
         }
 
-// idea: go throught all animals and check whether i have something in this cage
-        /*
-        bool Cage::isEmpty(){
-    //can I call a function of Lab here?
+bool Cage::isEmpty(){
+    return occupied;
 }
-*/
 
-//vorzeichen noch durchdenken!!!
-Vec2d Cage::adjustPostition(Vec2d position, double size){ //size of entity
-    double x = position.x();
-    double y = position.y();
-    auto topWall(this->getTopLimit(true));
-        if (position.y() - size/2 < topWall){
-            y = (topWall + size/2) * 1.5;
-        }
-    auto bottomWall(this->getBottomLimit(true));
-        if (position.y() + size/2 > bottomWall){
-            y = (bottomWall + size/2) * 1.5;
-        }
-    auto rightWall(this->getRightLimit(true));
-        if (position.x() - size/2 < rightWall){
-            x = (rightWall + size/2) * 1.5;
-        }
-    auto leftWall(this->getLeftLimit(true));
-        if (position.x() - size/2 < leftWall){
-            x = (leftWall + size/2) * 1.5;
-        }
-    Vec2d posdef(x,y);
-    return posdef;
+void Cage::reset(){
+    setOccupied(false);
 }

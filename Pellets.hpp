@@ -1,7 +1,6 @@
 #ifndef PELLETS_HPP
 #define PELLETS_HPP
 #include <Utility/Utility.hpp>
-#include "Application.hpp"
 #include "Entity.hpp"
 #include <SFML/Graphics.hpp>
 #pragma once

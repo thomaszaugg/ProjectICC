@@ -20,12 +20,15 @@ class Cage{
     Wall bottom;
     Wall left;
 
+    //3.1
+    bool occupied;
+
 public:
     /*!
     * @brief Constructor of a Cage, initialized with position, width, height, wallWidth provided by default
     * walls are constructed in the body of the constructor
     */
-    Cage(Vec2d postion, double width = 300.0, double height = 300.0, double wallWidth = 10.0);
+    Cage(Vec2d postion, double width = 300.0, double height = 300.0, double wallWidth = 10.0, bool occupied = false);
 
     /*!
     * @brief Copy constructer by default
@@ -45,6 +48,8 @@ public:
     Wall getBottom();
     Wall getLeft();
 
+    //3.1
+    void setOccupied(bool o);
     /*!
     * @brief getting the coord of the inner wall of the Cage (if intern = true) or getting the coord of the outer wall (if intern = false)
     *
@@ -79,10 +84,10 @@ public:
     */
     void drawOn(sf::RenderTarget& targetWindow);
 
-   // bool addOcccupant(Animal* a);
+    //3.1
     bool isEmpty();
+    void reset();
 
-    Vec2d adjustPostition(Vec2d position, double size);
 };
 
 #endif // CAGE_HPP

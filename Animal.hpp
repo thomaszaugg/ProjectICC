@@ -20,6 +20,4 @@ public:
 
 };
 
-bool addOccupant(Cage* cage, Animal* a);
-
 #endif // ANIMAL_HPP

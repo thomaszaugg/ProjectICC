@@ -40,8 +40,9 @@ public:
 
      virtual bool isAnimal();
 
-
      virtual bool canBeConfined(Cage* cage);
+
+     void adjustPostition();
 
      virtual ~Entity()=default;
 

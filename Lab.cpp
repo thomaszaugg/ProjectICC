@@ -82,6 +82,7 @@ void Lab::update(sf::Time dt){
             }
         }
     }
+    entities.erase(std::remove(entities.begin(), entities.end(), nullptr), entities.end());
 }
 
 void Lab::drawOn(sf::RenderTarget& targetWindow){
@@ -117,7 +118,7 @@ void Lab::clearEntities(){
         delete entity;
         entity=nullptr;
     }
-    entities.erase(std::remove(entities.begin(), entities.end(), nullptr), entities.end());
+
 }
 
 void Lab::clearCages(){
@@ -139,7 +140,11 @@ Lab::~Lab(){
 bool Lab::addEntity(Entity* e){
     if (e->canBeConfined(e->getCage()) and PositionLab(e)){
         if(e!=nullptr){
-            //ajust position
+            e->adjustPostition();
+            // if not possible to assign new center, construct here the new adjusted entity
+            if(e->isAnimal()){
+                addOccupant(e);
+            }
             entities.push_back(e);
             return true;
         } else {
@@ -157,7 +162,7 @@ bool Lab::addFood(Pellets* p){
     return addEntity(p);
 }
 
-
+/*
 bool isCageEmptyHelper(Lab& lab, Cage* cage){
     return lab.isCageEmpty(cage);
 }
@@ -170,33 +175,12 @@ bool Lab::isCageEmpty(Cage* cage){
     }
     return true;
 }
-
-/* 3.1
-bool Lab::addAnimal(Hamster* h){
-     if(h!=nullptr and hamster==nullptr){
-         hamster=h;
-         return true;}
-
-         return false;
- }
-
- bool Lab::addFood(Pellets* p){
- if(pellet==nullptr and p!=nullptr){
-     pellet=p;
-     return true;}
- return false;
- }
 */
 
 bool Lab::PositionLab(Entity* e){
-    Cage* cage(e->getCage());
-    Vec2d center(e->getCenter());
-    for (unsigned int i(0); i < cages.size(); ++i){
-        for (unsigned int j(0); j < cages.size(); ++j){
-            if(cage == cages[i][j]){
-                return (cages[i][j]->isPositionInside(center));
-            }
-        }
-    }
-    return false;
+    return (e->getCage()->isPositionInside(e->getCenter()));
+}
+
+void Lab::addOccupant(Entity* e){
+    e->getCage()->setOccupied(true);
 }

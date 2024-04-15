@@ -1,7 +1,7 @@
 #include "Animal.hpp"
 
 
-/*
+
 bool Animal::isAnimal() {
     return true;
 }
@@ -13,12 +13,3 @@ bool Animal::canBeConfined(Cage* cage){
         return false;
     }
 }
-
-bool addOccupant(Cage* cage, Animal* a){
-    if (cage == a->getCage()){
-        return true;
-    }else{
-        return false;
-    }
-}
-*/

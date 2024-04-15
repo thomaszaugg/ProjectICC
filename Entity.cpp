@@ -60,3 +60,27 @@ Cage* Entity::getCage(){return cage;}
      return true;
  }
 
+ void Entity::adjustPostition(){
+     double size(this->getSize());
+     double x = position.x();
+     double y = position.y();
+
+     auto topWall(cage->getTopLimit(true));
+     if (position.y() - size/2 < topWall){
+         y = topWall + size/2 * 1.5;
+     }
+     auto bottomWall(cage->getBottomLimit(true));
+     if (position.y() + size/2 > bottomWall){
+         y = bottomWall - size/2 * 1.5;
+     }
+     auto rightWall(cage->getRightLimit(true));
+     if (position.x() + size/2 > rightWall){
+         x = rightWall - size/2 * 1.5;
+     }
+     auto leftWall(cage->getLeftLimit(true));
+     if (position.x() - size/2 < leftWall){
+         x = leftWall + size/2 * 1.5;
+     }
+     Vec2d newPosition (x,y);
+     position = newPosition;
+ }
