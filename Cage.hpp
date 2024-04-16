@@ -49,7 +49,8 @@ public:
     Wall getLeft();
 
     /*!
-    * @brief getting the coord of the inner wall of the Cage (if intern = true) or getting the coord of the outer wall (if intern = false)
+    * @brief getting the coord of the inner wall of the Cage (if intern = true)
+    *        or getting the coord of the outer wall (if intern = false)
     *
     * @return double with x or y value of the wall
     */

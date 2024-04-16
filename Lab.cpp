@@ -138,26 +138,27 @@ Lab::~Lab(){
 
 //3.1
 bool Lab::addEntity(Entity* e){
-    if (e!=nullptr){
-        declareEntityCage(e);
-        if(e->canBeConfinedIn(e->getCage())){
+    if (e!=nullptr and declareEntityCage(e)
+       and  e->canBeConfinedIn(e->getCage())){
             e->adjustPostition();
             entities.push_back(e);
             return true;
-        }}
+        }
         return false;
     }
 
-void Lab::declareEntityCage(Entity* e){
+bool Lab::declareEntityCage(Entity* e){
     Vec2d center = e->getCenter();
     for (auto& row: cages){
         for (auto& ele: row){
             if(ele->isPositionInside(center)){
                 e->setCage(ele);
                 ele->addOccupant();
+                return true;
             }
         }
-}}
+}
+return false;}
 
 
 bool Lab::addAnimal(Hamster* h){

@@ -65,7 +65,7 @@ Cage* Entity::getCage(){return cage;}
 
  void  Entity::setCage(Cage* c){ cage=c;}
 
- void Entity::adjustPostition(){/*
+ void Entity::adjustPostition(){
      double size(this->getSize());
      double x = position.x();
      double y = position.y();
@@ -87,7 +87,7 @@ Cage* Entity::getCage(){return cage;}
          x = leftWall + size/2 * 1.5;
      }
      Vec2d newPosition (x,y);
-     position = newPosition;*/
+     position = newPosition;
  }
 
  Vec2d Entity::getHeading(){

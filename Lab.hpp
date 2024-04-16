@@ -105,7 +105,7 @@ public:
    bool addAnimal(Hamster* h);
    bool addFood(Pellets* p);
 
-   void declareEntityCage(Entity* e);
+   bool declareEntityCage(Entity* e);
 
    bool isCageEmpty(Cage* cage);
 
