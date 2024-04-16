@@ -142,5 +142,5 @@ void Cage::reset(){
 }
 
 bool Cage::isEmpty(){
-    return occupied;
+    return !occupied;
 }

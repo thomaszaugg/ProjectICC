@@ -30,7 +30,7 @@ public:
    void  setCage(Cage* c);
 
      void drawEnergy(sf::RenderTarget& target);
-     bool increaseAge(sf::Time time);
+
      void substractEnergy(double);
 
      //3.1
@@ -42,9 +42,11 @@ public:
 
      virtual bool isAnimal();
 
+    virtual bool update(sf::Time dt);
+
 
      virtual bool canBeConfinedIn(Cage* cage);
-    void adjustPostition();
+     void adjustPostition();
      virtual ~Entity()=default;
 
      Vec2d getHeading();

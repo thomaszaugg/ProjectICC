@@ -31,10 +31,7 @@ Cage* Entity::getCage(){return cage;}
               }
  }
 
- bool Entity::increaseAge(sf::Time time){
-     age+=time;
-     return (age>= this->getLongevity() or getEnergy()<=0);
- }
+
 
  sf::Time Entity::getLongevity(){
      return sf::seconds(1E+9);
@@ -55,8 +52,8 @@ Cage* Entity::getCage(){return cage;}
      return false;
  }
 
- bool Entity::canBeConfinedIn(Cage*){
-     return true;
+ bool Entity::canBeConfinedIn(Cage* cage){
+     return cage->isPositionInside(getCenter());
  }
 
  double Entity::getRadius() const{
@@ -109,3 +106,7 @@ Cage* Entity::getCage(){return cage;}
  void Entity::setEnergy(double e){
      energy=e;
  }
+
+ bool Entity::update(sf::Time dt){
+     age+=dt;
+     return !(age>= this->getLongevity() or getEnergy()<=0);}

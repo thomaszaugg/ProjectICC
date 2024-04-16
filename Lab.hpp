@@ -107,7 +107,6 @@ public:
 
    bool declareEntityCage(Entity* e);
 
-   bool isCageEmpty(Cage* cage);
 
 
 

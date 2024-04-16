@@ -13,23 +13,26 @@ Animal::Animal(const Vec2d& position, double energy)
     }
 
 Animal::~Animal() {
-    getCage()->reset();}
+    if(getCage()!=nullptr) getCage()->reset();}
 
 bool Animal::isAnimal() {
     return true;
 }
 
 bool Animal::canBeConfinedIn(Cage* cage){
-    return cage->isEmpty();
+     return cage->isEmpty() and cage->isPositionInside(getCenter());
 }
 
-void Animal::update(sf::Time dt){
+bool Animal::update(sf::Time dt){
     updateEnergy(dt);       //has to come before increaseAge for correct functioning in lab(return value)
-    increaseAge(dt);
-    updateState(dt);}
+    updateState(dt);
+    move(dt);
+    return Entity::update(dt);
+    }
 
-void Animal::updateState(sf::Time){
+void Animal::updateState(sf::Time dt){
     speed= this->getMaxSpeed();
+
 }
 
 void Animal::move(sf::Time dt){

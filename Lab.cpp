@@ -75,13 +75,12 @@ void Lab::removeCageFromRow(){
 //3.1
 void Lab::update(sf::Time dt){
     for (auto& entity: entities){
-        if(entity!=nullptr){
-            if(entity->increaseAge(dt)){    //if the animal is too old, increaseAge returns
-                delete entity;              //true and the entity is removed from the lab
+            if(entity!=nullptr and !(entity->update(dt))){    //if the animal should be dead, update returns false
+                delete entity;
                 entity = nullptr;
-            }
-        }
-    }
+            }}
+
+
     entities.erase(std::remove(entities.begin(),    //removing nullptrs only after iteration finished
                   entities.end(), nullptr), entities.end());
 }
@@ -151,9 +150,8 @@ bool Lab::declareEntityCage(Entity* e){
     Vec2d center = e->getCenter();
     for (auto& row: cages){
         for (auto& ele: row){
-            if(ele->isPositionInside(center)){
+            if(ele->isPositionInside(center) or ele->isPositionOnWall(center)){
                 e->setCage(ele);
-                ele->addOccupant();
                 return true;
             }
         }
@@ -162,27 +160,20 @@ return false;}
 
 
 bool Lab::addAnimal(Hamster* h){
-                             //cage is marked occupied in the constructor of Animal
-    return addEntity(h);
-}
+           if( addEntity(h)){
+               h->getCage()->addOccupant();
+               return true;
+           }else{
+               return false;}
+               }
 
 bool Lab::addFood(Pellets* p){
     return addEntity(p);
 }
 
 
-bool isCageEmptyHelper(Lab& lab, Cage* cage){
-    return lab.isCageEmpty(cage);
-}
 
-bool Lab::isCageEmpty(Cage* cage){
-    for (auto& entity: entities){
-        if (entity->isAnimal() and entity->getCage() == cage){
-            return false;
-        }
-    }
-    return true;
-}
+
 
 
 

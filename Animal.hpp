@@ -25,12 +25,12 @@ public:
 
     bool isAnimal() override;
 
-    bool canBeConfinedIn(Cage* cage) override;
+    bool canBeConfinedIn(Cage* c) override;
 
     virtual ~Animal() ;
 
     public:
-        void update(sf::Time dt);
+        bool update(sf::Time dt) override;
         void updateState(sf::Time dt);
 
 
