@@ -1,14 +1,15 @@
 #include "Cage.hpp"
 #include "Application.hpp"
+//#include "Lab.hpp"
 
 Cage::Cage(Vec2d position, double width, double height, double wallWidth)
-    : position(position), width(width), height(height), wallWidth(wallWidth){
+    : position(position), width(width), height(height), wallWidth(wallWidth), occupied(false){
 
     Vec2d h2(-width/2, -height/2);
     h2+=position;
     Vec2d h1(width/2-wallWidth, -height/2+wallWidth);
     h1+=position;
-    Wall top(h1, h2);top;
+    Wall top(h1, h2);
     walls.push_back(top);
 
     Vec2d h4(width/2-wallWidth, -height/2);
@@ -130,3 +131,16 @@ void Cage::drawOn(sf::RenderTarget& targetWindow){
             sf::RectangleShape left = buildRectangle(this->getLeft().second, this->getLeft().first, &getAppTexture(getAppConfig().simulation_lab_fence));
             targetWindow.draw(left);
         }
+
+
+
+void Cage::addOccupant(){
+    occupied=true;
+}
+void Cage::reset(){
+    occupied = false;
+}
+
+bool Cage::isEmpty(){
+    return occupied;
+}

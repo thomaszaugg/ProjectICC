@@ -2,6 +2,7 @@
 #define CAGE_HPP
 #include <Utility/Vec2d.hpp>
 #include "SFML/Graphics.hpp"
+#pragma once
 
 
 typedef std::pair <Vec2d, Vec2d> Wall; //bottom right corner, top left corner
@@ -18,6 +19,9 @@ class Cage{
     Wall right;
     Wall bottom;
     Wall left;
+
+    bool occupied;
+
 
 public:
     /*!
@@ -77,6 +81,11 @@ public:
     * @brief Draw a cage
     */
     void drawOn(sf::RenderTarget& targetWindow);
-};
+
+    void addOccupant();
+    void reset();
+    bool isEmpty();
+
+    };
 
 #endif // CAGE_HPP

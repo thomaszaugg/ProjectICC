@@ -3,30 +3,34 @@
  *  @authors: 
  */
 #include <Utility/Vec2d.hpp>
+#include <SFML/Graphics.hpp>
 #pragma once
 
 class CircularBody{
     public:
 
-        //constructor
-        CircularBody(const Vec2d& p, double r);
+    //constructor
+    //CircularBody(const Vec2d& p, double r);
+    CircularBody(); //constructuer par default
 
-        //returns the center of the circular body
-        Vec2d getCenter() const;
+    //returns the center of the circular body
+    virtual Vec2d getCenter() const = 0;
 
-        //returns the radius of the circular body
-        double getRadius() const;
+    //returns the radius of the circular body
+    virtual double getRadius() const = 0;
 
-        //returns true if the two bodies are colliding and false otherwise
-        bool isColliding(const CircularBody& other) const;
+    //returns true if the two bodies are colliding and false otherwise
+    bool isColliding(const CircularBody& other) const;
 
-        //returns true if the point is inside the
-        bool isPointInside(const Vec2d& point) const;
+    //returns true if the point is inside the
+    bool isPointInside(const Vec2d& point) const;
+
+    void drawOn(sf::RenderTarget& target);
 
 
     private:
-        Vec2d position;
-        double radius;
+        //Vec2d position;
+        //double radius;
 
 };
 
