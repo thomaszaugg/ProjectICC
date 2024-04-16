@@ -2,13 +2,16 @@
 #define LAB_HPP
 #include <vector>
 #include "Cage.hpp"
-#include <memory>
 #include "SFML/Graphics/RenderTarget.hpp"
+#pragma once
 
 class Pellets;
 class Hamster;
+class Entity;
+class Animal;
 
 typedef std::vector<std::vector<Cage*>> Cages;
+typedef std::vector<Entity*> Entities;
 
 
 
@@ -16,8 +19,8 @@ class Lab
 {
 private:
     Cages cages;
-   Pellets* pellet = nullptr;
-   Hamster* hamster = nullptr;
+    Entities entities;
+
 
     /*!
     * @brief Check whether the value nbCagesPerRow is inbetween the min and max barrier
@@ -98,9 +101,19 @@ public:
     /*!
     * @brief add hamsters and pellets
     */
+   bool addEntity(Entity* e);
    bool addAnimal(Hamster* h);
    bool addFood(Pellets* p);
+
+   bool declareEntityCage(Entity* e);
+
+
+
+
+
 };
+
+bool isCageEmptyHelper(Lab& lab, Cage* cage);
 
 #endif // LAB_HPP
 

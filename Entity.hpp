@@ -3,9 +3,12 @@
 #include <Utility/Utility.hpp>
 #include <SFML/Graphics.hpp>
 #include "Cage.hpp"
-#include "Application.hpp"
+#include "CircularBody.hpp"
+#pragma once
 
-class Entity
+class CircularBody;
+
+class Entity: public CircularBody
 {
 private:
     Vec2d position;
@@ -17,18 +20,43 @@ private:
 public:
     Entity(const Vec2d& position, double energy);
 
-    Vec2d getPosition() ;
+    virtual Vec2d getCenter() const override ;
     sf::Time getAge() ;
     Angle getOrientation() ;
-    double getEnergy() ;
+    double getEnergy() const ; //3.1 const
     Cage* getCage() ;
- virtual   sf::Time getLongevity();
+    virtual sf::Time getLongevity();
+
+   void  setCage(Cage* c);
 
      void drawEnergy(sf::RenderTarget& target);
-     bool increaseAge(sf::Time time);
+
      void substractEnergy(double);
 
+     //3.1
+     void drawOn(sf::RenderTarget& targetWindow);
+
+     virtual double getSize() const =0; //3.1 const
+     virtual sf::Texture& getTexture()=0;
+     double getRadius() const override;
+
+     virtual bool isAnimal();
+
+    virtual bool update(sf::Time dt);
+
+
+     virtual bool canBeConfinedIn(Cage* cage);
+     void adjustPostition();
      virtual ~Entity()=default;
+
+     Vec2d getHeading();
+     void  updatePosition(Vec2d step);
+
+
+    bool inCollision(Vec2d position);
+    void setOrientation(Angle angle);
+
+    void setEnergy(double);
 
 
 };

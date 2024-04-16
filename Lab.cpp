@@ -4,6 +4,7 @@
 #include "Hamster.hpp"
 #include "Pellets.hpp"
 #include "Config.hpp"
+#include <algorithm>
 
 unsigned int Lab::maxCageNumber(){
     double min_size(getAppConfig().simulation_lab_min_box_size);
@@ -71,27 +72,26 @@ void Lab::removeCageFromRow(){
 
 }
 
+//3.1
 void Lab::update(sf::Time dt){
-    if(hamster!=nullptr) {
-        if(hamster->increaseAge(dt)){
-        delete hamster;
-        hamster=nullptr;
-        }
-    if(pellet!=nullptr) {
-        if(pellet->increaseAge(dt)){
-            delete pellet;
-            pellet = nullptr;
-        }
-    }
+    for (auto& entity: entities){
+            if(entity!=nullptr and !(entity->update(dt))){    //if the animal should be dead, update returns false
+                delete entity;
+                entity = nullptr;
+            }}
 
 
-}}
+    entities.erase(std::remove(entities.begin(),    //removing nullptrs only after iteration finished
+                  entities.end(), nullptr), entities.end());
+}
 
 void Lab::drawOn(sf::RenderTarget& targetWindow){
     drawOnCages(targetWindow);
-
-    if(hamster!=nullptr) hamster->drawOn(targetWindow);
-    if(pellet!=nullptr) pellet->drawOn(targetWindow);
+    for (const auto& entity: entities){
+        if(entity!=nullptr){
+            entity->drawOn(targetWindow);
+        }
+    }
 }
 
 void Lab::drawOnCages(sf::RenderTarget& targetWindow){
@@ -109,17 +109,17 @@ void Lab::reset(bool reset){
         clearCages();
         makeBoxes(getAppConfig().simulation_lab_nb_boxes);
     }else{
-     clearEntities();
+        clearEntities();
     }
 }
 
 void Lab::clearEntities(){
-    delete hamster;
-    hamster=nullptr;
-
-    delete pellet;
-    pellet=nullptr;
+    for (auto& entity: entities){
+               delete entity;
+    }
+    entities.clear();
 }
+
 void Lab::clearCages(){
     clearEntities();
     for (unsigned int i(0); i < cages.size(); ++i){
@@ -135,17 +135,45 @@ Lab::~Lab(){
     clearCages();
 };
 
+//3.1
+bool Lab::addEntity(Entity* e){
+    if (e!=nullptr and declareEntityCage(e)
+       and  e->canBeConfinedIn(e->getCage())){
+            e->adjustPostition();
+            entities.push_back(e);
+            return true;
+        }
+        return false;
+    }
+
+bool Lab::declareEntityCage(Entity* e){
+    Vec2d center = e->getCenter();
+    for (auto& row: cages){
+        for (auto& ele: row){
+            if(ele->isPositionInside(center) or ele->isPositionOnWall(center)){
+                e->setCage(ele);
+                return true;
+            }
+        }
+}
+return false;}
+
+
 bool Lab::addAnimal(Hamster* h){
-     if(h!=nullptr and hamster==nullptr){
-         hamster=h;
-         return true;}
+           if( addEntity(h)){
+               h->getCage()->addOccupant();
+               return true;
+           }else{
+               return false;}
+               }
 
-         return false;
- }
+bool Lab::addFood(Pellets* p){
+    return addEntity(p);
+}
 
- bool Lab::addFood(Pellets* p){
- if(pellet==nullptr and p!=nullptr){
-     pellet=p;
-     return true;}
- return false;
- }
+
+
+
+
+
+

@@ -2,6 +2,7 @@
 #define CAGE_HPP
 #include <Utility/Vec2d.hpp>
 #include "SFML/Graphics.hpp"
+#pragma once
 
 
 typedef std::pair <Vec2d, Vec2d> Wall; //bottom right corner, top left corner
@@ -18,6 +19,9 @@ class Cage{
     Wall right;
     Wall bottom;
     Wall left;
+
+    bool occupied;
+
 
 public:
     /*!
@@ -45,7 +49,8 @@ public:
     Wall getLeft();
 
     /*!
-    * @brief getting the coord of the inner wall of the Cage (if intern = true) or getting the coord of the outer wall (if intern = false)
+    * @brief getting the coord of the inner wall of the Cage (if intern = true)
+    *        or getting the coord of the outer wall (if intern = false)
     *
     * @return double with x or y value of the wall
     */
@@ -59,7 +64,7 @@ public:
     *
     * @return true if point is inside
     */
-    bool isPositionInside(const Vec2d& position);
+    bool isPositionInside(const Vec2d& position, double radius =0);
 
     /*!
     * @brief check whether a point is on the wall of the Cage
@@ -77,6 +82,11 @@ public:
     * @brief Draw a cage
     */
     void drawOn(sf::RenderTarget& targetWindow);
-};
+
+    void addOccupant();
+    void reset();
+    bool isEmpty();
+
+    };
 
 #endif // CAGE_HPP
