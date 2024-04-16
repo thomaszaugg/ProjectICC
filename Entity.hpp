@@ -13,7 +13,7 @@ class Entity: public CircularBody
 private:
     Vec2d position;
     sf::Time age;
-    Angle orientation;        //radians
+    Angle orientation;        //radians, negative okay
     double energy;
     Cage* cage;
 

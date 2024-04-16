@@ -37,7 +37,8 @@ public:
         Vec2d getSpeedVector();
 
        virtual double getMaxSpeed()=0;
-        double getSpeed();
+      virtual  double getFatigueEnergy()=0;
+        double getFatigueFactor();
 
        void move(sf::Time dt);
         Angle getNewRotation();

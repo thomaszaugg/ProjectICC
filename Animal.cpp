@@ -2,8 +2,8 @@
 #include "Cage.hpp"
 #include "Application.hpp"
 #include "Random/Random.hpp"
+#include "Utility/Utility.hpp"
 
-//where to put them???
 Intervals intervals = { -180, -100, -55, -25, -10, 0, 10, 25, 55, 100, 180};
 std::vector<double> probabilities = {0.0000,0.0000,0.0005,0.0010,0.0050,0.9870,0.0050,0.0010,0.0005,0.0000,0.0000};
 
@@ -31,7 +31,7 @@ bool Animal::update(sf::Time dt){
     }
 
 void Animal::updateState(sf::Time dt){
-    speed= this->getSpeed();
+    speed= this->getMaxSpeed();
 
 }
 
@@ -39,8 +39,9 @@ void Animal::move(sf::Time dt){
   //change of orientation
     counter+=dt;
     if(counter > sf::seconds(getAppConfig().animal_rotation_delay)){    //since seconds are floats, we use comparison instead of egality
-        setOrientation(getOrientation()+getNewRotation());
+        setOrientation(getOrientation()+getNewRotation());              //energy can become
     }
+  //look into angle delta
 
    //change of position
     Vec2d step=getSpeedVector()*dt.asSeconds();
@@ -68,13 +69,8 @@ setEnergy(this->getEnergy()- energy_loss);
 }
 
 
-double Animal::getSpeed(){
-    double speed(getMaxSpeed());
-    if(getEnergy()< 200 ) speed*= 0.5;
-    return speed;
-}
 
-
+double Animal::getFatigueFactor(){return 0.25;}
 
 
 

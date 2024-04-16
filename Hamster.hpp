@@ -16,5 +16,6 @@ public:
 
     double getMaxSpeed() override ;
     double getEnergyLoss() override;
+    double getFatigueEnergy() override;
 };
 #endif // HAMSTER_HPP
