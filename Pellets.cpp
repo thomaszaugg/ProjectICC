@@ -1,4 +1,5 @@
 #include "Pellets.hpp"
+#include "Application.hpp"
 
 Pellets::Pellets(Vec2d position)
     : Entity(position, getAppConfig().food_initial_energy)
@@ -18,7 +19,4 @@ sf::Texture& Pellets::getTexture(){
     return getAppTexture(getAppConfig().food_texture);
 }
 
-double Pellets::getRadius() const {
-    return getSize()/2;
-}
 

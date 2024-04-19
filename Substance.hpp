@@ -16,10 +16,12 @@ private:
      * @brief Sets the fractions and the values in the boundery of the values
      */
     void setSubstance(double VGEF, double GLUCOSE, double BROMOPYRUVATE);
+
     /*!
     * @brief Sets the concentration in the correct boundary
     */
     void checkCon(double& con);
+
 public:
     /*!
      * @brief Constructor by default
@@ -55,7 +57,7 @@ public:
     /*!
      * @brief checks if two substances are equal or not
      */
-     void operator=(const Substance& sub);
+    void operator=(const Substance& sub);
 
      /*!
      * @brief checks if two substances are equal or not
@@ -88,9 +90,12 @@ public:
     /*!
      * @brief mulitply the quantity of a substance by c
      */
-   void update(SubstanceId subId, double c);
+    void update(SubstanceId subId, double c);
 
-   void uptakeOnGradient(double fraction, Substance& receiver, SubstanceId id);
+    /*!
+     * @brief updates the concentration of a receiver
+     */
+    void uptakeOnGradient(double fraction, Substance& receiver, SubstanceId id);
 
     };
 

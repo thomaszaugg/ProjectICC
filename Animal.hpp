@@ -2,21 +2,48 @@
 #define ANIMAL_HPP
 #include <Utility/Utility.hpp>
 #include "Entity.hpp"
-#include "Cage.hpp"
 #pragma once
+
+enum State{
+               TARGETING_FOOD, // se dirige vers la nourriture
+               FEEDING,       // en train de manger (là en principe il arrête de se déplacer)
+               WANDERING,     // déambule
+               IDLE,          // au repos
+              };
 
 class Animal : public Entity
 {
-public:
-    Animal(const Vec2d& position, double energy)
-        : Entity(position, energy){}
 
-    //3.1
+
+private:
+   State state;
+   double speed;
+   sf::Time counter=sf::Time::Zero;
+
+public:
+    Animal(const Vec2d& position, double energy);
+
     bool isAnimal() override;
 
-    bool canBeConfined(Cage* cage) override;
+    bool canBeConfinedIn(Cage* c) override;
 
-    virtual ~Animal() {}
+    virtual ~Animal() ;
+
+    public:
+        bool update(sf::Time dt) override;
+        void updateState(sf::Time dt);
+
+
+        Vec2d getSpeedVector();
+
+       virtual double getMaxSpeed()=0;
+      virtual  double getFatigueEnergy()=0;
+        double getFatigueFactor();
+
+       void move(sf::Time dt);
+        Angle getNewRotation();
+        void updateEnergy(sf::Time);
+      virtual double getEnergyLoss() = 0;
 
 };
 

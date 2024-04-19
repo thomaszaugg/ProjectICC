@@ -2,8 +2,8 @@
 #include "Application.hpp"
 //#include "Lab.hpp"
 
-Cage::Cage(Vec2d position, double width, double height, double wallWidth, bool occupied)
-    : position(position), width(width), height(height), wallWidth(wallWidth), occupied(occupied){
+Cage::Cage(Vec2d position, double width, double height, double wallWidth)
+    : position(position), width(width), height(height), wallWidth(wallWidth), occupied(false){
 
     Vec2d h2(-width/2, -height/2);
     h2+=position;
@@ -67,10 +67,6 @@ Wall Cage::getLeft(){
     return walls[3];
 }
 
-void Cage::setOccupied(bool o){
-    occupied = o;
-}
-
 double Cage::getLeftLimit(bool intern){
     if (intern){
         return position.x()-width/2+wallWidth;
@@ -103,9 +99,10 @@ double Cage::getBottomLimit(bool intern){
     }
 }
 
-bool Cage::isPositionInside(const Vec2d& position){
-    if (position.x() > getLeftLimit(true) && position.x() < getRightLimit(true) &&
-        position.y() > getTopLimit(true) && position.y() < getBottomLimit(true)){
+bool Cage::isPositionInside(const Vec2d& position, double radius){
+
+    if (position.x() - radius > getLeftLimit(true) && position.x() + radius < getRightLimit(true) &&
+        position.y() - radius > getTopLimit(true) && position.y() + radius < getBottomLimit(true)){
         return true;
     }else{
         return false;
@@ -136,10 +133,15 @@ void Cage::drawOn(sf::RenderTarget& targetWindow){
             targetWindow.draw(left);
         }
 
-bool Cage::isEmpty(){
-    return occupied;
+
+
+void Cage::addOccupant(){
+    occupied=true;
+}
+void Cage::reset(){
+    occupied = false;
 }
 
-void Cage::reset(){
-    setOccupied(false);
+bool Cage::isEmpty(){
+    return !occupied;
 }

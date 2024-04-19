@@ -2,6 +2,7 @@
 #include <Utility/Utility.hpp>
 #include <Random/Random.hpp>
 #include "Cage.hpp"
+#include "Application.hpp"
 
 
 
@@ -24,18 +25,13 @@ Cage* Entity::getCage(){return cage;}
                                 getAppConfig().default_debug_text_size*5,   //why so small
                                 sf::Color::Blue,
                                 0 / DEG_TO_RAD); // if you want to rotate the text
+
           target.draw(text);
-          //3.1
-          auto circle(buildCircle(getCenter(), getRadius(), sf::Color(20,150,20,30)));
-          target.draw(circle);
-          //3.1
-      }
+          CircularBody::drawOn(target);
+              }
  }
 
- bool Entity::increaseAge(sf::Time time){
-     age+=time;
-     return (age>= this->getLongevity() or getEnergy()<=0);
- }
+
 
  sf::Time Entity::getLongevity(){
      return sf::seconds(1E+9);
@@ -46,9 +42,9 @@ Cage* Entity::getCage(){return cage;}
  }
 
  void Entity::drawOn(sf::RenderTarget& target){
-     sf::Sprite  entitySprite = buildSprite( getCenter(), 2*getRadius(), getTexture(),getOrientation()/ DEG_TO_RAD); // conversion degree to radians becauce SFML uses these units
+     sf::Sprite  entitySprite = buildSprite( getCenter(), 2*getRadius(),        //getCenter, getRadius, getTexture all virtual
+                                             getTexture(), getOrientation()/ DEG_TO_RAD); // conversion degree to radians becauce SFML uses these units
      target.draw(entitySprite);
-
      drawEnergy(target);
  }
 
@@ -56,9 +52,15 @@ Cage* Entity::getCage(){return cage;}
      return false;
  }
 
- bool Entity::canBeConfined(Cage* cage){
-     return true;
+ bool Entity::canBeConfinedIn(Cage* cage){
+     return cage->isPositionInside(getCenter());
  }
+
+ double Entity::getRadius() const{
+     return getSize()/2;
+ }
+
+ void  Entity::setCage(Cage* c){ cage=c;}
 
  void Entity::adjustPostition(){
      double size(this->getSize());
@@ -84,3 +86,27 @@ Cage* Entity::getCage(){return cage;}
      Vec2d newPosition (x,y);
      position = newPosition;
  }
+
+ Vec2d Entity::getHeading(){
+     return Vec2d::fromAngle(orientation);
+ }
+
+ void  Entity::updatePosition(Vec2d step){
+         position+=step;
+ }
+
+ void Entity::setOrientation(Angle angel){
+          orientation = angel;
+ }
+
+ bool Entity::inCollision(Vec2d p){
+     return !getCage()->isPositionInside(p, getRadius());
+ }
+
+ void Entity::setEnergy(double e){
+     energy=e;
+ }
+
+ bool Entity::update(sf::Time dt){
+     age+=dt;
+     return !(age>= this->getLongevity() or getEnergy()<=0);}

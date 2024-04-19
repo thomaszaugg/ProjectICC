@@ -33,6 +33,7 @@ private:
     */
     void clearCages();
     void clearEntities();
+
     /*!
     * @brief Helper function that draws the Cages of the lab
     */
@@ -96,26 +97,27 @@ public:
     /*!
     * @brief to make it impossible to copy a Lab
     */
-   Lab(const Lab&)=delete;
+    Lab(const Lab&)=delete;
 
     /*!
-    * @brief add hamsters and pellets
+    * @brief add hamsters and pellets, addAnimal and addPellets call addEntity
     */
-   bool addEntity(Entity* e);
-   bool addAnimal(Hamster* h);
-   bool addFood(Pellets* p);
+    bool addEntity(Entity* e);
+    bool addAnimal(Hamster* h);
+    bool addFood(Pellets* p);
 
-   //bool isCageEmpty(Cage* cage);
+    /*!
+    * @brief assigns the entitiy to a Cage in the Lab
+    */
+    bool declareEntityCage(Entity* e);
 
-   bool PositionLab(Entity* e);
 
-   void addOccupant(Entity* e);
 
 
 
 };
 
-//bool isCageEmptyHelper(Lab& lab, Cage* cage);
+bool isCageEmptyHelper(Lab& lab, Cage* cage);
 
 #endif // LAB_HPP
 

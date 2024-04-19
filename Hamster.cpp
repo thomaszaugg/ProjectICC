@@ -1,4 +1,5 @@
 #include "Hamster.hpp"
+#include "Application.hpp"
 
 
 
@@ -18,6 +19,13 @@ sf::Texture& Hamster::getTexture(){
     return getAppTexture(getAppConfig().hamster_texture_brown);
 }
 
-double Hamster::getRadius() const{
-    return getSize()/2;
-}
+double Hamster::getMaxSpeed(){
+        double speed(getAppConfig().hamster_max_speed);
+        if(getEnergy()< getFatigueEnergy()) speed*= getFatigueFactor();
+        return speed;
+    }
+double Hamster::getFatigueEnergy(){ return 300;}
+
+ double Hamster::getEnergyLoss() {
+     return getAppConfig().hamster_energy_loss_factor;}
+

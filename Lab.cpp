@@ -75,14 +75,14 @@ void Lab::removeCageFromRow(){
 //3.1
 void Lab::update(sf::Time dt){
     for (auto& entity: entities){
-        if(entity!=nullptr){
-            if(entity->increaseAge(dt)){
+            if(entity!=nullptr and !(entity->update(dt))){    //if the animal should be dead, update returns false
                 delete entity;
                 entity = nullptr;
-            }
-        }
-    }
-    entities.erase(std::remove(entities.begin(), entities.end(), nullptr), entities.end());
+            }}
+
+
+    entities.erase(std::remove(entities.begin(),    //removing nullptrs only after iteration finished
+                  entities.end(), nullptr), entities.end());
 }
 
 void Lab::drawOn(sf::RenderTarget& targetWindow){
@@ -109,16 +109,15 @@ void Lab::reset(bool reset){
         clearCages();
         makeBoxes(getAppConfig().simulation_lab_nb_boxes);
     }else{
-     clearEntities();
+        clearEntities();
     }
 }
 
 void Lab::clearEntities(){
     for (auto& entity: entities){
-        delete entity;
-        entity=nullptr;
+               delete entity;
     }
-
+    entities.clear();
 }
 
 void Lab::clearCages(){
@@ -138,49 +137,43 @@ Lab::~Lab(){
 
 //3.1
 bool Lab::addEntity(Entity* e){
-    if (e->canBeConfined(e->getCage()) and PositionLab(e)){
-        if(e!=nullptr){
+    if (e!=nullptr and declareEntityCage(e)
+       and  e->canBeConfinedIn(e->getCage())){
             e->adjustPostition();
-            // if not possible to assign new center, construct here the new adjusted entity
-            if(e->isAnimal()){
-                addOccupant(e);
-            }
             entities.push_back(e);
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
-    return false;
+
+bool Lab::declareEntityCage(Entity* e){
+    Vec2d center = e->getCenter();
+    for (auto& row: cages){
+        for (auto& ele: row){
+            if(ele->isPositionInside(center) or ele->isPositionOnWall(center)){
+                e->setCage(ele);
+                return true;
+            }
+        }
 }
+return false;}
+
 
 bool Lab::addAnimal(Hamster* h){
-    return addEntity(h);
-}
+           if( addEntity(h)){
+               h->getCage()->addOccupant();
+               return true;
+           }else{
+               return false;}
+               }
 
 bool Lab::addFood(Pellets* p){
     return addEntity(p);
 }
 
-/*
-bool isCageEmptyHelper(Lab& lab, Cage* cage){
-    return lab.isCageEmpty(cage);
-}
 
-bool Lab::isCageEmpty(Cage* cage){
-    for (auto& entity: entities){
-        if (entity->isAnimal() and entity->getCage() == cage){
-            return false;
-        }
-    }
-    return true;
-}
-*/
 
-bool Lab::PositionLab(Entity* e){
-    return (e->getCage()->isPositionInside(e->getCenter()));
-}
 
-void Lab::addOccupant(Entity* e){
-    e->getCage()->setOccupied(true);
-}
+
+
+

@@ -3,6 +3,7 @@
  *  @authors: 
  */
 #include <Utility/Vec2d.hpp>
+#include <SFML/Graphics.hpp>
 #pragma once
 
 class CircularBody{
@@ -23,6 +24,8 @@ class CircularBody{
 
     //returns true if the point is inside the
     bool isPointInside(const Vec2d& point) const;
+
+    void drawOn(sf::RenderTarget& target);
 
 
     private:
