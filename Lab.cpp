@@ -160,12 +160,12 @@ return false;}
 
 
 bool Lab::addAnimal(Hamster* h){
-           if( addEntity(h)){
-               h->getCage()->addOccupant();
-               return true;
-           }else{
-               return false;}
-               }
+    if( addEntity(h)){
+        h->getCage()->addOccupant();
+        return true;
+    }else{
+        return false;}
+}
 
 bool Lab::addFood(Pellets* p){
     return addEntity(p);

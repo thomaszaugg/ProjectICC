@@ -1,6 +1,5 @@
 #include "Cage.hpp"
 #include "Application.hpp"
-//#include "Lab.hpp"
 
 Cage::Cage(Vec2d position, double width, double height, double wallWidth)
     : position(position), width(width), height(height), wallWidth(wallWidth), occupied(false){
@@ -32,7 +31,6 @@ Cage::Cage(Vec2d position, double width, double height, double wallWidth)
     h7+=position;
     Wall left(h7,h8);
     walls.push_back(left);
-
 }
 
 Vec2d Cage::getCenter(){
@@ -120,24 +118,23 @@ bool Cage::isPositionOnWall(const Vec2d& position){
 
 void Cage::drawOn(sf::RenderTarget& targetWindow){
 
-            sf::RectangleShape top = buildRectangle(this->getTop().second, this->getTop().first, &getAppTexture(getAppConfig().simulation_lab_fence));
-            targetWindow.draw(top);
+    sf::RectangleShape top = buildRectangle(this->getTop().second, this->getTop().first, &getAppTexture(getAppConfig().simulation_lab_fence));
+    targetWindow.draw(top);
 
-            sf::RectangleShape right = buildRectangle(this->getRight().second, this->getRight().first, &getAppTexture(getAppConfig().simulation_lab_fence));
-            targetWindow.draw(right);
+    sf::RectangleShape right = buildRectangle(this->getRight().second, this->getRight().first, &getAppTexture(getAppConfig().simulation_lab_fence));
+    targetWindow.draw(right);
 
-            sf::RectangleShape bottom = buildRectangle(this->getBottom().second, this->getBottom().first, &getAppTexture(getAppConfig().simulation_lab_fence));
-            targetWindow.draw(bottom);
+    sf::RectangleShape bottom = buildRectangle(this->getBottom().second, this->getBottom().first, &getAppTexture(getAppConfig().simulation_lab_fence));
+    targetWindow.draw(bottom);
 
-            sf::RectangleShape left = buildRectangle(this->getLeft().second, this->getLeft().first, &getAppTexture(getAppConfig().simulation_lab_fence));
-            targetWindow.draw(left);
-        }
-
-
+    sf::RectangleShape left = buildRectangle(this->getLeft().second, this->getLeft().first, &getAppTexture(getAppConfig().simulation_lab_fence));
+    targetWindow.draw(left);
+}
 
 void Cage::addOccupant(){
     occupied=true;
 }
+
 void Cage::reset(){
     occupied = false;
 }

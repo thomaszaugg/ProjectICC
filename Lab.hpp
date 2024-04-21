@@ -13,14 +13,11 @@ class Animal;
 typedef std::vector<std::vector<Cage*>> Cages;
 typedef std::vector<Entity*> Entities;
 
-
-
 class Lab
 {
 private:
     Cages cages;
     Entities entities;
-
 
     /*!
     * @brief Check whether the value nbCagesPerRow is inbetween the min and max barrier
@@ -111,13 +108,7 @@ public:
     */
     bool declareEntityCage(Entity* e);
 
-
-
-
-
 };
-
-bool isCageEmptyHelper(Lab& lab, Cage* cage);
 
 #endif // LAB_HPP
 

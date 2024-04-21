@@ -13,14 +13,15 @@ Animal::Animal(const Vec2d& position, double energy)
     }
 
 Animal::~Animal() {
-    if(getCage()!=nullptr) getCage()->reset();}
+    if(getCage()!=nullptr) getCage()->reset();
+}
 
 bool Animal::isAnimal() {
     return true;
 }
 
 bool Animal::canBeConfinedIn(Cage* cage){
-     return cage->isEmpty() and cage->isPositionInside(getCenter());
+    return cage->isEmpty() and cage->isPositionInside(getCenter());
 }
 
 bool Animal::update(sf::Time dt){
@@ -28,9 +29,9 @@ bool Animal::update(sf::Time dt){
     updateState(dt);
     move(dt);
     return Entity::update(dt);  //is this okay???
-    }
+}
 
-void Animal::updateState(sf::Time dt){
+void Animal::updateState(sf::Time){
     speed= this->getMaxSpeed();
 
 }
@@ -43,37 +44,29 @@ void Animal::move(sf::Time dt){
     }
   //look into angle delta
 
-   //change of position
+  //change of position
     Vec2d step=getSpeedVector()*dt.asSeconds();
         if(inCollision(step+getCenter())){
             setOrientation((-getHeading()).angle());
             counter=sf::seconds(getAppConfig().animal_rotation_delay);              // to prevent glitching at the wall
         }
     updatePosition(step);
-
 }
-
 
 Vec2d Animal::getSpeedVector(){
     return getHeading()*speed;
 }
 
-
 Angle Animal::getNewRotation(){
-
     return piecewise_linear(intervals, probabilities)*DEG_TO_RAD;   //piecewise_linear works with degrees
 }
 
 void Animal::updateEnergy(sf::Time dt){
-double energy_loss = getAppConfig().animal_base_energy_consumption + speed * getEnergyLoss() * dt.asSeconds();
-setEnergy(this->getEnergy()- energy_loss);
+    double energy_loss = getAppConfig().animal_base_energy_consumption + speed * getEnergyLoss() * dt.asSeconds();
+    setEnergy(this->getEnergy()- energy_loss);
 }
 
-
-
 double Animal::getFatigueFactor(){return 0.25;}
-
-
 
 
  /*  switch (state) {

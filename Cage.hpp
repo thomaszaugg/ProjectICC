@@ -74,18 +74,31 @@ public:
     bool isPositionOnWall(const Vec2d& position);
 
     /*!
-    * @brief Destructor
+    * @brief sets the attibut occupied = true (meaning : cage occupied by an animal)
     */
-    ~Cage(){}
+    void addOccupant();
+
+    /*!
+    * @brief sets the attibut occupied = false (meaning : cage not occupied by an animal)
+    */
+    void reset();
+
+    /*!
+    * @brief checks whether a cage is empty (no animal inside)
+    *
+    * @return ture if empty
+    */
+    bool isEmpty();
 
     /*!
     * @brief Draw a cage
     */
     void drawOn(sf::RenderTarget& targetWindow);
 
-    void addOccupant();
-    void reset();
-    bool isEmpty();
+    /*!
+    * @brief Destructor
+    */
+    ~Cage(){}
 
     };
 

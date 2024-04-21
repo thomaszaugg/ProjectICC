@@ -9,20 +9,20 @@ class Pellets : public Entity
 {
 public:
     /*!
-     * @brief Constructor
-     */
+    * @brief Constructor
+    */
     Pellets(Vec2d position);
 
     /*!
-     * @brief calculating the new energy of a Pellet after the energy qte has been eaten
-     *
-     * @return Quantity (double) of energy of the Pellet
-     */
+    * @brief calculating the new energy of a Pellet after the energy qte has been eaten
+    *
+    * @return Quantity (double) of energy of the Pellet
+    */
     Quantity provideEnergy(Quantity qte);
 
     /*!
-     * @brief Getters
-     */
+    * @brief Getters
+    */
     virtual double getSize() const override; //3.1 const
     virtual sf::Texture& getTexture() override;
 
