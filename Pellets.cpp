@@ -19,4 +19,14 @@ sf::Texture& Pellets::getTexture(){
     return getAppTexture(getAppConfig().food_texture);
 }
 
+bool Pellets::canConsume(Entity const* entity) const {
+    return entity->consumableBy(this);
+}
 
+bool Pellets::consumableBy(Pellets const*) const {
+    return false;
+}
+
+bool Pellets::consumableBy(Hamster const*) const {
+    return true;
+}

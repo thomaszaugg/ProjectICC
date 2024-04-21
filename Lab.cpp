@@ -173,8 +173,26 @@ bool Lab::addFood(Pellets* p){
     return addEntity(p);
 }
 
+Entity* Lab::getClosesedEatableEntity(Cage* c, Entity* const& e){
 
+    Entities vecEntities;   //creates the vector of entites that are in the same cage and eatable for entity e
+    for(auto const& entity: entities){
+        if(entity->getCage()== c and entity!=e and e->canConsume(entity)) vecEntities.push_back(entity);
+    }
 
+    if(vecEntities.empty()) return nullptr;     //for the case there is no eatable entity
+
+        unsigned int index(0);
+        double MINdistance( (vecEntities[0]->getCenter()- e->getCenter()).length());      //how to get a MAX value?
+        double distance(0);
+    for(unsigned int i(1); i<vecEntities.size();++i){
+        distance=(vecEntities[i]->getCenter()- e->getCenter()).length();
+        if(distance<MINdistance){
+            MINdistance=distance;
+            index=i;
+        }
+    }
+     return vecEntities[index];}
 
 
 

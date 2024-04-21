@@ -71,7 +71,7 @@ public:
     /*!
     * @brief updates the speed
     */
-    void updateState(sf::Time dt);
+    void updateState( Entity* food);
 
     /*!
     * @brief changes the orientation and the position
@@ -80,11 +80,19 @@ public:
 
 
     /*!
-    * @brief calculates the new energy of the animal after time dt
+    * @brief calculates the new energy of the animal after time dt and lets the animal age
     */
     void updateEnergy(sf::Time dt);
 
 
+    void move(const Vec2d& force, sf::Time dt);
+    virtual double getMass() const =0;
+   virtual double getDeceleration() const =0;
+
+    bool isHungry();
+    virtual double getEnergyBite() const=0;
+
+    Vec2d calculateForce(Entity* food, double deaceleration=1);
 };
 
 

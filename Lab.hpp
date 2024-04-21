@@ -109,6 +109,12 @@ public:
     bool addAnimal(Hamster* h);
     bool addFood(Pellets* p);
 
+    /*!
+        * @brief finds the closest eatable entity to e that is in cage c
+        * @return either pointer to the eatable entity or nullptr if there is none
+        */
+Entity* getClosesedEatableEntity(Cage* c, Entity* const& e);
+
 };
 
 #endif // LAB_HPP

@@ -6,7 +6,8 @@
 #include "CircularBody.hpp"
 #pragma once
 
-class CircularBody;
+class Hamster;
+class Pellets;
 
 class Entity: public CircularBody
 {
@@ -112,6 +113,11 @@ protected:
     */
     bool inCollision(Vec2d position);
 
+
+public: //is that right?
+    virtual bool canConsume(Entity const* entity) const = 0;
+    virtual bool consumableBy(Hamster  const* hamster) const = 0;
+    virtual bool consumableBy(Pellets const* Pellets) const = 0;
 
 };
 

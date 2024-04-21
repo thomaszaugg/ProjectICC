@@ -24,5 +24,12 @@ public:
     double getMaxSpeed() override ;
     double getEnergyLoss() override;
     double getFatigueEnergy() override;
+
+    bool canConsume(Entity const* entity) const override ;
+    bool consumableBy(Pellets const*) const override;
+    bool consumableBy(Hamster const*) const override;
+    double getMass() const override;
+     double getDeceleration() const override;
+     double getEnergyBite() const override;
 };
 #endif // HAMSTER_HPP

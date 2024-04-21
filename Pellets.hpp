@@ -26,7 +26,9 @@ public:
     virtual double getSize() const override;
     virtual sf::Texture& getTexture() override;
 
-
+bool canConsume(Entity const* entity) const override;
+bool consumableBy(Pellets const*) const override;
+bool consumableBy(Hamster const*) const override;
 };
 
 #endif // PELLETS_HPP

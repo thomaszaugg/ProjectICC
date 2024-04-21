@@ -4,6 +4,7 @@
 #include "Random/Random.hpp"
 #include "Utility/Utility.hpp"
 
+
 //used for the random orientation change
 Intervals intervals = { -180, -100, -55, -25, -10, 0, 10, 25, 55, 100, 180};
 std::vector<double> probabilities = {0.0000,0.0000,0.0005,0.0010,0.0050,0.9870,0.0050,0.0010,0.0005,0.0000,0.0000};
@@ -25,17 +26,47 @@ bool Animal::canBeConfinedIn(Cage* cage){
 }
 
 void Animal::update(sf::Time dt){
-    updateEnergy(dt);
-    updateState(dt);
-    move(dt);
-   Entity::update(dt);
+ updateEnergy(dt);
+
+
+    Entity* food(getAppEnv().getClosesedEatableEntity(getCage(), this));
+     updateState( food);
+
+    switch (state) {
+       case TARGETING_FOOD :{
+            Vec2d force=calculateForce(food);
+            move(force, dt);
+           break;}
+
+       case FEEDING:{
+            Vec2d force=calculateForce(food, getDeceleration());
+            move(force, dt);
+           break;}
+
+       case WANDERING:{
+        move(dt);
+           break;}
+       case IDLE:{;}
+
+           break;
+       }
+
 }
 
-void Animal::updateState(sf::Time){
-    speed= this->getAdjustedMaxSpeed();
+void Animal::updateState( Entity* food){
+    if(isHungry() and food!=nullptr){
+        state=TARGETING_FOOD;
+        if(this->isColliding(*food)){
+            state=FEEDING;
+        }
+ } else{
+        state=WANDERING;}
+
 }
 
-void Animal::move(sf::Time dt){
+
+
+void Animal::move(sf::Time dt){     //Wandering
 
   changeOrientation(dt);        //happens when counter is high enough
 
@@ -65,6 +96,8 @@ Angle Animal::getNewRotation(){
 void Animal::updateEnergy(sf::Time dt){
     double energy_loss = getAppConfig().animal_base_energy_consumption + speed * getEnergyLoss() * dt.asSeconds();
     setEnergy(this->getEnergy()- energy_loss);
+    Entity::update(dt);
+    speed= this->getAdjustedMaxSpeed();
 }
 
 double Animal::getFatigueFactor(){return 0.25;}
@@ -75,23 +108,33 @@ double Animal::getAdjustedMaxSpeed(){
     return speed;
 }
 
+void Animal::move(const Vec2d& force, sf::Time dt){     //TARGETING and FEEDING
+     Vec2d acceleration = force / getMass();
+    Vec2d speedVector = getSpeedVector() - acceleration * dt.asSeconds();
+    setOrientation( speedVector.angle());
+    if(speedVector.length()>getAdjustedMaxSpeed()){
+        speedVector=getHeading()*getAdjustedMaxSpeed();
+    }
+    updatePosition( speedVector * dt.asSeconds());
 
- /*  switch (state) {
-       case TARGETING_FOOD :
+}
 
-           break;
-       case FEEDING:
+bool Animal::isHungry(){
+    if(state==FEEDING){
+        return getEnergy()<getAppConfig().animal_satiety_max;
+    } else{
+        return getEnergy()<getAppConfig().animal_satiety_min;
+    }
+}
 
-           break;
+Vec2d Animal::calculateForce(Entity* food, double deceleration){
+    Vec2d to_target(food->getCenter()- this->getCenter());
+    if(to_target.length()==0){
+         return to_target;}
+     double speed = std::min(to_target.length()/deceleration, getAdjustedMaxSpeed());
+    Vec2d v_wish= to_target.normal()*speed;
+   return v_wish - getSpeedVector();}
 
-       case WANDERING:
-
-           break;
-       case IDLE:
-
-           break;
-       }
-}*/
 
 
 

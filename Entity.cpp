@@ -1,9 +1,10 @@
-
 #include "Entity.hpp"
 #include <Utility/Utility.hpp>
 #include <Random/Random.hpp>
 #include "Cage.hpp"
 #include "Application.hpp"
+#include "Hamster.hpp"
+#include "Pellets.hpp"
 
 
 
