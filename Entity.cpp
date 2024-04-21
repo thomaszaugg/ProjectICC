@@ -1,3 +1,4 @@
+
 #include "Entity.hpp"
 #include <Utility/Utility.hpp>
 #include <Random/Random.hpp>
@@ -17,96 +18,100 @@ Angle Entity::getOrientation(){return orientation;}
 double Entity::getEnergy() const {return energy;}
 Cage* Entity::getCage(){return cage;}
 
- void Entity::drawEnergy(sf::RenderTarget& target){
-      if(isDebugOn()){
-          auto text = buildText(to_nice_string(energy),
-                                position,
-                                getAppFont(),
-                                getAppConfig().default_debug_text_size*5,   //why so small
-                                sf::Color::Blue,
-                                0 / DEG_TO_RAD); // if you want to rotate the text
-
-          target.draw(text);
-          CircularBody::drawOn(target);
-              }
- }
-
+void Entity::drawDebug(sf::RenderTarget& target){
+    if(isDebugOn()){
+        auto text = buildText(to_nice_string(energy),
+                    position,
+                    getAppFont(),
+                    getAppConfig().default_debug_text_size*5,   //why so small
+                    sf::Color::Blue,
+                    0 / DEG_TO_RAD); // if you want to rotate the text
+        target.draw(text);
+        CircularBody::drawOn(target);
+    }
+}
 
 
- sf::Time Entity::getLongevity(){
-     return sf::seconds(1E+9);
- }
 
- void Entity::substractEnergy(double e){
-     energy -=e;
- }
+sf::Time Entity::getLongevity(){
+    return sf::seconds(1E+9);
+}
 
- void Entity::drawOn(sf::RenderTarget& target){
-     sf::Sprite  entitySprite = buildSprite( getCenter(), 2*getRadius(),        //getCenter, getRadius, getTexture all virtual
-                                             getTexture(), getOrientation()/ DEG_TO_RAD); // conversion degree to radians becauce SFML uses these units
-     target.draw(entitySprite);
-     drawEnergy(target);
- }
+void Entity::substractEnergy(double e){
+    energy -=e;
+}
 
- bool Entity::isAnimal(){
-     return false;
- }
+void Entity::drawOn(sf::RenderTarget& target){
+    sf::Sprite  entitySprite = buildSprite( getCenter(), 2*getRadius(),        //getCenter, getRadius, getTexture all virtual
+                                         getTexture(), getOrientation()/ DEG_TO_RAD); // conversion degree to radians becauce SFML uses these units
+    target.draw(entitySprite);
+    drawDebug(target);
+}
 
- bool Entity::canBeConfinedIn(Cage* cage){
-     return cage->isPositionInside(getCenter());
- }
+bool Entity::isAnimal(){
+    return false;
+}
 
- double Entity::getRadius() const{
-     return getSize()/2;
- }
+bool Entity::canBeConfinedIn(Cage* cage){
+    return cage->isPositionInside(getCenter());
+}
 
- void  Entity::setCage(Cage* c){ cage=c;}
+double Entity::getRadius() const{
+    return getSize()/2;
+}
 
- void Entity::adjustPostition(){
-     double size(this->getSize());
-     double x = position.x();
-     double y = position.y();
+void  Entity::setCage(Cage* c){
+    cage=c;
+}
 
-     auto topWall(cage->getTopLimit(true));
-     if (position.y() - size/2 < topWall){
-         y = topWall + size/2 * 1.5;
+void Entity::adjustPostition(){
+    double size(this->getSize());
+    double x = position.x();
+    double y = position.y();
+
+    auto topWall(cage->getTopLimit(true));
+    if (position.y() - size/2 < topWall){
+        y = topWall + size/2 * 1.5;
+    }
+    auto bottomWall(cage->getBottomLimit(true));
+    if (position.y() + size/2 > bottomWall){
+        y = bottomWall - size/2 * 1.5;
+    }
+    auto rightWall(cage->getRightLimit(true));
+    if (position.x() + size/2 > rightWall){
+        x = rightWall - size/2 * 1.5;
+    }
+    auto leftWall(cage->getLeftLimit(true));
+    if (position.x() - size/2 < leftWall){
+        x = leftWall + size/2 * 1.5;
+    }
+    Vec2d newPosition (x,y);
+    position = newPosition;
+}
+
+Vec2d Entity::getHeading(){
+    return Vec2d::fromAngle(orientation);
+}
+
+void Entity::updatePosition(Vec2d step){
+    position+=step;
+}
+
+void Entity::setOrientation(Angle angle){
+    orientation = angle;
+}
+
+bool Entity::inCollision(Vec2d p){
+    return !getCage()->isPositionInside(p, getRadius());
+}
+
+void Entity::setEnergy(double e){
+    energy=e;
+}
+
+void Entity::update(sf::Time dt){
+    age+=dt;
+}
+bool Entity::isDead(){
+    return (age>= this->getLongevity() or getEnergy()<=0);
      }
-     auto bottomWall(cage->getBottomLimit(true));
-     if (position.y() + size/2 > bottomWall){
-         y = bottomWall - size/2 * 1.5;
-     }
-     auto rightWall(cage->getRightLimit(true));
-     if (position.x() + size/2 > rightWall){
-         x = rightWall - size/2 * 1.5;
-     }
-     auto leftWall(cage->getLeftLimit(true));
-     if (position.x() - size/2 < leftWall){
-         x = leftWall + size/2 * 1.5;
-     }
-     Vec2d newPosition (x,y);
-     position = newPosition;
- }
-
- Vec2d Entity::getHeading(){
-     return Vec2d::fromAngle(orientation);
- }
-
- void  Entity::updatePosition(Vec2d step){
-         position+=step;
- }
-
- void Entity::setOrientation(Angle angel){
-          orientation = angel;
- }
-
- bool Entity::inCollision(Vec2d){
-     return false; //lisa
- }
-
- void Entity::setEnergy(double e){
-     energy=e;
- }
-
- bool Entity::update(sf::Time dt){
-     age+=dt;
-     return !(age>= this->getLongevity() or getEnergy()<=0);}

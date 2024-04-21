@@ -5,10 +5,10 @@
 #pragma once
 
 enum State{
-               TARGETING_FOOD, // se dirige vers la nourriture
-               FEEDING,       // en train de manger (là en principe il arrête de se déplacer)
-               WANDERING,     // déambule
-               IDLE,          // au repos
+               TARGETING_FOOD, // walks to food
+               FEEDING,        // eats
+               WANDERING,      // explores
+               IDLE,           // strolls
               };
 
 class Animal : public Entity
@@ -20,29 +20,73 @@ private:
    double speed;
    sf::Time counter=sf::Time::Zero;
 
+   void changeOrientation(sf::Time dt);
+
 public:
+
+    /*!
+    * @brief Constructor
+    */
     Animal(const Vec2d& position, double energy);
 
-    bool isAnimal() override;
-
-    bool canBeConfinedIn(Cage* c) override;
-
+    /*!
+    * @brief destructor
+    */
     virtual ~Animal() ;
 
-    public:
-        bool update(sf::Time dt) override;
-        void updateState(sf::Time dt);
+    /*!
+    * @brief Getters
+    */
+    Vec2d getSpeedVector();
+   virtual double getFatigueFactor();  //by default the same for all animals, possiblility to override
+    Angle getNewRotation();
+    double getAdjustedMaxSpeed();
+
+    /*!
+    * @brief purely virtual getters
+    */
+    virtual double getMaxSpeed()=0;
+    virtual  double getFatigueEnergy()=0;   //energy at which the animal starts to slow down
+    virtual double getEnergyLoss() = 0;
+
+    /*!
+    * @brief boolean function to indecate if the entity is an animal
+    *
+    * @return true
+    */
+    bool isAnimal() override;
+
+    /*!
+    * @brief checks whether an animal can be confined in a cage
+    *
+    * @return true if cage is empty an animal is not placed on wall
+    */
+    bool canBeConfinedIn(Cage* c) override;
+
+    /*!
+    * @brief calls the 3 following update functions
+    */
+    void  update(sf::Time dt) override;
+
+    /*!
+    * @brief updates the speed
+    */
+    void updateState(sf::Time dt);
+
+    /*!
+    * @brief changes the orientation and the position
+    */
+    void move(sf::Time dt);
 
 
-        Vec2d getSpeedVector();
+    /*!
+    * @brief calculates the new energy of the animal after time dt
+    */
+    void updateEnergy(sf::Time dt);
 
-       virtual double getMaxSpeed()=0;
-
-       void move(sf::Time dt);
-        Angle getNewRotation();
-        void updateEnergy(sf::Time);
-      virtual double getEnergyLoss() = 0;
 
 };
+
+
 
 #endif // ANIMAL_HPP

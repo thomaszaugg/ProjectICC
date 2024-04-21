@@ -14,13 +14,11 @@ class Cage{
     double width;
     double height;
     double wallWidth;
-    Walls walls;
-    Wall top;
-    Wall right;
-    Wall bottom;
-    Wall left;
+    Walls walls;               //0 = top, 1 = right
+                               //2 = bottom, 3 = left
 
-    bool occupied;
+
+    bool occupied;  //true if there is an animal in the cage
 
 
 public:
@@ -49,8 +47,8 @@ public:
     Wall getLeft();
 
     /*!
-    * @brief getting the coord of the inner wall of the Cage (if intern = true)
-    *        or getting the coord of the outer wall (if intern = false)
+    * @brief getting the coordinate of the inner wall of the Cage (if intern = true)
+    *        or getting the coordinate of the outer wall (if intern = false)
     *
     * @return double with x or y value of the wall
     */
@@ -60,11 +58,11 @@ public:
     double getBottomLimit(bool intern = false);
 
     /*!
-    * @brief check whether a point is inside of a Cage (walls excuded)
+    * @brief check whether a object (point per default) is inside of a Cage (walls excuded)
     *
     * @return true if point is inside
     */
-    bool isPositionInside(const Vec2d& position);
+    bool isPositionInside(const Vec2d& position, double radius =0);
 
     /*!
     * @brief check whether a point is on the wall of the Cage
@@ -74,18 +72,31 @@ public:
     bool isPositionOnWall(const Vec2d& position);
 
     /*!
-    * @brief Destructor
+    * @brief sets the attibut occupied = true (meaning : cage occupied by an animal)
     */
-    ~Cage(){}
+    void addOccupant();
+
+    /*!
+    * @brief sets the attibut occupied = false (meaning : cage not occupied by an animal)
+    */
+    void reset();
+
+    /*!
+    * @brief checks whether a cage is empty (no animal inside)
+    *
+    * @return ture if empty
+    */
+    bool isEmpty();
 
     /*!
     * @brief Draw a cage
     */
     void drawOn(sf::RenderTarget& targetWindow);
 
-    void addOccupant();
-    void reset();
-    bool isEmpty();
+    /*!
+    * @brief Destructor
+    */
+    ~Cage(){}
 
     };
 
