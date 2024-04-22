@@ -3,6 +3,7 @@
 #include "Application.hpp"
 #include "Random/Random.hpp"
 #include "Utility/Utility.hpp"
+#include "Pellets.hpp"
 
 
 //used for the random orientation change
@@ -41,14 +42,15 @@ void Animal::update(sf::Time dt){
        case FEEDING:{
             Vec2d force=calculateForce(food, getDeceleration());
             move(force, dt);
+            eatFood(food);
            break;}
 
        case WANDERING:{
         move(dt);
            break;}
-       case IDLE:{;}
+       case IDLE:{
 
-           break;
+           break;}
        }
 
 }
@@ -75,7 +77,7 @@ void Animal::move(sf::Time dt){     //Wandering
         if(inCollision(step+getCenter())){
             setOrientation((-getHeading()).angle());
         }
-    updatePosition(step);
+    takeStep(step);
 }
 
 void Animal::changeOrientation(sf::Time dt){
@@ -110,12 +112,12 @@ double Animal::getAdjustedMaxSpeed(){
 
 void Animal::move(const Vec2d& force, sf::Time dt){     //TARGETING and FEEDING
      Vec2d acceleration = force / getMass();
-    Vec2d speedVector = getSpeedVector() - acceleration * dt.asSeconds();
-    setOrientation( speedVector.angle());
+    Vec2d speedVector = getSpeedVector() + acceleration * dt.asSeconds();
+    setOrientation(force.angle());
     if(speedVector.length()>getAdjustedMaxSpeed()){
         speedVector=getHeading()*getAdjustedMaxSpeed();
     }
-    updatePosition( speedVector * dt.asSeconds());
+    takeStep( speedVector * dt.asSeconds());
 
 }
 
@@ -137,8 +139,45 @@ Vec2d Animal::calculateForce(Entity* food, double deceleration){
 
 
 
+void Animal::eatFood(Entity* food){
+    setEnergy((getEnergy()+food->provideEnergy(getEnergyBite())));
+}
 
 
+void Animal::drawDebug(sf::RenderTarget& target) {
+    Entity::drawDebug(target);
 
+    Vec2d pos(-120,-120);
 
+    auto text = buildText(getStateString(),
+                getCenter()+pos,
+                getAppFont(),
+                getAppConfig().default_debug_text_size*2.5,   //why so small
+                sf::Color::Blue,
+                0 / DEG_TO_RAD); // if you want to rotate the text
+    target.draw(text);
+    CircularBody::drawOn(target);
+}
+
+std::string Animal::getStateString(){
+
+    switch (state) {
+       case TARGETING_FOOD :{
+            return "TARGETING_FOOD";
+       break;}
+
+       case FEEDING:{
+            return "FEEDING";
+           break;}
+
+       case WANDERING:{
+            return "WANDERING";
+           break;}
+       case IDLE:{
+            return "IDLE";
+           break;}
+    default:{
+    return "";}
+       }
+}
 

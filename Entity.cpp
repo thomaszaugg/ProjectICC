@@ -20,7 +20,7 @@ double Entity::getEnergy() const {return energy;}
 Cage* Entity::getCage(){return cage;}
 
 void Entity::drawDebug(sf::RenderTarget& target){
-    if(isDebugOn()){
+
         auto text = buildText(to_nice_string(energy),
                     position,
                     getAppFont(),
@@ -29,7 +29,7 @@ void Entity::drawDebug(sf::RenderTarget& target){
                     0 / DEG_TO_RAD); // if you want to rotate the text
         target.draw(text);
         CircularBody::drawOn(target);
-    }
+
 }
 
 
@@ -46,7 +46,7 @@ void Entity::drawOn(sf::RenderTarget& target){
     sf::Sprite  entitySprite = buildSprite( getCenter(), 2*getRadius(),        //getCenter, getRadius, getTexture all virtual
                                          getTexture(), getOrientation()/ DEG_TO_RAD); // conversion degree to radians becauce SFML uses these units
     target.draw(entitySprite);
-    drawDebug(target);
+   if(isDebugOn()) drawDebug(target);
 }
 
 bool Entity::isAnimal(){
@@ -94,7 +94,7 @@ Vec2d Entity::getHeading(){
     return Vec2d::fromAngle(orientation);
 }
 
-void Entity::updatePosition(Vec2d step){
+void Entity::takeStep(Vec2d step){
     position+=step;
 }
 
@@ -116,3 +116,7 @@ void Entity::update(sf::Time dt){
 bool Entity::isDead(){
     return (age>= this->getLongevity() or getEnergy()<=0);
      }
+
+double Entity::provideEnergy(Quantity ){
+    return 0;
+}

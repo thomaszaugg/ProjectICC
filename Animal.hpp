@@ -4,6 +4,7 @@
 #include "Entity.hpp"
 #pragma once
 
+
 enum State{
                TARGETING_FOOD, // walks to food
                FEEDING,        // eats
@@ -93,8 +94,13 @@ public:
     virtual double getEnergyBite() const=0;
 
     Vec2d calculateForce(Entity* food, double deaceleration=1);
+
+    void eatFood(Entity* food);
+
+    void drawDebug(sf::RenderTarget& target) override;
+
+    std::string getStateString();
+
 };
-
-
 
 #endif // ANIMAL_HPP

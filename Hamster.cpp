@@ -54,3 +54,4 @@ double Hamster::getDeceleration() const {
 double Hamster::getEnergyBite() const{
     return getAppConfig().hamster_energy_bite;
 }
+

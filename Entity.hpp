@@ -70,7 +70,7 @@ public:
     /*!
     * @brief draws the informations given by debug mode
     */
-    void drawDebug(sf::RenderTarget& target);
+  virtual  void drawDebug(sf::RenderTarget& target);
 
 
     /*!
@@ -102,9 +102,9 @@ protected:
     Vec2d getHeading();
 
     /*!
-    * @brief updates the position attribut of an entitiy
+    * @brief adds step to the current position
     */
-    void  updatePosition(Vec2d step);
+    void  takeStep(Vec2d step);
 
     /*!
     * @brief checks whether an entity is in collison with a cage wall
@@ -119,6 +119,9 @@ public: //is that right?
     virtual bool consumableBy(Hamster  const* hamster) const = 0;
     virtual bool consumableBy(Pellets const* Pellets) const = 0;
 
+
+    //does nothing as default
+    virtual double provideEnergy(Quantity qte);
 };
 
 #endif // ENTITY_HPP
