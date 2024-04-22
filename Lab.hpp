@@ -3,6 +3,8 @@
 #include <vector>
 #include "Cage.hpp"
 #include "SFML/Graphics/RenderTarget.hpp"
+#include "Drawable.hpp"
+#include "Updatable.hpp"
 #pragma once
 
 class Pellets;
@@ -13,31 +15,38 @@ class Animal;
 typedef std::vector<std::vector<Cage*>> Cages;
 typedef std::vector<Entity*> Entities;
 
-
-
-class Lab
+class Lab : public Drawable, public Updatable
 {
 private:
     Cages cages;
     Entities entities;
 
-
     /*!
     * @brief Check whether the value nbCagesPerRow is inbetween the min and max barrier
-    * if not, the function does also correct the value
+    * if not, the function does also corrects the value
     */
     void CageNumberCheck(unsigned int& nbCagesPerRow);
 
     /*!
-    * @brief deletes all the cages or all the entities
+    * @brief deletes all the cages (entities included) or all the entities
     */
     void clearCages();
     void clearEntities();
+
     /*!
     * @brief Helper function that draws the Cages of the lab
     */
     void drawOnCages(sf::RenderTarget& targetWindow);
 
+    /*!
+    * @brief constructs the different cages
+    */
+    void makeBoxes(unsigned int nbCagesPerRow);
+
+    /*!
+    * @brief assigns the entitiy to a Cage in the Lab
+    */
+    bool declareEntityCage(Entity* e);
 
 public:
     /*!
@@ -46,14 +55,14 @@ public:
     Lab();
 
     /*!
+    * @brief deconstructer
+    */
+   virtual ~Lab();
+
+    /*!
     * @brief defines the maxCageNumber
     */
     unsigned int maxCageNumber();
-
-    /*!
-    * @brief constructs the different cages
-    */
-    void makeBoxes(unsigned int nbCagesPerRow);
 
     /*!
     * @brief Getter for attribut nbCagesPerRow
@@ -88,32 +97,27 @@ public:
     */
     void reset(bool reset = false);
 
-    /*!
-    * @brief deconstructer
-    */
-    ~Lab();
 
     /*!
     * @brief to make it impossible to copy a Lab
     */
-   Lab(const Lab&)=delete;
+    Lab(const Lab&)=delete;
 
     /*!
-    * @brief add hamsters and pellets
+    * @brief add hamsters and pellets, addAnimal and addPellets call addEntity
+    * @attention the lab class is responsible for the freeing of the memory of the pointers
     */
-   bool addEntity(Entity* e);
-   bool addAnimal(Hamster* h);
-   bool addFood(Pellets* p);
+    bool addEntity(Entity* e);
+    bool addAnimal(Hamster* h);
+    bool addFood(Pellets* p);
 
-   bool declareEntityCage(Entity* e);
+    /*!
+     * @brief finds the closest eatable entity to e that is in cage c
+     * @return either pointer to the eatable entity or nullptr if there is none
+     */
+    Entity* getClosesedEatableEntity(Cage* c, Entity* const& e);
 
-
-
-
-
-};
-
-bool isCageEmptyHelper(Lab& lab, Cage* cage);
+    };
 
 #endif // LAB_HPP
 

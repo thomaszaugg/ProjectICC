@@ -7,35 +7,52 @@
 #pragma once
 
 class CircularBody{
-    public:
+public:
 
-    //constructor
-    //CircularBody(const Vec2d& p, double r);
-    CircularBody(); //constructuer par default
+    /*!
+    * @brief Constructor and virtual destructor
+    */
+    CircularBody()=default; //default constructuer since it is an abstract class
+    virtual ~CircularBody()=default;
 
-    //returns the center of the circular body
+    /*!
+    * @brief Getters
+    */
     virtual Vec2d getCenter() const = 0;
-
-    //returns the radius of the circular body
     virtual double getRadius() const = 0;
 
-    //returns true if the two bodies are colliding and false otherwise
+    /*!
+    * @brief checks whether two bodies are colliding
+    *
+    * @return true if they are colliding, false otherwise
+    */
     bool isColliding(const CircularBody& other) const;
 
-    //returns true if the point is inside the
+    /*!
+    * @brief checks whether a point is inside of an circular body
+    *
+    * @return true if point is inside
+    */
     bool isPointInside(const Vec2d& point) const;
 
+    /*!
+    * @brief drawOn function for the circle or the circular body in debug mode
+    */
     void drawOn(sf::RenderTarget& target);
 
 
-    private:
-        //Vec2d position;
-        //double radius;
-
 };
 
-    //returns true if the two objects are colliding
-  bool operator|(const CircularBody& object1, const CircularBody& object2);
+    /*!
+    * @brief operator definition: |
+    *
+    * @return true if two circular bodies are colliding
+    */
+    bool operator|(const CircularBody& object1, const CircularBody& object2);
 
-    //returnes true if the point is inside the object1
-  bool operator>(const CircularBody& object1, const Vec2d& point);
+    /*!
+    * @brief operator definition: >
+    *
+    * @return true if the point is inside the circular body
+    */
+    bool operator>(const CircularBody& object1, const Vec2d& point);

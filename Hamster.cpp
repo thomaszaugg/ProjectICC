@@ -4,7 +4,7 @@
 
 
 Hamster::Hamster(Vec2d position)
-    :   Animal(position, getAppConfig().hamster_energy_initial){
+    :Animal(position, getAppConfig().hamster_energy_initial){
 }
 
 sf::Time Hamster::getLongevity(){
@@ -20,12 +20,38 @@ sf::Texture& Hamster::getTexture(){
 }
 
 double Hamster::getMaxSpeed(){
-        double speed(getAppConfig().hamster_max_speed);
-        if(getEnergy()< getFatigueEnergy()) speed*= getFatigueFactor();
-        return speed;
-    }
-double Hamster::getFatigueEnergy(){ return 300;}
+    return getAppConfig().hamster_max_speed;
+   }
 
- double Hamster::getEnergyLoss() {
-     return getAppConfig().hamster_energy_loss_factor;}
+double Hamster::getFatigueEnergy(){
+    return 300;
+}
+
+double Hamster::getEnergyLoss(){
+    return getAppConfig().hamster_energy_loss_factor;
+}
+
+bool Hamster::canConsume(Entity const* entity) const {
+    return entity->consumableBy(this);
+}
+
+bool Hamster::consumableBy(Pellets const*)const{
+    return false;
+}
+
+bool Hamster::consumableBy(Hamster const*) const {
+    return false;
+}
+
+double Hamster::getMass()const{
+    return getAppConfig().hamster_mass ;
+}
+
+double Hamster::getDeceleration() const {
+    return 0.3; //getAppConfig().hamster_deceleration; how to add to AppConfig
+}
+
+double Hamster::getEnergyBite() const{
+    return getAppConfig().hamster_energy_bite*0.01;
+}
 
