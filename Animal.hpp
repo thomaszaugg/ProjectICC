@@ -4,11 +4,12 @@
 #include "Entity.hpp"
 #pragma once
 
+
 enum State{
-               TARGETING_FOOD, // se dirige vers la nourriture
-               FEEDING,        // en train de manger (là en principe il arrête de se déplacer)
-               WANDERING,      // déambule
-               IDLE,           // au repos
+               TARGETING_FOOD, // walks to food
+               FEEDING,        // eats
+               WANDERING,      // explores
+               IDLE,           // strolls
               };
 
 class Animal : public Entity
@@ -20,26 +21,39 @@ private:
    double speed;
    sf::Time counter=sf::Time::Zero;
 
+   void changeOrientation(sf::Time dt);
+
 public:
 
     /*!
-    * @brief Consturctor
+    * @brief Constructor
     */
     Animal(const Vec2d& position, double energy);
+
+    /*!
+    * @brief destructor
+    */
+    virtual ~Animal() ;
 
     /*!
     * @brief Getters
     */
     Vec2d getSpeedVector();
-    double getFatigueFactor();
+    virtual double getFatigueFactor();  //by default the same for all animals, possiblility to override
     Angle getNewRotation();
+    double getAdjustedMaxSpeed();
+    std::string getStateString();
+
 
     /*!
     * @brief purely virtual getters
     */
     virtual double getMaxSpeed()=0;
-    virtual  double getFatigueEnergy()=0;
+    virtual  double getFatigueEnergy()=0;   //energy at which the animal starts to slow down
     virtual double getEnergyLoss() = 0;
+    virtual double getMass() const =0;
+    virtual double getDeceleration() const =0;
+    virtual double getEnergyBite() const=0;
 
     /*!
     * @brief boolean function to indecate if the entity is an animal
@@ -51,37 +65,56 @@ public:
     /*!
     * @brief checks whether an animal can be confined in a cage
     *
-    * @return true if cage empty an animal not on wall
+    * @return true if cage is empty an animal is not placed on wall
     */
     bool canBeConfinedIn(Cage* c) override;
 
     /*!
     * @brief calls the 3 following update functions
-    *
-    * @return boolean value of entity::update(dt) function -> true if animal has enough energy to live
     */
-    bool update(sf::Time dt) override;
+    void  update(sf::Time dt) override;
 
     /*!
     * @brief updates the speed
     */
-    void updateState(sf::Time dt);
+    void updateState(sf::Time dt, Entity* food);
 
     /*!
     * @brief changes the orientation and the position
     */
-    void move(sf::Time dt);
+    void move(sf::Time dt);                     //Wandering
+    void move(const Vec2d& force, sf::Time dt); //Targeting and Feeding
 
     /*!
-    * @brief calculates the new energy of the animal after time dt
+    * @brief calculates the new energy of the animal after time dt and lets the animal age
     */
     void updateEnergy(sf::Time dt);
 
-    /*!
-    * @brief destructor
-    */
-    virtual ~Animal() ;
 
+    /*!
+    * @return bool indicating whether or not the animal is hungry
+    */
+    bool isHungry();
+
+    /*!
+    * @brief calculates the force, possibly taking into accound deceleration
+    */
+    Vec2d calculateForce(Entity* food, double deceleration=1);
+
+    /*!
+    * @brief modularized eat function
+    */
+    void eatFood(Entity* food);
+
+    /*!
+    * @brief draws energy and state
+    */
+    void drawDebug(sf::RenderTarget& target) override;
+
+    /*!
+    * @return ANIMAL_PRIORITY
+    */
+    DrawingPriority getDepth() override;
 };
 
 #endif // ANIMAL_HPP

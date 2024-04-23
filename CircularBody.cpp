@@ -3,23 +3,6 @@
 #include <Utility/Utility.hpp>
 
 
-//not used anymore since 3.1
-/*
-        CircularBody::CircularBody(const Vec2d& p, double r)
-        :position(p), radius(r){}
-
-
-        Vec2d CircularBody::getCenter()const{
-             return position;
-        }
-
-        double CircularBody::getRadius()const{
-            return radius;
-        }
-*/
-
-CircularBody::CircularBody(){};
-
 
 bool CircularBody::isColliding(const CircularBody& other)const{
     return *this | other;

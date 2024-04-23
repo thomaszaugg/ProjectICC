@@ -4,11 +4,14 @@
 #include <SFML/Graphics.hpp>
 #include "Cage.hpp"
 #include "CircularBody.hpp"
+#include "Drawable.hpp"
+#include "Updatable.hpp"
 #pragma once
 
-class CircularBody;
+class Hamster;
+class Pellets;
 
-class Entity: public CircularBody
+class Entity: public CircularBody, public Drawable, public Updatable
 {
 private:
     Vec2d position;
@@ -16,12 +19,18 @@ private:
     Angle orientation;        //radians, negative okay
     double energy;
     Cage* cage;
+    bool tracked;
 
 public:
     /*!
     * @brief Constuctor
     */
     Entity(const Vec2d& position, double energy);
+
+    /*!
+    * @brief default destructor
+    */
+    virtual ~Entity()=default;
 
     /*!
     * @brief Getters
@@ -35,7 +44,9 @@ public:
     virtual sf::Time getLongevity();
     virtual double getSize() const =0;
     virtual sf::Texture& getTexture()=0;
-    Vec2d getHeading();
+    //4.1
+    bool getTracked();
+
 
     /*!
     * @brief Setters
@@ -43,36 +54,40 @@ public:
     void setCage(Cage* c);
     void setOrientation(Angle angle);
     void setEnergy(double);
+    void setTracked(bool b);
 
     /*!
     * @brief boolean function to indecate if the entity is an animal
     *
-    * @return returns false in entity, returns true if the one in animal is called
+    * @return true if it contains an animal, false otherwise
     */
     virtual bool isAnimal();
 
     /*!
-    * @brief substracts a certain amound of energy from the energy of an entity
+    * @brief substracts a certain amound of energy
     */
     void substractEnergy(double e);
 
     /*!
     * @brief drawing of entity
     */
-    void drawOn(sf::RenderTarget& targetWindow);
+    void drawOn(sf::RenderTarget& targetWindow) override;
 
     /*!
     * @brief draws the informations given by debug mode
     */
-    void drawEnergy(sf::RenderTarget& target);
+  virtual  void drawDebug(sf::RenderTarget& target);
 
 
     /*!
     * @brief updates the age of an entitiy by time dt
-    *
-    * @return returns false if the energy is smaller than 0 and the Longevity is reached
     */
-    virtual bool update(sf::Time dt);
+    virtual void  update(sf::Time dt)override;
+
+    /*!
+    * @return returns false if the energy is smaller than 0 or the Longevity is reached
+    */
+    bool isDead();
 
     /*!
     * @brief checks whether an entity can be confined in a cage:
@@ -85,10 +100,17 @@ public:
     */
     void adjustPostition();
 
+protected:
+
     /*!
-    * @brief updates the position attribut of an entitiy
+    * @return Unit vector pointing in the direction of the entity
     */
-    void  updatePosition(Vec2d step);
+    Vec2d getHeading();
+
+    /*!
+    * @brief adds step to the current position
+    */
+    void  takeStep(Vec2d step);
 
     /*!
     * @brief checks whether an entity is in collison with a cage wall
@@ -97,11 +119,24 @@ public:
     */
     bool inCollision(Vec2d position);
 
-    /*!
-    * @brief default destructor
-    */
-    virtual ~Entity()=default;
 
+public:
+    /*!
+    * @brief return true if the entity can consume the entity passed as a parameter
+    */
+    virtual bool canConsume(Entity const* entity) const = 0;
+
+    /*!
+    * @brief Helpers for the canConsume function
+    */
+   virtual bool consumableBy(Pellets const*) const =0;
+   virtual bool consumableBy(Hamster const*) const =0;
+
+
+    /*!
+    * @brief empty function that can be changed in subclasses for implementation of eating
+    */
+    virtual double provideEnergy(Quantity qte);
 };
 
 #endif // ENTITY_HPP

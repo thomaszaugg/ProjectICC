@@ -32,10 +32,11 @@ void Lab::makeBoxes(unsigned int nbCagesPerRow){
     cages.clear();
     CageNumberCheck(nbCagesPerRow);
     double widthBox(getAppConfig().simulation_lab_size/nbCagesPerRow);
-    std::vector<Cage*> vCage;
+
+    std::vector<Cage*> vCage;       //every row of cages is first stored in vCages before making a pushback on the attribut cages
     for (unsigned int i(0); i < nbCagesPerRow; ++i){
         vCage.clear();
-        for (unsigned int j(0); j < nbCagesPerRow; ++j){     //assumption: empty vector
+        for (unsigned int j(0); j < nbCagesPerRow; ++j){
             Vec2d position (widthBox/2 + i*widthBox, widthBox/2 + j*widthBox);
             Cage* ptr(new Cage(position, widthBox, widthBox , 0.025*widthBox));
             vCage.push_back(ptr);
@@ -46,7 +47,7 @@ void Lab::makeBoxes(unsigned int nbCagesPerRow){
 
 
 Lab::Lab(){
-    makeBoxes(getAppConfig().simulation_lab_nb_boxes); //does the argument has to be in the constructer
+    makeBoxes(getAppConfig().simulation_lab_nb_boxes);
 }
 
 unsigned int Lab::getNbCagesPerRow(){
@@ -75,19 +76,32 @@ void Lab::removeCageFromRow(){
 //3.1
 void Lab::update(sf::Time dt){
     for (auto& entity: entities){
-            if(entity!=nullptr and !(entity->update(dt))){    //if the animal should be dead, update returns false
-                delete entity;
-                entity = nullptr;
+            if(entity!=nullptr){
+                entity->update(dt);
+                    if(entity->isDead()){
+                        /*if(entity->getTracked()){
+                            entity->setTracked(false);
+                            animal=nullptr;
+                        }*/
+                        delete entity;
+                        entity = nullptr;}
             }}
 
-
-    entities.erase(std::remove(entities.begin(),    //removing nullptrs only after iteration finished
+    entities.erase(std::remove(entities.begin(),            //removing nullptrs only after iteration finished
                   entities.end(), nullptr), entities.end());
 }
 
 void Lab::drawOn(sf::RenderTarget& targetWindow){
     drawOnCages(targetWindow);
-    for (const auto& entity: entities){
+
+                // Copy of Entities in a list
+          std::list<Entity*> sorted( entities.begin(), entities.end());
+                // order redefined based on getDepth():
+        auto comp([](Entity* a, Entity* b)->bool{ return int(a->getDepth()) < int(b->getDepth()); });
+                // list sorted
+        sorted.sort (comp);
+
+    for (const auto& entity: sorted){
         if(entity!=nullptr){
             entity->drawOn(targetWindow);
         }
@@ -115,7 +129,11 @@ void Lab::reset(bool reset){
 
 void Lab::clearEntities(){
     for (auto& entity: entities){
-               delete entity;
+        if (entity->getTracked()){  //4.1
+            entity->setTracked(false);
+            animal=nullptr;
+        }
+        delete entity;
     }
     entities.clear();
 }
@@ -135,7 +153,7 @@ Lab::~Lab(){
     clearCages();
 };
 
-//3.1
+
 bool Lab::addEntity(Entity* e){
     if (e!=nullptr and declareEntityCage(e)
        and  e->canBeConfinedIn(e->getCage())){
@@ -171,9 +189,72 @@ bool Lab::addFood(Pellets* p){
     return addEntity(p);
 }
 
+Entity* Lab::getClosesedEatableEntity(Cage* c, Entity* const& e){
+
+    Entities vecEntities;   //creates the vector of entites that are in the same cage and eatable for entity e
+    for(auto const& entity: entities){
+        if(entity->getCage()== c and entity!=e and e->canConsume(entity)) vecEntities.push_back(entity);
+    }
+
+    if(vecEntities.empty()) return nullptr;     //for the case there is no eatable entity
+
+        unsigned int index(0);
+        double MINdistance( (vecEntities[0]->getCenter()- e->getCenter()).length());
+        double distance(0);
+    for(unsigned int i(1); i<vecEntities.size();++i){
+        distance=(vecEntities[i]->getCenter()- e->getCenter()).length();
+        if(distance<MINdistance){
+            MINdistance=distance;
+            index=i;
+        }
+    }
+     return vecEntities[index];}
 
 
+//4.1
+void Lab::trackAnimal(const Vec2d& position){
+    for (auto& entity: entities){
+        if (entity->isAnimal() && entity->isPointInside(position) && animal==nullptr){
+            trackAnimal(dynamic_cast<Animal*>(entity));
+        }
+    }
+}
 
+void Lab::trackAnimal(Animal* a){
+    a->setTracked(true);
+    animal=a;
+}
 
+bool Lab::isAnyTrackedAnimal(){
+    /*for (auto& entity: entities){
+        if (entity->isAnimal() && entity->getTracked()){
+            return true;
+        }
+    }*/
+    return !(animal==nullptr);
 
+}
 
+void Lab::switchToView(View view){
+    if (isAnyTrackedAnimal()){
+        getApp().switchToView(view);
+    }
+}
+
+void Lab::stopTrackingAnyEntity(){
+    for (auto& entity: entities){
+        if (entity->getTracked()){
+            entity->setTracked(false);
+        }
+    }
+    delete animal;;
+    animal=nullptr; //desallocation
+}
+
+void Lab::updateTrackedAnimal(){
+
+}
+
+void Lab::drawCurrentOrgan(sf::RenderTarget& target){
+
+}

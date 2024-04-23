@@ -5,15 +5,14 @@
 class Substance{
 private:
     double totalCon;
-    //the 3 possible substances in the ECM: fractions
+    //the 3 possible substances in the ECM:
+
     double vgef;                //Vascular Endothelial Growth Factor
     double glucose;
     double bromopyruvate;
 
-
-
     /*!
-    * @brief Sets the fractions and the values in the boundery of the values
+    * @brief Sets the fractions and the values in the bounderies
     */
     void setSubstance(double VGEF, double GLUCOSE, double BROMOPYRUVATE);
 
@@ -37,7 +36,7 @@ public:
     * @brief Default Copy Constructor & Destructor
     */
     Substance(const Substance& sub)=default;
-    ~Substance()=default;
+    virtual ~Substance()=default;
 
     /*!
     * @brief Getters
@@ -48,19 +47,19 @@ public:
     double getTotalConcentration();
 
     /*!
-    * @brief checks if the concentrations of the substances is equal to zero
+    * @brief checks if the concentrations of the substances is equal to zero (up to substance precision)
     *
     * @return returns true if they are equal to zero
     */
     bool isNull();
 
     /*!
-    * @brief checks if two substances are equal or not
+    * @brief sets one substance as the other
     */
     void operator=(const Substance& sub);
 
     /*!
-    * @brief checks if two substances are equal or not
+    * @brief checks if two substances are equal or not (up to substance precision)
     */
     bool operator==(const Substance& other) const;
     bool operator!=(const Substance& other) const;

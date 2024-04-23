@@ -3,11 +3,14 @@
 #include <Random/Random.hpp>
 #include "Cage.hpp"
 #include "Application.hpp"
+#include "Hamster.hpp"
+#include "Pellets.hpp"
+#include "Icon.hpp"
 
 
 
 Entity::Entity(const Vec2d& position, double energy)
-    : position(position), age(sf::Time::Zero), energy(energy), cage(nullptr){
+    : position(position), age(sf::Time::Zero), energy(energy), cage(nullptr), tracked(false){
     orientation = uniform(0.0, TAU);
 }
 
@@ -17,8 +20,8 @@ Angle Entity::getOrientation(){return orientation;}
 double Entity::getEnergy() const {return energy;}
 Cage* Entity::getCage(){return cage;}
 
-void Entity::drawEnergy(sf::RenderTarget& target){
-    if(isDebugOn()){
+void Entity::drawDebug(sf::RenderTarget& target){
+
         auto text = buildText(to_nice_string(energy),
                     position,
                     getAppFont(),
@@ -27,7 +30,7 @@ void Entity::drawEnergy(sf::RenderTarget& target){
                     0 / DEG_TO_RAD); // if you want to rotate the text
         target.draw(text);
         CircularBody::drawOn(target);
-    }
+
 }
 
 
@@ -44,7 +47,11 @@ void Entity::drawOn(sf::RenderTarget& target){
     sf::Sprite  entitySprite = buildSprite( getCenter(), 2*getRadius(),        //getCenter, getRadius, getTexture all virtual
                                          getTexture(), getOrientation()/ DEG_TO_RAD); // conversion degree to radians becauce SFML uses these units
     target.draw(entitySprite);
-    drawEnergy(target);
+   if(isDebugOn()) drawDebug(target);
+   if(this->tracked) {
+       Icon icon(getCenter(), getOrientation());
+       icon.drawOn(target);
+   }
 }
 
 bool Entity::isAnimal(){
@@ -92,7 +99,7 @@ Vec2d Entity::getHeading(){
     return Vec2d::fromAngle(orientation);
 }
 
-void Entity::updatePosition(Vec2d step){
+void Entity::takeStep(Vec2d step){
     position+=step;
 }
 
@@ -108,7 +115,22 @@ void Entity::setEnergy(double e){
     energy=e;
 }
 
-bool Entity::update(sf::Time dt){
+void Entity::update(sf::Time dt){
     age+=dt;
-    return !(age>= this->getLongevity() or getEnergy()<=0);
+}
+
+bool Entity::isDead(){
+    return (age>= this->getLongevity() or getEnergy()<=0);
+}
+
+double Entity::provideEnergy(Quantity ){
+    return 0;
+}
+
+bool Entity::getTracked(){
+    return tracked;
+}
+
+void Entity::setTracked(bool b){
+    tracked = b;
 }

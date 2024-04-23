@@ -2,7 +2,11 @@
 #define LAB_HPP
 #include <vector>
 #include "Cage.hpp"
-#include "SFML/Graphics/RenderTarget.hpp"
+#include "Env/Animal.hpp"
+#include "SFML/Graphics.hpp"
+#include "Drawable.hpp"
+#include "Updatable.hpp"
+#include "Types.hpp"
 #pragma once
 
 class Pellets;
@@ -12,21 +16,23 @@ class Animal;
 
 typedef std::vector<std::vector<Cage*>> Cages;
 typedef std::vector<Entity*> Entities;
+//typedef std::vector<Animal*> Animals;  //to mark the animals tracked 4.1
 
-class Lab
+class Lab : public Drawable, public Updatable
 {
 private:
     Cages cages;
     Entities entities;
+    Animal* animal=nullptr; //4.1
 
     /*!
     * @brief Check whether the value nbCagesPerRow is inbetween the min and max barrier
-    * if not, the function does also correct the value
+    * if not, the function does also corrects the value
     */
     void CageNumberCheck(unsigned int& nbCagesPerRow);
 
     /*!
-    * @brief deletes all the cages or all the entities
+    * @brief deletes all the cages (entities included) or all the entities
     */
     void clearCages();
     void clearEntities();
@@ -36,6 +42,15 @@ private:
     */
     void drawOnCages(sf::RenderTarget& targetWindow);
 
+    /*!
+    * @brief constructs the different cages
+    */
+    void makeBoxes(unsigned int nbCagesPerRow);
+
+    /*!
+    * @brief assigns the entitiy to a Cage in the Lab
+    */
+    bool declareEntityCage(Entity* e);
 
 public:
     /*!
@@ -44,14 +59,14 @@ public:
     Lab();
 
     /*!
+    * @brief deconstructer
+    */
+   virtual ~Lab();
+
+    /*!
     * @brief defines the maxCageNumber
     */
     unsigned int maxCageNumber();
-
-    /*!
-    * @brief constructs the different cages
-    */
-    void makeBoxes(unsigned int nbCagesPerRow);
 
     /*!
     * @brief Getter for attribut nbCagesPerRow
@@ -86,10 +101,6 @@ public:
     */
     void reset(bool reset = false);
 
-    /*!
-    * @brief deconstructer
-    */
-    ~Lab();
 
     /*!
     * @brief to make it impossible to copy a Lab
@@ -98,17 +109,38 @@ public:
 
     /*!
     * @brief add hamsters and pellets, addAnimal and addPellets call addEntity
+    * @attention the lab class is responsible for the freeing of the memory of the pointers
     */
     bool addEntity(Entity* e);
     bool addAnimal(Hamster* h);
     bool addFood(Pellets* p);
 
     /*!
-    * @brief assigns the entitiy to a Cage in the Lab
-    */
-    bool declareEntityCage(Entity* e);
+     * @brief finds the closest eatable entity to e that is in cage c
+     * @return either pointer to the eatable entity or nullptr if there is none
+     */
+    Entity* getClosesedEatableEntity(Cage* c, Entity* const& e);
 
-};
+    //4.1
+
+    void trackAnimal(Animal* a);
+
+    void trackAnimal(const Vec2d& position);
+
+    bool isAnyTrackedAnimal();
+
+    void switchToView(View view);
+
+    void stopTrackingAnyEntity();
+
+    void updateTrackedAnimal();
+
+    void drawCurrentOrgan(sf::RenderTarget& target);
+
+    void drawOnIcon(sf::RenderTarget& target);
+
+
+    };
 
 #endif // LAB_HPP
 

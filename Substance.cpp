@@ -63,7 +63,7 @@ void Substance::operator=(const Substance& sub){
     bromopyruvate=sub.bromopyruvate;
 }
 
-bool Substance::operator==(const Substance& other) const {
+bool Substance::operator==(const Substance& other) const {  //checks whether the difference between two concentrations is smaller than substance precision
     return ((fabs((*this)[VGEF]-other[VGEF])< SUBSTANCE_PRECISION) && (fabs((*this)[GLUCOSE]-other[GLUCOSE])< SUBSTANCE_PRECISION)
             && (fabs((*this)[BROMOPYRUVATE]-other[BROMOPYRUVATE]) < SUBSTANCE_PRECISION));
 }
@@ -73,16 +73,18 @@ bool Substance::operator!=(const Substance& other) const {
 }
 
 double Substance::operator[](const SubstanceId index) const{
-    if (GLUCOSE == index){
+
+    switch(index) {
+    case GLUCOSE :
         return glucose * totalCon;
-    }
-    if (VGEF == index){
+
+    case VGEF :
         return vgef * totalCon;
-    }
-    if (BROMOPYRUVATE == index){
+
+    case BROMOPYRUVATE :
         return bromopyruvate * totalCon;
-    }
-    else {
+
+    default :
         return -1;
     }
 }
@@ -124,15 +126,19 @@ void Substance::update(SubstanceId subId, double c){
     double glu((*this)[GLUCOSE]);
     double bro((*this)[BROMOPYRUVATE]);
 
-    if (GLUCOSE == subId){
+    switch(subId) {
+    case GLUCOSE :
         glu*=c;
-    }
-    if (VGEF == subId){
+        break;
+    case VGEF :
         vf*=c;
-    }
-    if (BROMOPYRUVATE == subId){
-        bro*=c;}
-
+        break;
+    case BROMOPYRUVATE :
+        bro*=c;
+        break;
+     default:
+        throw std::invalid_argument("SubstanceID not found");
+}
     setSubstance(vf, glu, bro);
 
     return;
@@ -144,7 +150,7 @@ void Substance::uptakeOnGradient(double fraction, Substance& receiver, Substance
 
     update(id, (1-fraction));
 
-    double quot((take/receiver[id])+1);    //calculates the multiplier for the function update
+    double quot((take/receiver[id])+1);    //calculates the multiplier needed for the function update
 
     receiver.update(id, quot);
 }

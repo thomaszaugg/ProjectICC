@@ -1,0 +1,10 @@
+#ifndef DRAWINGPRIORITY_H
+#define DRAWINGPRIORITY_H
+
+enum class DrawingPriority
+{
+     FOOD_PRIORITY,
+     ANIMAL_PRIORITY,
+     DEFAULT_PRIORITY
+};
+#endif // DRAWINGPRIORITY_H

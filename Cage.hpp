@@ -2,25 +2,24 @@
 #define CAGE_HPP
 #include <Utility/Vec2d.hpp>
 #include "SFML/Graphics.hpp"
+#include "Drawable.hpp"
 #pragma once
 
 
 typedef std::pair <Vec2d, Vec2d> Wall; //bottom right corner, top left corner
 typedef std::vector<Wall> Walls;
 
-class Cage{
+class Cage: public Drawable{
 
     Vec2d position;
     double width;
     double height;
     double wallWidth;
-    Walls walls;
-    Wall top;
-    Wall right;
-    Wall bottom;
-    Wall left;
+    Walls walls;               //0 = top, 1 = right
+                               //2 = bottom, 3 = left
 
-    bool occupied;
+
+    bool occupied;  //true if there is an animal in the cage
 
 
 public:
@@ -29,6 +28,11 @@ public:
     * walls are constructed in the body of the constructor
     */
     Cage(Vec2d postion, double width = 300.0, double height = 300.0, double wallWidth = 10.0);
+
+    /*!
+    * @brief Destructor
+    */
+   virtual ~Cage()=default;
 
     /*!
     * @brief Copy constructer by default
@@ -49,8 +53,8 @@ public:
     Wall getLeft();
 
     /*!
-    * @brief getting the coord of the inner wall of the Cage (if intern = true)
-    *        or getting the coord of the outer wall (if intern = false)
+    * @brief getting the coordinate of the inner wall of the Cage (if intern = true)
+    *        or getting the coordinate of the outer wall (if intern = false)
     *
     * @return double with x or y value of the wall
     */
@@ -60,7 +64,7 @@ public:
     double getBottomLimit(bool intern = false);
 
     /*!
-    * @brief check whether a point is inside of a Cage (walls excuded)
+    * @brief check whether a object (point per default) is inside of a Cage (walls excuded)
     *
     * @return true if point is inside
     */
@@ -93,12 +97,8 @@ public:
     /*!
     * @brief Draw a cage
     */
-    void drawOn(sf::RenderTarget& targetWindow);
+    void drawOn(sf::RenderTarget& targetWindow) override;
 
-    /*!
-    * @brief Destructor
-    */
-    ~Cage(){}
 
     };
 

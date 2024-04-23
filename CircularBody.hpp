@@ -10,10 +10,10 @@ class CircularBody{
 public:
 
     /*!
-    * @brief Constructor
+    * @brief Constructor and virtual destructor
     */
-    //CircularBody(const Vec2d& p, double r);
-    CircularBody(); //constructuer par default since it is an abstract class
+    CircularBody()=default; //default constructuer since it is an abstract class
+    virtual ~CircularBody()=default;
 
     /*!
     * @brief Getters
@@ -40,11 +40,6 @@ public:
     */
     void drawOn(sf::RenderTarget& target);
 
-
-private:
-    // no attributs since part 3.1 -> abstract class
-        //Vec2d position;
-        //double radius;
 
 };
 
