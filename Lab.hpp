@@ -133,6 +133,8 @@ public:
 
     void stopTrackingAnyEntity();
 
+    void stopTrackingEntity();
+
     void updateTrackedAnimal();
 
     void drawCurrentOrgan(sf::RenderTarget& target);

@@ -79,10 +79,11 @@ void Lab::update(sf::Time dt){
             if(entity!=nullptr){
                 entity->update(dt);
                     if(entity->isDead()){
-                        /*if(entity->getTracked()){
-                            entity->setTracked(false);
+                        if(entity->getTracked()){
+                            //stopTrackingEntity();
+                            delete animal;
                             animal=nullptr;
-                        }*/
+                        }
                         delete entity;
                         entity = nullptr;}
             }}
@@ -130,7 +131,8 @@ void Lab::reset(bool reset){
 void Lab::clearEntities(){
     for (auto& entity: entities){
         if (entity->getTracked()){  //4.1
-            entity->setTracked(false);
+            //stopTrackingEntity();
+            delete animal;
             animal=nullptr;
         }
         delete entity;
@@ -193,7 +195,7 @@ Entity* Lab::getClosesedEatableEntity(Cage* c, Entity* const& e){
 
     Entities vecEntities;   //creates the vector of entites that are in the same cage and eatable for entity e
     for(auto const& entity: entities){
-        if(entity->getCage()== c and entity!=e and e->canConsume(entity)) vecEntities.push_back(entity);
+        if(entity!=nullptr and entity->getCage()== c and entity!=e and e->canConsume(entity)) vecEntities.push_back(entity);
     }
 
     if(vecEntities.empty()) return nullptr;     //for the case there is no eatable entity
@@ -226,14 +228,11 @@ void Lab::trackAnimal(Animal* a){
 }
 
 bool Lab::isAnyTrackedAnimal(){
-    /*for (auto& entity: entities){
-        if (entity->isAnimal() && entity->getTracked()){
-            return true;
-        }
-    }*/
     return !(animal==nullptr);
 
 }
+
+
 
 void Lab::switchToView(View view){
     if (isAnyTrackedAnimal()){
@@ -244,12 +243,20 @@ void Lab::switchToView(View view){
 void Lab::stopTrackingAnyEntity(){
     for (auto& entity: entities){
         if (entity->getTracked()){
+            //stopTrackingEntity();
             entity->setTracked(false);
+            delete animal;
+            animal=nullptr;
         }
     }
-    delete animal;;
-    animal=nullptr; //desallocation
 }
+
+/*
+void Lab::stopTrackingEntity(){
+    entity->setTracked(false);
+    delete animal;
+    animal=nullptr;
+}*/
 
 void Lab::updateTrackedAnimal(){
 
