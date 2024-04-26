@@ -10,9 +10,10 @@ class CircularBody{
 public:
 
     /*!
-    * @brief Constructor
+    * @brief Constructor and virtual destructor
     */
     CircularBody()=default; //default constructuer since it is an abstract class
+    virtual ~CircularBody()=default;
 
     /*!
     * @brief Getters

@@ -30,3 +30,7 @@ bool Pellets::consumableBy(Pellets const*) const {
 bool Pellets::consumableBy(Hamster const*) const {
     return true;
 }
+
+DrawingPriority Pellets::getDepth(){
+    return DrawingPriority::FOOD_PRIORITY;
+}

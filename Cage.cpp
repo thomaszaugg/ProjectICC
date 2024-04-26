@@ -1,6 +1,7 @@
 #include "Cage.hpp"
 #include "Application.hpp"
 
+
 Cage::Cage(Vec2d position, double width, double height, double wallWidth)
     : position(position), width(width), height(height), wallWidth(wallWidth), occupied(false){
 

@@ -2,7 +2,11 @@
 #define LAB_HPP
 #include <vector>
 #include "Cage.hpp"
-#include "SFML/Graphics/RenderTarget.hpp"
+#include "Env/Animal.hpp"
+#include "SFML/Graphics.hpp"
+#include "Drawable.hpp"
+#include "Updatable.hpp"
+#include "Types.hpp"
 #pragma once
 
 class Pellets;
@@ -12,12 +16,14 @@ class Animal;
 
 typedef std::vector<std::vector<Cage*>> Cages;
 typedef std::vector<Entity*> Entities;
+//typedef std::vector<Animal*> Animals;  //to mark the animals tracked 4.1
 
-class Lab
+class Lab : public Drawable, public Updatable
 {
 private:
     Cages cages;
     Entities entities;
+    Animal* animal=nullptr;
 
     /*!
     * @brief Check whether the value nbCagesPerRow is inbetween the min and max barrier
@@ -32,9 +38,10 @@ private:
     void clearEntities();
 
     /*!
-    * @brief Helper function that draws the Cages of the lab
+    * @brief Helper functions that draws the cages and the entities
     */
     void drawOnCages(sf::RenderTarget& targetWindow);
+    void drawOnEntities(sf::RenderTarget& targetWindow);
 
     /*!
     * @brief constructs the different cages
@@ -55,7 +62,7 @@ public:
     /*!
     * @brief deconstructer
     */
-    ~Lab();
+   virtual ~Lab();
 
     /*!
     * @brief defines the maxCageNumber
@@ -110,12 +117,40 @@ public:
     bool addFood(Pellets* p);
 
     /*!
-        * @brief finds the closest eatable entity to e that is in cage c
-        * @return either pointer to the eatable entity or nullptr if there is none
-        */
-Entity* getClosesedEatableEntity(Cage* c, Entity* const& e);
+     * @brief finds the closest eatable entity to e that is in cage c
+     * @return either pointer to the eatable entity or nullptr if there is none
+     */
+    Entity* getClosesedEatableEntity(Cage* c, Entity* const& e);
 
-};
+    //4.1
+
+    void setTracked(bool b);
+
+    bool getTracked();
+
+    void trackAnimal(Animal* a);
+
+    void trackAnimal(const Vec2d& position);
+
+    bool isAnyTrackedAnimal();
+
+    void switchToView(View view);
+
+    void stopTrackingAnyEntity();
+
+    void stopTrackingEntity();
+
+    void updateTrackedAnimal();
+
+    void drawTracker(sf::RenderTarget& target);
+
+    void drawCurrentOrgan(sf::RenderTarget& target);
+
+    void drawOnIcon(sf::RenderTarget& target);
+
+
+
+    };
 
 #endif // LAB_HPP
 

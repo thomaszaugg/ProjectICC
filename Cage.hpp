@@ -2,13 +2,14 @@
 #define CAGE_HPP
 #include <Utility/Vec2d.hpp>
 #include "SFML/Graphics.hpp"
+#include "Drawable.hpp"
 #pragma once
 
 
 typedef std::pair <Vec2d, Vec2d> Wall; //bottom right corner, top left corner
 typedef std::vector<Wall> Walls;
 
-class Cage{
+class Cage: public Drawable{
 
     Vec2d position;
     double width;
@@ -27,6 +28,11 @@ public:
     * walls are constructed in the body of the constructor
     */
     Cage(Vec2d postion, double width = 300.0, double height = 300.0, double wallWidth = 10.0);
+
+    /*!
+    * @brief Destructor
+    */
+   virtual ~Cage()=default;
 
     /*!
     * @brief Copy constructer by default
@@ -91,12 +97,8 @@ public:
     /*!
     * @brief Draw a cage
     */
-    void drawOn(sf::RenderTarget& targetWindow);
+    void drawOn(sf::RenderTarget& targetWindow) override;
 
-    /*!
-    * @brief Destructor
-    */
-    ~Cage(){}
 
     };
 

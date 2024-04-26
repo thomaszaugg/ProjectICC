@@ -36,7 +36,7 @@ public:
     * @brief Default Copy Constructor & Destructor
     */
     Substance(const Substance& sub)=default;
-    ~Substance()=default;
+    virtual ~Substance()=default;
 
     /*!
     * @brief Getters

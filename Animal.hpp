@@ -2,6 +2,7 @@
 #define ANIMAL_HPP
 #include <Utility/Utility.hpp>
 #include "Entity.hpp"
+#include "Organ.hpp"
 #pragma once
 
 
@@ -20,6 +21,7 @@ private:
    State state;
    double speed;
    sf::Time counter=sf::Time::Zero;
+   Organ* organ;
 
    void changeOrientation(sf::Time dt);
 
@@ -31,17 +33,20 @@ public:
     Animal(const Vec2d& position, double energy);
 
     /*!
-    * @brief destructor
+    * @brief destructor and desactivated copy constructor
     */
     virtual ~Animal() ;
+    Animal(Animal& )=delete;    //to prevent cage pointer
 
     /*!
     * @brief Getters
     */
     Vec2d getSpeedVector();
-   virtual double getFatigueFactor();  //by default the same for all animals, possiblility to override
+    virtual double getFatigueFactor();  //by default the same for all animals, possiblility to override
     Angle getNewRotation();
     double getAdjustedMaxSpeed();
+    std::string getStateString();
+
 
     /*!
     * @brief purely virtual getters
@@ -49,6 +54,9 @@ public:
     virtual double getMaxSpeed()=0;
     virtual  double getFatigueEnergy()=0;   //energy at which the animal starts to slow down
     virtual double getEnergyLoss() = 0;
+    virtual double getMass() const =0;
+    virtual double getDeceleration() const =0;
+    virtual double getEnergyBite() const=0;
 
     /*!
     * @brief boolean function to indecate if the entity is an animal
@@ -72,13 +80,13 @@ public:
     /*!
     * @brief updates the speed
     */
-    void updateState( Entity* food);
+    void updateState(sf::Time dt, Entity* food);
 
     /*!
     * @brief changes the orientation and the position
     */
-    void move(sf::Time dt);
-
+    void move(sf::Time dt);                     //Wandering
+    void move(const Vec2d& force, sf::Time dt, bool feeding); //Targeting and Feeding
 
     /*!
     * @brief calculates the new energy of the animal after time dt and lets the animal age
@@ -86,21 +94,35 @@ public:
     void updateEnergy(sf::Time dt);
 
 
-    void move(const Vec2d& force, sf::Time dt);
-    virtual double getMass() const =0;
-   virtual double getDeceleration() const =0;
-
+    /*!
+    * @return bool indicating whether or not the animal is hungry
+    */
     bool isHungry();
-    virtual double getEnergyBite() const=0;
 
-    Vec2d calculateForce(Entity* food, double deaceleration=1);
+    /*!
+    * @brief calculates the force, possibly taking into accound deceleration
+    */
+    Vec2d calculateForce(Entity* food, double deceleration=1);
 
+    /*!
+    * @brief modularized eat function
+    */
     void eatFood(Entity* food);
 
+    /*!
+    * @brief draws energy and state
+    */
     void drawDebug(sf::RenderTarget& target) override;
 
-    std::string getStateString();
+    /*!
+    * @return ANIMAL_PRIORITY
+    */
+    DrawingPriority getDepth() override;
 
+    void updateOrgan();
+    void drawOrgan(sf::RenderTarget& target);
+    void initializeOrgan();
+    void deleteOrgan();
 };
 
 #endif // ANIMAL_HPP
