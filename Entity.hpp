@@ -19,7 +19,7 @@ private:
     Angle orientation;        //radians, negative okay
     double energy;
     Cage* cage;
-    bool tracked;
+
 
 public:
     /*!
@@ -28,7 +28,7 @@ public:
     Entity(const Vec2d& position, double energy);
 
     /*!
-    * @brief default destructor
+    * @brief  destructor
     */
     virtual ~Entity()=default;
 
@@ -45,7 +45,7 @@ public:
     virtual double getSize() const =0;
     virtual sf::Texture& getTexture()=0;
     //4.1
-    bool getTracked();
+
 
 
     /*!
@@ -54,7 +54,6 @@ public:
     void setCage(Cage* c);
     void setOrientation(Angle angle);
     void setEnergy(double);
-    void setTracked(bool b);
 
     /*!
     * @brief boolean function to indecate if the entity is an animal

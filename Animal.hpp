@@ -2,6 +2,7 @@
 #define ANIMAL_HPP
 #include <Utility/Utility.hpp>
 #include "Entity.hpp"
+#include "Organ.hpp"
 #pragma once
 
 
@@ -20,6 +21,7 @@ private:
    State state;
    double speed;
    sf::Time counter=sf::Time::Zero;
+   Organ* organ;
 
    void changeOrientation(sf::Time dt);
 
@@ -31,9 +33,10 @@ public:
     Animal(const Vec2d& position, double energy);
 
     /*!
-    * @brief destructor
+    * @brief destructor and desactivated copy constructor
     */
     virtual ~Animal() ;
+    Animal(Animal& )=delete;    //to prevent cage pointer
 
     /*!
     * @brief Getters
@@ -83,7 +86,7 @@ public:
     * @brief changes the orientation and the position
     */
     void move(sf::Time dt);                     //Wandering
-    void move(const Vec2d& force, sf::Time dt); //Targeting and Feeding
+    void move(const Vec2d& force, sf::Time dt, bool feeding); //Targeting and Feeding
 
     /*!
     * @brief calculates the new energy of the animal after time dt and lets the animal age
@@ -115,6 +118,11 @@ public:
     * @return ANIMAL_PRIORITY
     */
     DrawingPriority getDepth() override;
+
+    void updateOrgan();
+    void drawOrgan(sf::RenderTarget& target);
+    void initializeOrgan();
+    void deleteOrgan();
 };
 
 #endif // ANIMAL_HPP

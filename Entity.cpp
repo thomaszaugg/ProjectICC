@@ -5,14 +5,15 @@
 #include "Application.hpp"
 #include "Hamster.hpp"
 #include "Pellets.hpp"
-#include "Icon.hpp"
 
 
 
 Entity::Entity(const Vec2d& position, double energy)
-    : position(position), age(sf::Time::Zero), energy(energy), cage(nullptr), tracked(false){
+    : position(position), age(sf::Time::Zero), energy(energy), cage(nullptr){
     orientation = uniform(0.0, TAU);
 }
+
+
 
 Vec2d Entity::getCenter() const {return position;}
 sf::Time Entity::getAge(){return age;}
@@ -48,10 +49,7 @@ void Entity::drawOn(sf::RenderTarget& target){
                                          getTexture(), getOrientation()/ DEG_TO_RAD); // conversion degree to radians becauce SFML uses these units
     target.draw(entitySprite);
    if(isDebugOn()) drawDebug(target);
-   if(this->tracked) {
-       Icon icon(getCenter(), getOrientation());
-       icon.drawOn(target);
-   }
+
 }
 
 bool Entity::isAnimal(){
@@ -127,10 +125,4 @@ double Entity::provideEnergy(Quantity ){
     return 0;
 }
 
-bool Entity::getTracked(){
-    return tracked;
-}
 
-void Entity::setTracked(bool b){
-    tracked = b;
-}

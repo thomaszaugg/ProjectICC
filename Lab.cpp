@@ -4,6 +4,7 @@
 #include "Hamster.hpp"
 #include "Pellets.hpp"
 #include "Config.hpp"
+#include "Icon.hpp"
 #include <algorithm>
 
 unsigned int Lab::maxCageNumber(){
@@ -46,8 +47,10 @@ void Lab::makeBoxes(unsigned int nbCagesPerRow){
 }
 
 
-Lab::Lab(){
+Lab::Lab()
+{
     makeBoxes(getAppConfig().simulation_lab_nb_boxes);
+    animal=nullptr;
 }
 
 unsigned int Lab::getNbCagesPerRow(){
@@ -73,41 +76,41 @@ void Lab::removeCageFromRow(){
 
 }
 
-//3.1
+
 void Lab::update(sf::Time dt){
     for (auto& entity: entities){
             if(entity!=nullptr){
                 entity->update(dt);
                     if(entity->isDead()){
-                        if(entity->getTracked()){
-                            //stopTrackingEntity();
-                            delete animal;
-                            animal=nullptr;
-                        }
+                        if(entity==animal)animal=nullptr;
                         delete entity;
                         entity = nullptr;}
             }}
 
     entities.erase(std::remove(entities.begin(),            //removing nullptrs only after iteration finished
                   entities.end(), nullptr), entities.end());
+    if(animal!=nullptr) updateTrackedAnimal();
 }
+
 
 void Lab::drawOn(sf::RenderTarget& targetWindow){
-    drawOnCages(targetWindow);
+    switch(getApp().getCurrentView()){
+    case(ORGAN):{
+        drawCurrentOrgan(targetWindow);
 
-                // Copy of Entities in a list
-          std::list<Entity*> sorted( entities.begin(), entities.end());
-                // order redefined based on getDepth():
-        auto comp([](Entity* a, Entity* b)->bool{ return int(a->getDepth()) < int(b->getDepth()); });
-                // list sorted
-        sorted.sort (comp);
-
-    for (const auto& entity: sorted){
-        if(entity!=nullptr){
-            entity->drawOn(targetWindow);
-        }
     }
-}
+        break;
+    case(ECM):{}
+        break;
+    case(LAB):{
+        drawOnCages(targetWindow);
+        drawOnEntities(targetWindow);
+        }
+        break;
+    case(CONCENTRATION):{}
+        break;}
+
+      }
 
 void Lab::drawOnCages(sf::RenderTarget& targetWindow){
 
@@ -117,6 +120,24 @@ void Lab::drawOnCages(sf::RenderTarget& targetWindow){
         }
     }
 }
+void Lab::drawOnEntities(sf::RenderTarget& targetWindow){
+
+            // Copy of Entities in a list
+      std::list<Entity*> sorted( entities.begin(), entities.end());
+            // order redefined based on getDepth():
+    auto comp([](Entity* a, Entity* b)->bool{ return int(a->getDepth()) < int(b->getDepth()); });
+            // list sorted
+    sorted.sort (comp);
+
+            //draw the new list
+    for (const auto& entity: sorted){
+        if(entity!=nullptr){
+            entity->drawOn(targetWindow);
+        }
+    }
+
+    if(animal!=nullptr) drawTracker(targetWindow);}
+
 
 void Lab::reset(bool reset){
     if(isDebugOn()) getAppConfig().switchDebug();
@@ -130,14 +151,10 @@ void Lab::reset(bool reset){
 
 void Lab::clearEntities(){
     for (auto& entity: entities){
-        if (entity->getTracked()){  //4.1
-            //stopTrackingEntity();
-            delete animal;
-            animal=nullptr;
-        }
         delete entity;
     }
     entities.clear();
+    animal=nullptr;
 }
 
 void Lab::clearCages(){
@@ -200,7 +217,7 @@ Entity* Lab::getClosesedEatableEntity(Cage* c, Entity* const& e){
 
     if(vecEntities.empty()) return nullptr;     //for the case there is no eatable entity
 
-        unsigned int index(0);
+        unsigned int index(0);                  //searches the closest (of all the ones that are eatable and in the same cage
         double MINdistance( (vecEntities[0]->getCenter()- e->getCenter()).length());
         double distance(0);
     for(unsigned int i(1); i<vecEntities.size();++i){
@@ -213,7 +230,9 @@ Entity* Lab::getClosesedEatableEntity(Cage* c, Entity* const& e){
      return vecEntities[index];}
 
 
-//4.1
+
+
+
 void Lab::trackAnimal(const Vec2d& position){
     for (auto& entity: entities){
         if (entity->isAnimal() && entity->isPointInside(position) && animal==nullptr){
@@ -223,12 +242,12 @@ void Lab::trackAnimal(const Vec2d& position){
 }
 
 void Lab::trackAnimal(Animal* a){
-    a->setTracked(true);
-    animal=a;
+      animal=a;
+      animal->initializeOrgan();
 }
 
 bool Lab::isAnyTrackedAnimal(){
-    return !(animal==nullptr);
+    return animal != nullptr;
 
 }
 
@@ -241,27 +260,27 @@ void Lab::switchToView(View view){
 }
 
 void Lab::stopTrackingAnyEntity(){
-    for (auto& entity: entities){
-        if (entity->getTracked()){
-            //stopTrackingEntity();
-            entity->setTracked(false);
-            delete animal;
-            animal=nullptr;
-        }
-    }
-}
+            if(animal!=nullptr){
+             animal->deleteOrgan();
+             animal=nullptr;}
+ }
 
-/*
-void Lab::stopTrackingEntity(){
-    entity->setTracked(false);
-    delete animal;
-    animal=nullptr;
-}*/
+void Lab::drawTracker(sf::RenderTarget& target){
+
+    if(animal!=nullptr) {
+        Vec2d  a= animal->getSpeedVector().normalised();      //better placement icon
+        Icon icon(animal->getCenter()+ (a+a.normal())*(-55), animal->getOrientation());
+        icon.drawOn(target);
+    }}
+
 
 void Lab::updateTrackedAnimal(){
-
+    if(animal!=nullptr) animal->updateOrgan();
 }
 
 void Lab::drawCurrentOrgan(sf::RenderTarget& target){
-
+    if(animal!=nullptr){
+        animal->drawOrgan(target);
+    }
 }
+

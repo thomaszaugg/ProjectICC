@@ -23,7 +23,7 @@ class Lab : public Drawable, public Updatable
 private:
     Cages cages;
     Entities entities;
-    Animal* animal=nullptr; //4.1
+    Animal* animal=nullptr;
 
     /*!
     * @brief Check whether the value nbCagesPerRow is inbetween the min and max barrier
@@ -38,9 +38,10 @@ private:
     void clearEntities();
 
     /*!
-    * @brief Helper function that draws the Cages of the lab
+    * @brief Helper functions that draws the cages and the entities
     */
     void drawOnCages(sf::RenderTarget& targetWindow);
+    void drawOnEntities(sf::RenderTarget& targetWindow);
 
     /*!
     * @brief constructs the different cages
@@ -123,6 +124,10 @@ public:
 
     //4.1
 
+    void setTracked(bool b);
+
+    bool getTracked();
+
     void trackAnimal(Animal* a);
 
     void trackAnimal(const Vec2d& position);
@@ -137,9 +142,12 @@ public:
 
     void updateTrackedAnimal();
 
+    void drawTracker(sf::RenderTarget& target);
+
     void drawCurrentOrgan(sf::RenderTarget& target);
 
     void drawOnIcon(sf::RenderTarget& target);
+
 
 
     };
