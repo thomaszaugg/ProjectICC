@@ -1,5 +1,6 @@
 #include "Organ.hpp"
 #include "Application.hpp"
+#include "Cellslayer.hpp"
 
 Organ::Organ(bool generation)
     {
@@ -32,7 +33,19 @@ int Organ::getHeight(){
 
 void Organ::reloadConfig(){
      nbCells=getAppConfig().simulation_organ_nbCells;
-     cellSize=getAppConfig().simulation_organ_size;
+     cellSize=getWidth()/nbCells;
+
+     // @lisa: initialize the following:(and my attempts to do it...
+     //std::array<std::array<CellsLayer*, 10>, 10> cellsLayers_;
+//cellsLayers = new std::vector<std::vector<CellsLayer*, nbCells > nbCells > ;
+   /*
+     for( int i(0); i < nbCells; ++i){
+         for(int j(0); j < nbCells; ++j){
+             CellCoord coord(i,j); //@lisa which is which ?
+             CellsLayer* ptr(new CellsLayer(coord, this));
+             cellsLayers[i][j]= ptr; //again the same
+         }
+     }*/
 }
 
 void Organ::initOrganTexture (){
@@ -52,5 +65,11 @@ void Organ::updateRepresentation(){
 }
 */
 
+bool Organ::isOut(CellCoord position){
+    return position.x > nbCells or position.y > nbCells;    //stats CellCord at 0?
+}
 
+CellCoord Organ::toCellCoord(const Vec2d position){
+    return vec2dToCellCoord(position, nbCells, nbCells, cellSize);
+}
 
