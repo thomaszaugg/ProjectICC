@@ -145,12 +145,32 @@ void Substance::update(SubstanceId subId, double c){
 }
 
 void Substance::uptakeOnGradient(double fraction, Substance& receiver, SubstanceId id){
-    double take=(*this)[id]*fraction;
+    /*double take=(*this)[id]*fraction;
     if(take< SUBSTANCE_PRECISION) return;
 
     update(id, (1-fraction));
 
     double quot((take/receiver[id])+1);    //calculates the multiplier needed for the function update
 
-    receiver.update(id, quot);
+    receiver.update(id, quot);*/
+
+
+        //assert(fraction > 0 && fraction < 1);
+
+        if ((*this)[id] < SUBSTANCE_PRECISION) { // to avoid floating point issues
+            return;
+        }
+        Substance temp;
+        switch(id)
+        {
+        case GLUCOSE : temp = Substance(0,(fraction)*((*this)[id]),0);break;
+        case BROMOPYRUVATE : temp = Substance(0,0,(fraction)*((*this)[id]));break;
+        case VGEF : temp = Substance((fraction)*((*this)[id]),0,0);break;
+        default   : /*nothing to do*/ break;
+        }
+        receiver+=temp;
+        Substance temp2 = (*this);
+        temp2.update(id,1-fraction);
+        (*this) -= temp;
+
 }

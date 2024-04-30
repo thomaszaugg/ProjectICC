@@ -1,4 +1,5 @@
 #include "Cellslayer.hpp"
+#include "Organ.hpp"
 
 
 
@@ -8,19 +9,25 @@ CellsLayer::CellsLayer(CellCoord position, Organ* organ)
 
 
 CellsLayer::~CellsLayer(){
-    //delete //all the types;
+    organ = nullptr;
+    delete ecm;
+    delete organCell;
+    delete bloodCell;
+    ecm = nullptr;
+    organCell = nullptr;
+    bloodCell = nullptr;
 }
 
 bool CellsLayer::hasECMCell(){
-    return !(ecm==nullptr);
+    return ecm!=nullptr;
 }
 
 bool CellsLayer::hasOrganCell(){
-    return !(organCell==nullptr);
+    return organCell!=nullptr;
 }
 
 bool CellsLayer::hasBloodCell(){
-    return !(bloodCell==nullptr);
+    return bloodCell!=nullptr;
 }
 
 void CellsLayer::setECMCell(){
@@ -35,7 +42,7 @@ void CellsLayer::setOrganCell(){
     }
 }
 
-void CellsLayer::setBloodCell(TypeBloodCell type){
+void CellsLayer::setBlood(TypeBloodCell type){
     if (bloodCell==nullptr){
         bloodCell = new BloodCell(this, type);
     }
@@ -49,9 +56,10 @@ void CellsLayer::updateSubstance(Substance substance){
 
 double CellsLayer::getECMQuantity(SubstanceId id){
     if (hasECMCell()){
-        return ecm->getQuantitiy(id); //method on Cell level
+        return ecm->getQuantitiy(id);
     } else {return 0;}
 }// is it okay with return 0 ? or throw error ?
+//@lisa I think that is something to ask the TA, either way, comment it in the hpp file
 
 double CellsLayer::getOrganCellQuantity(SubstanceId id){
     if (hasOrganCell()){
@@ -65,9 +73,13 @@ double CellsLayer::getBloodCellQuantity(SubstanceId id){
     } else {return 0;}
 }
 
-void CellsLayer::organCellTakeFormECM(SubstanceId id, double fraction){
+void CellsLayer::organCellTakeFromECM(SubstanceId id, double fraction){
     if (hasOrganCell() && hasECMCell()){
         ecm->uptakeSubstance(fraction, organCell,  id);
     }
-
 }
+
+bool CellsLayer::isOut(const CellCoord& coord){
+    return organ->isOut(coord);
+}
+

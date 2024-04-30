@@ -4,6 +4,7 @@
 #include "Updatable.hpp"
 #include "Utility/Utility.hpp"
 #include "Cellslayer.hpp"
+#include "SFML/Graphics/Vertex.hpp"
 
 #pragma once
 
@@ -13,29 +14,30 @@ class Organ: public Drawable /*public Updatable*/
 {
 private:
     int nbCells;
-    //size_t nbCells;
     float cellSize;
     sf::RenderTexture organTexture;
-    std::array<std::array<CellsLayer*, 10>, 10> cellsLayers_; // how does it work with the variable nbCells as parameter for the size ???????
+    std::vector<std::vector<CellsLayer*>> cellsLayers;
 
+    std::vector<sf::Vertex> bloodVertexes;
+    std::vector<sf::Vertex> organVertexes;
 
 protected:
     virtual void generate();
 
     //helpers generate
-     void reloadConfig();
+    void reloadConfig();
     void initOrganTexture (); //initalize organTexture
      /*createOrgan(); //create organ fragment
       createBloodSystem(); //create blood network*/
 
 public:
-    Organ(bool generation);//maybe default value?
+    Organ(bool generation = true);//maybe default value? @tom: yess written in enonce
     virtual ~Organ()=default;
     void update() ;
     void drawOn(sf::RenderTarget& target);
 
     void updateRepresentation(); //helper generate
-   // void updateRepresentationAt(const CellCoord&);
+    virtual void updateRepresentationAt(const CellCoord&);
 
     int getWidth ();
     int getHeight();

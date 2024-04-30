@@ -10,12 +10,7 @@ private:
     CellsLayer* cellsLayer;
     Substance* substance;
 
-protected:
-    //Substance* getSubstance();
-
 public:
-    //Cell(); //default constructor
-
     Cell(CellsLayer* ptr);
 
     virtual ~Cell();

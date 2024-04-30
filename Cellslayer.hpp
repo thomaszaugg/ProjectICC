@@ -2,7 +2,6 @@
 #define CELLSLAYER_HPP
 #include "Cell.hpp"
 #include "Utility/Utility.hpp"
-//#include "Organ.hpp"
 #include "ECMCell.hpp"
 #include "BloodCell.hpp"
 #include "OrganCell.hpp"
@@ -30,7 +29,7 @@ private:
 
 public:
     CellsLayer(CellCoord position, Organ* organ);
-    ~CellsLayer();
+    virtual ~CellsLayer();
     //hierarchy
 
     bool hasECMCell();
@@ -40,17 +39,19 @@ public:
     //kann nur assigned werden wenn vorher nullptr
     void setECMCell();
     void setOrganCell();
-    void setBloodCell(TypeBloodCell type); //achtung default value
+    void setBlood(TypeBloodCell type); //achtung default value
 
     //put Substance in ECM level -> ev. funktion in ECM aufrufen/ += operator
     void updateSubstance(Substance substance);
 
+    //if the cell type asked for doesn't exist: either throw error or return 0(to be decided)
     double getECMQuantity(SubstanceId id); //amound not fractions
     double getOrganCellQuantity(SubstanceId id);
     double getBloodCellQuantity(SubstanceId id);
 
-    void organCellTakeFormECM(SubstanceId id, double fraction); //with Substance::uptake On Gradient
+    void organCellTakeFromECM(SubstanceId id, double fraction); //with Substance::uptake On Gradient
 
+    bool isOut(const CellCoord& coord);
 };
 
 #endif // CELLSLAYER_HPP

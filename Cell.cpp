@@ -2,21 +2,17 @@
 //#include "Cellslayer.hpp"
 
 Cell::Cell(CellsLayer* cellsLayer)
-    : cellsLayer(cellsLayer), substance(new Substance) //how should we initialize substance ?? new Substance or nullptr?
+    : cellsLayer(cellsLayer), substance(new Substance)
 {}
 
 Cell::~Cell(){
-    delete substance;
-    cellsLayer = nullptr; //so that the cellslayer doesn't habe this cell anymore
+    delete substance;   //free up allocated memory
+    // cellsLayer = nullptr; not needed
 }
 
-/*
-Substance* Cell::getSubstance(){
-    return substance;
-}*/
 
 void Cell::addSubstance(Substance newSubstance){
-    *substance += newSubstance; //is the value of the pointer really updated?
+    *substance += newSubstance;
 }
 
 double Cell::getQuantitiy(SubstanceId id){
