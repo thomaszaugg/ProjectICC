@@ -6,13 +6,6 @@
 #include "BloodCell.hpp"
 #include "OrganCell.hpp"
 
-//enum type for how many layers possible
-enum Layers{
-    SINGLE,
-    TWO,
-    THREE,
-};
-
 class Organ;
 
 class CellsLayer
@@ -52,6 +45,8 @@ public:
     void organCellTakeFromECM(SubstanceId id, double fraction); //with Substance::uptake On Gradient
 
     bool isOut(const CellCoord& coord);
+
+    Cell* topCell();
 };
 
 #endif // CELLSLAYER_HPP

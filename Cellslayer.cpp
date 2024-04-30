@@ -83,3 +83,10 @@ bool CellsLayer::isOut(const CellCoord& coord){
     return organ->isOut(coord);
 }
 
+Cell* CellsLayer::topCell(){
+    if (hasBloodCell()){
+        return bloodCell;
+    }else if (hasOrganCell()){
+        return organCell;
+    }else return ecm;
+}

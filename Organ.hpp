@@ -4,7 +4,7 @@
 #include "Updatable.hpp"
 #include "Utility/Utility.hpp"
 #include "Cellslayer.hpp"
-#include "SFML/Graphics/Vertex.hpp"
+#include "Utility/Vertex.hpp"
 
 #pragma once
 
@@ -47,7 +47,10 @@ public:
 
     CellCoord toCellCoord(const Vec2d position);
 
+    //wie machbar ohne code zu kopieren?
+    void drawBloodCells();
 
+    void drawOrganCells();
 
 };
 
