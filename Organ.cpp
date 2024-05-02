@@ -1,72 +1,115 @@
 #include "Organ.hpp"
 #include "Application.hpp"
-#include "Cellslayer.hpp"
+#include "CellsLayer.hpp"
+
 
 Organ::Organ(bool generation)
-    {
-if(generation) generate(); //initialize attributes!!!
+    { if(generation) generate(); //initialize attributes!!!
 }
 
 void Organ::update(){
     updateRepresentation();
 }
+
 void Organ::drawOn(sf::RenderTarget& target){
     sf::Sprite image(organTexture.getTexture()); // transform the image into a texture
     target.draw(image); // display the texture
+
+    //4.3 -> drawing this properly
 }
 
-
 void Organ::generate(){
-     reloadConfig();
-   initOrganTexture (); //initalize organTexture
+    reloadConfig();
+    initOrganTexture (); //initalize organTexture & initalize vertexes
     /*createOrgan(); //create organ fragment
      createBloodSystem(); //create blood network*/
-   updateRepresentation();
+    updateRepresentation();
 }
 
 int Organ::getWidth (){
-    return getAppConfig().simulation_organ_size;}
+    return getAppConfig().simulation_organ_size;
+}
 
 int Organ::getHeight(){
     return getAppConfig().simulation_organ_size;
 }
 
 void Organ::reloadConfig(){
-     nbCells=getAppConfig().simulation_organ_nbCells;
-     cellSize=getWidth()/nbCells;
+    nbCells=getAppConfig().simulation_organ_nbCells;
+    cellSize=getWidth()/nbCells;
+    std::vector<std::vector<CellsLayer*>> cellsLayers(nbCells, std::vector<CellsLayer*>(nbCells));
 
-     // @lisa: initialize the following:(and my attempts to do it...
-     //std::array<std::array<CellsLayer*, 10>, 10> cellsLayers_;
-//cellsLayers = new std::vector<std::vector<CellsLayer*, nbCells > nbCells > ;
-   /*
-     for( int i(0); i < nbCells; ++i){
-         for(int j(0); j < nbCells; ++j){
-             CellCoord coord(i,j); //@lisa which is which ?
-             CellsLayer* ptr(new CellsLayer(coord, this));
-             cellsLayers[i][j]= ptr; //again the same
-         }
-     }*/
+    for(int i(0); i < nbCells; ++i){
+        for(int j(0); j < nbCells; ++j){
+            CellCoord coord(i,j);
+            CellsLayer* ptr(new CellsLayer(coord, this));
+            cellsLayers[i][j]= ptr;
+        }
+    }
 }
 
 void Organ::initOrganTexture (){
-        organTexture.create(nbCells*cellSize, nbCells*cellSize);
-  }
+    organTexture.create(nbCells*cellSize, nbCells*cellSize); //@tom: or put getHeight for reasons of simpicity
+    bloodVertexes = generateVertexes(getAppConfig().simulation_organ["textures"], nbCells, cellSize);
+    organVertexes = generateVertexes(getAppConfig().simulation_organ["textures"], nbCells, cellSize);
+    //enonce: not more than four lines, this is only 3. What is missing?
+}
 
-/*createOrgan(); //create organ fragment
- createBloodSystem(); //create blood network*/
+void Organ::drawBloodCells(){
+    sf::RenderStates rs;
+    auto textures = getAppConfig().simulation_organ["textures"];
+    rs.texture = &getAppTexture(textures["blood cell"].toString()); // here for the texture linked to a blood cell
+    organTexture.draw(bloodVertexes.data(), bloodVertexes.size(), sf::Quads, rs);
+}
 
-void Organ::updateRepresentation(){
-    organTexture.clear(sf::Color(223,196,176));
+//@tom: how to make it less redudant??
+
+void Organ::drawOrganCells(){
+    sf::RenderStates rs;
+    auto textures = getAppConfig().simulation_organ["textures"];
+    rs.texture = &getAppTexture(textures["organ cell"].toString()); // here for the texture linked to a blood cell
+    organTexture.draw(organVertexes.data(), organVertexes.size(), sf::Quads, rs);
+}
+
+/*
+createOrgan(); //create organ fragment
+createBloodSystem(); //create blood network
+*/
+
+void Organ::updateRepresentation(bool changed){
+  if(changed){
+    //zuerst noch alles checken, dann erst zeichnen!
+
+
+   //     for(int i(0); i < nbCells; ++i){
+    //      for(int j(0); j < nbCells; ++j){
+    //updateReèresentationAt(coord);}
+
+        organTexture.clear(sf::Color(223,196,176));}
+  //do we want to concise that
+    drawBloodCells();
+    drawOrganCells();
     organTexture.display();
 }
 
-/*void Organ::updateRepresentationAt(const CellCoord&){
-
+void Organ::updateRepresentationAt(const CellCoord&){
+    for(int i(0); i < nbCells; ++i){
+        for(int j(0); j < nbCells; ++j){
+            Cell* drawableCell = cellsLayers[i][j]->topCell();
+            //make the cell in the corresponding vector drawable and in the other transparent
+        }
+    }
 }
-*/
 
 bool Organ::isOut(CellCoord position){
-    return position.x > nbCells or position.y > nbCells;    //stats CellCord at 0?
+    for(int i(0); i < nbCells; ++i){
+        for(int j(0); j < nbCells; ++j){
+            if (position.x == i and position.y == j){
+                return false;
+            }
+        }
+    }
+    return true;
 }
 
 CellCoord Organ::toCellCoord(const Vec2d position){

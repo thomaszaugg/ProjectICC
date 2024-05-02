@@ -3,39 +3,41 @@
 #include "Drawable.hpp"
 #include "Updatable.hpp"
 #include "Utility/Utility.hpp"
-#include "Cellslayer.hpp"
+#include "CellsLayer.hpp"
+#include "Utility/Vertex.hpp"
 
 #pragma once
 
 
 
-class Organ: public Drawable /*public Updatable*/
+class Organ: public Drawable /*public Updatable*/ //how to solve this?
 {
 private:
     int nbCells;
-    //size_t nbCells;
     float cellSize;
     sf::RenderTexture organTexture;
-    //std::vector<std::vector<CellsLayer*>> cellsLayers; // how does it work with the variable nbCells as parameter for the size ???????
-             //   @lisa mir müesse ä global value ertsteue wo getAppConfig().simulation_organ_nbCells dinne het
-                // @lisa which is the row and which is the column?
+    std::vector<std::vector<CellsLayer*>> cellsLayers;
+
+    std::vector<sf::Vertex> bloodVertexes;
+    std::vector<sf::Vertex> organVertexes;
+
 protected:
     virtual void generate();
 
     //helpers generate
-     void reloadConfig();
+    void reloadConfig();
     void initOrganTexture (); //initalize organTexture
      /*createOrgan(); //create organ fragment
       createBloodSystem(); //create blood network*/
 
 public:
-    Organ(bool generation);//maybe default value?
+    Organ(bool generation = true);
     virtual ~Organ()=default;
     void update() ;
     void drawOn(sf::RenderTarget& target);
 
     void updateRepresentation(); //helper generate
-   // void updateRepresentationAt(const CellCoord&);
+    virtual void updateRepresentationAt(const CellCoord&);
 
     int getWidth ();
     int getHeight();
@@ -45,7 +47,10 @@ public:
 
     CellCoord toCellCoord(const Vec2d position);
 
+    //wie machbar ohne code zu kopieren?
+    void drawBloodCells();
 
+    void drawOrganCells();
 
 };
 
