@@ -1,8 +1,9 @@
 #include "Organ.hpp"
 #include "Application.hpp"
-#include "Cellslayer.hpp"
+#include "CellsLayer.hpp"
 
 
+//constructor is crashing!
 Organ::Organ(bool generation)
     { if(generation) generate(); //initialize attributes!!!
 }
@@ -14,8 +15,6 @@ void Organ::update(){
 void Organ::drawOn(sf::RenderTarget& target){
     sf::Sprite image(organTexture.getTexture()); // transform the image into a texture
     target.draw(image); // display the texture
-
-    //4.3 -> drawing this properly
 }
 
 void Organ::generate(){
@@ -55,6 +54,31 @@ void Organ::initOrganTexture (){
     //enonce: not more than four lines, this is only 3. What is missing?
 }
 
+/*
+createOrgan(); //create organ fragment
+createBloodSystem(); //create blood network
+*/
+
+void Organ::updateRepresentation(bool changed){
+    if(changed){
+        for(int i(0); i < nbCells; ++i){
+            for(int j(0); j < nbCells; ++j){
+                CellCoord coord(i,j);
+                updateRepresentationAt(coord);
+            }
+        }
+    }
+    drawRepresentation();
+}
+
+void Organ::drawRepresentation(){
+    organTexture.clear(sf::Color(223,196,176));
+    drawBloodCells();
+    drawOrganCells();
+    organTexture.display();
+}
+
+//@tom: how to make it less redudant??
 void Organ::drawBloodCells(){
     sf::RenderStates rs;
     auto textures = getAppConfig().simulation_organ["textures"];
@@ -69,25 +93,46 @@ void Organ::drawOrganCells(){
     organTexture.draw(organVertexes.data(), organVertexes.size(), sf::Quads, rs);
 }
 
-/*
-createOrgan(); //create organ fragment
-createBloodSystem(); //create blood network
-*/
+void Organ::updateRepresentationAt(const CellCoord& coord){
+    int i = coord.x;
+    int j = coord.y;
+    std::vector<std::size_t> indexes = indexesForCellVertexes(i, j, nbCells);
+    if (cellsLayers[i][j]->hasBloodCell()){
 
-void Organ::updateRepresentation(){
-    //zuerst noch alles checken, dann erst zeichnen!
-    organTexture.clear(sf::Color(223,196,176));
-    drawBloodCells();
-    drawOrganCells();
-    organTexture.display();
-}
+        bloodVertexes[indexes[0]].color.a=255;
+        bloodVertexes[indexes[1]].color.a=255;
+        bloodVertexes[indexes[2]].color.a=255;
+        bloodVertexes[indexes[3]].color.a=255;
 
-void Organ::updateRepresentationAt(const CellCoord&){
-    for(int i(0); i < nbCells; ++i){
-        for(int j(0); j < nbCells; ++j){
-            Cell* drawableCell = cellsLayers[i][j]->topCell();
-            //make the cell in the corresponding vector drawable and in the other transparent
-        }
+        organVertexes[indexes[0]].color.a=0;
+        organVertexes[indexes[1]].color.a=0;
+        organVertexes[indexes[2]].color.a=0;
+        organVertexes[indexes[3]].color.a=0;
+
+    }else if (cellsLayers[i][j]->hasOrganCell() && !(cellsLayers[i][j]->hasBloodCell())){
+
+        bloodVertexes[indexes[0]].color.a=0;
+        bloodVertexes[indexes[1]].color.a=0;
+        bloodVertexes[indexes[2]].color.a=0;
+        bloodVertexes[indexes[3]].color.a=0;
+
+        organVertexes[indexes[0]].color.a=255;
+        organVertexes[indexes[1]].color.a=255;
+        organVertexes[indexes[2]].color.a=255;
+        organVertexes[indexes[3]].color.a=255;
+
+    }else{
+
+        bloodVertexes[indexes[0]].color.a=0;
+        bloodVertexes[indexes[1]].color.a=0;
+        bloodVertexes[indexes[2]].color.a=0;
+        bloodVertexes[indexes[3]].color.a=0;
+
+        organVertexes[indexes[0]].color.a=0;
+        organVertexes[indexes[1]].color.a=0;
+        organVertexes[indexes[2]].color.a=0;
+        organVertexes[indexes[3]].color.a=0;
+
     }
 }
 
@@ -102,7 +147,21 @@ bool Organ::isOut(CellCoord position){
     return true;
 }
 
-CellCoord Organ::toCellCoord(const Vec2d position){
+CellCoord Organ::toCellCoord(const Vec2d& position) const{
     return vec2dToCellCoord(position, nbCells, nbCells, cellSize);
 }
 
+void Organ::updateCellsLayer(const CellCoord& pos, Kind kind){
+    if (kind == Kind::ECM){
+        cellsLayers[pos.x][pos.y]->setECMCell();
+    }
+    if (kind == Kind::Organ){
+        cellsLayers[pos.x][pos.y]->setOrganCell();
+    }
+    if (kind == Kind::Artery){
+        cellsLayers[pos.x][pos.y]->setBlood(ARTERY);
+    }
+    if (kind == Kind::Capillary){
+        cellsLayers[pos.x][pos.y]->setBlood(CAPILLARY);
+    }
+}

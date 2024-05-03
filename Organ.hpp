@@ -3,15 +3,19 @@
 #include "Drawable.hpp"
 #include "Updatable.hpp"
 #include "Utility/Utility.hpp"
-#include "Cellslayer.hpp"
+#include "CellsLayer.hpp"
 #include "Utility/Vertex.hpp"
 
 #pragma once
 
 
-
-class Organ: public Drawable /*public Updatable*/
+class Organ: public Drawable /*public Updatable*/ //how to solve this?
 {
+public:
+    //should only be usable by the organ
+
+    enum class Kind : short { ECM, Organ, Artery, Capillary };
+
 private:
     int nbCells;
     float cellSize;
@@ -30,13 +34,16 @@ protected:
      /*createOrgan(); //create organ fragment
       createBloodSystem(); //create blood network*/
 
+    virtual void updateCellsLayer(const CellCoord& pos, Kind kind);
+
 public:
-    Organ(bool generation = true);//maybe default value? @tom: yess written in enonce
+
+    Organ(bool generation = true);
     virtual ~Organ()=default;
     void update() ;
     void drawOn(sf::RenderTarget& target);
 
-    void updateRepresentation(); //helper generate
+    void updateRepresentation(bool changed = true); //helper generate
     virtual void updateRepresentationAt(const CellCoord&);
 
     int getWidth ();
@@ -45,12 +52,16 @@ public:
     //4.2
     bool isOut(CellCoord position);
 
-    CellCoord toCellCoord(const Vec2d position);
+    virtual CellCoord toCellCoord(const Vec2d& position) const;
 
     //wie machbar ohne code zu kopieren?
     void drawBloodCells();
 
     void drawOrganCells();
+
+    void drawRepresentation();
+
+
 
 };
 

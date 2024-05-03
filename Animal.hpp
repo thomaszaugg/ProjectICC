@@ -123,6 +123,9 @@ public:
     void drawOrgan(sf::RenderTarget& target);
     void initializeOrgan();
     void deleteOrgan();
+
+    //whats the idea of this setter?
+    void transplant(Organ*);
 };
 
 #endif // ANIMAL_HPP
