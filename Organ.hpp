@@ -9,9 +9,13 @@
 #pragma once
 
 
-
 class Organ: public Drawable /*public Updatable*/ //how to solve this?
 {
+public:
+    //should only be usable by the organ
+
+    enum class Kind : short { ECM, Organ, Artery, Capillary };
+
 private:
     int nbCells;
     float cellSize;
@@ -20,6 +24,9 @@ private:
 
     std::vector<sf::Vertex> bloodVertexes;
     std::vector<sf::Vertex> organVertexes;
+
+    //helper for the updateRepresentationAt function
+    void setVertexes(std::vector<std::size_t> indexes, int a_blood, int a_organ);
 
 protected:
     virtual void generate();
@@ -30,13 +37,17 @@ protected:
      /*createOrgan(); //create organ fragment
       createBloodSystem(); //create blood network*/
 
+    virtual void updateCellsLayer(const CellCoord& pos, Kind kind);
+
+
 public:
+
     Organ(bool generation = true);
     virtual ~Organ()=default;
     void update() ;
     void drawOn(sf::RenderTarget& target);
 
-    void updateRepresentation(); //helper generate
+    void updateRepresentation(bool changed = true); //helper generate
     virtual void updateRepresentationAt(const CellCoord&);
 
     int getWidth ();
@@ -45,12 +56,15 @@ public:
     //4.2
     bool isOut(CellCoord position);
 
-    CellCoord toCellCoord(const Vec2d position);
+    virtual CellCoord toCellCoord(const Vec2d& position) const;
 
-    //wie machbar ohne code zu kopieren?
-    void drawBloodCells();
 
-    void drawOrganCells();
+    void drawCells(std::string name_cell);
+
+
+    void drawRepresentation();
+
+
 
 };
 

@@ -2,17 +2,9 @@
 #define CELLSLAYER_HPP
 #include "Cell.hpp"
 #include "Utility/Utility.hpp"
-//#include "Organ.hpp"
 #include "ECMCell.hpp"
 #include "BloodCell.hpp"
 #include "OrganCell.hpp"
-
-//enum type for how many layers possible
-enum Layers{
-    SINGLE,
-    TWO,
-    THREE,
-};
 
 class Organ;
 
@@ -40,7 +32,7 @@ public:
     //kann nur assigned werden wenn vorher nullptr
     void setECMCell();
     void setOrganCell();
-    void setBloodCell(TypeBloodCell type); //achtung default value
+    void setBlood(TypeBloodCell type); //achtung default value
 
     //put Substance in ECM level -> ev. funktion in ECM aufrufen/ += operator
     void updateSubstance(Substance substance);
@@ -50,8 +42,11 @@ public:
     double getOrganCellQuantity(SubstanceId id);
     double getBloodCellQuantity(SubstanceId id);
 
-    void organCellTakeFormECM(SubstanceId id, double fraction); //with Substance::uptake On Gradient
+    void organCellTakeFromECM(SubstanceId id, double fraction); //with Substance::uptake On Gradient
 
+    bool isOut(const CellCoord& coord);
+
+    Cell* topCell();
 };
 
 #endif // CELLSLAYER_HPP

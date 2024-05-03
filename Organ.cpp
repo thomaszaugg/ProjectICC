@@ -3,6 +3,7 @@
 #include "CellsLayer.hpp"
 
 
+
 Organ::Organ(bool generation)
     { if(generation) generate(); //initialize attributes!!!
 }
@@ -14,8 +15,6 @@ void Organ::update(){
 void Organ::drawOn(sf::RenderTarget& target){
     sf::Sprite image(organTexture.getTexture()); // transform the image into a texture
     target.draw(image); // display the texture
-
-    //4.3 -> drawing this properly
 }
 
 void Organ::generate(){
@@ -37,38 +36,24 @@ int Organ::getHeight(){
 void Organ::reloadConfig(){
     nbCells=getAppConfig().simulation_organ_nbCells;
     cellSize=getWidth()/nbCells;
-    std::vector<std::vector<CellsLayer*>> cellsLayers(nbCells, std::vector<CellsLayer*>(nbCells));
+  std::vector<CellsLayer*> oneCellsLayers;
 
     for(int i(0); i < nbCells; ++i){
-        for(int j(0); j < nbCells; ++j){
+        oneCellsLayers.clear();
+         for(int j(0); j < nbCells; ++j){
             CellCoord coord(i,j);
             CellsLayer* ptr(new CellsLayer(coord, this));
-            cellsLayers[i][j]= ptr;
+            oneCellsLayers.push_back(ptr);
         }
+         cellsLayers.push_back(oneCellsLayers);
     }
 }
 
 void Organ::initOrganTexture (){
-    organTexture.create(nbCells*cellSize, nbCells*cellSize); //@tom: or put getHeight for reasons of simpicity
+    organTexture.create(nbCells*cellSize, nbCells*cellSize);
     bloodVertexes = generateVertexes(getAppConfig().simulation_organ["textures"], nbCells, cellSize);
     organVertexes = generateVertexes(getAppConfig().simulation_organ["textures"], nbCells, cellSize);
     //enonce: not more than four lines, this is only 3. What is missing?
-}
-
-void Organ::drawBloodCells(){
-    sf::RenderStates rs;
-    auto textures = getAppConfig().simulation_organ["textures"];
-    rs.texture = &getAppTexture(textures["blood cell"].toString()); // here for the texture linked to a blood cell
-    organTexture.draw(bloodVertexes.data(), bloodVertexes.size(), sf::Quads, rs);
-}
-
-//@tom: how to make it less redudant??
-
-void Organ::drawOrganCells(){
-    sf::RenderStates rs;
-    auto textures = getAppConfig().simulation_organ["textures"];
-    rs.texture = &getAppTexture(textures["organ cell"].toString()); // here for the texture linked to a blood cell
-    organTexture.draw(organVertexes.data(), organVertexes.size(), sf::Quads, rs);
 }
 
 /*
@@ -77,27 +62,51 @@ createBloodSystem(); //create blood network
 */
 
 void Organ::updateRepresentation(bool changed){
-  if(changed){
-    //zuerst noch alles checken, dann erst zeichnen!
+    if(changed){
+        for(int i(0); i < nbCells; ++i){        //iterates through the cells and updates them
+            for(int j(0); j < nbCells; ++j){
 
+                CellCoord coord(i,j);
 
-   //     for(int i(0); i < nbCells; ++i){
-    //      for(int j(0); j < nbCells; ++j){
-    //updateReèresentationAt(coord);}
+                updateRepresentationAt(coord);
+            }
+        }
+    }
+    drawRepresentation();
+}
 
-        organTexture.clear(sf::Color(223,196,176));}
-  //do we want to concise that
-    drawBloodCells();
-    drawOrganCells();
+void Organ::drawRepresentation(){
+    organTexture.clear(sf::Color(223,196,176));
+    drawCells("blood cell");
+    drawCells("organ cell");
     organTexture.display();
 }
 
-void Organ::updateRepresentationAt(const CellCoord&){
-    for(int i(0); i < nbCells; ++i){
-        for(int j(0); j < nbCells; ++j){
-            Cell* drawableCell = cellsLayers[i][j]->topCell();
-            //make the cell in the corresponding vector drawable and in the other transparent
-        }
+//@tom: how to make it less redudant??
+void Organ::drawCells(std::string name_cell){
+    sf::RenderStates rs;
+    auto textures = getAppConfig().simulation_organ["textures"];
+    rs.texture = &getAppTexture(textures[name_cell].toString()); // here for the texture linked to a blood cell
+    organTexture.draw(bloodVertexes.data(), bloodVertexes.size(), sf::Quads, rs);
+}
+
+void Organ::setVertexes(std::vector<std::size_t> indexes, int a_blood, int a_organ){
+    for( auto i : indexes){
+        bloodVertexes[indexes[i]].color.a= a_blood;
+        organVertexes[indexes[i]].color.a=a_organ;
+    }
+}
+
+void Organ::updateRepresentationAt(const CellCoord& coord){
+    int i = coord.x;
+    int j = coord.y;
+    std::vector<std::size_t> indexes = indexesForCellVertexes(i, j, nbCells);
+    if (cellsLayers[i][j]->hasBloodCell()){
+              setVertexes(indexes, 255, 0);
+    }else if (cellsLayers[i][j]->hasOrganCell() ){
+        setVertexes(indexes, 0, 255);
+    }else{
+       setVertexes(indexes, 0, 0);
     }
 }
 
@@ -112,7 +121,21 @@ bool Organ::isOut(CellCoord position){
     return true;
 }
 
-CellCoord Organ::toCellCoord(const Vec2d position){
+CellCoord Organ::toCellCoord(const Vec2d& position) const{
     return vec2dToCellCoord(position, nbCells, nbCells, cellSize);
 }
 
+void Organ::updateCellsLayer(const CellCoord& pos, Kind kind){
+    if (kind == Kind::ECM){
+        cellsLayers[pos.x][pos.y]->setECMCell();
+    }
+    if (kind == Kind::Organ){
+        cellsLayers[pos.x][pos.y]->setOrganCell();
+    }
+    if (kind == Kind::Artery){
+        cellsLayers[pos.x][pos.y]->setBlood(ARTERY);
+    }
+    if (kind == Kind::Capillary){
+        cellsLayers[pos.x][pos.y]->setBlood(CAPILLARY);
+    }
+}

@@ -222,3 +222,10 @@ void Animal::deleteOrgan(){
     delete organ;
     organ=nullptr;
 }
+
+
+void Animal::transplant(Organ* o){
+    if(organ == nullptr){
+        organ = o;
+    }
+}
