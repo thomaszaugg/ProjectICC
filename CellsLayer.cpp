@@ -4,18 +4,14 @@
 
 
 CellsLayer::CellsLayer(CellCoord position, Organ* organ)
-    : position(position), organ(organ), ecm(new ECMCell(this)), organCell(nullptr), bloodCell(nullptr){} //construction von ECMCell ????????
-
+    : position(position), organ(organ), ecm(new ECMCell(this)), organCell(nullptr), bloodCell(nullptr){}
 
 
 CellsLayer::~CellsLayer(){
-    //organ = nullptr;
     delete ecm;
     delete organCell;
     delete bloodCell;
-   // ecm = nullptr;
-   // organCell = nullptr;
-    //bloodCell = nullptr;
+
 }
 
 bool CellsLayer::hasECMCell(){
@@ -33,19 +29,19 @@ bool CellsLayer::hasBloodCell(){
 void CellsLayer::setECMCell(){
     if (ecm==nullptr){
             ecm = new ECMCell(this);
-
-}}
+           }}
 
 void CellsLayer::setOrganCell(){
-    //if (organCell==nullptr){
-    delete organCell;
-        organCell = new OrganCell(this);
-    }
+    if (organCell==nullptr){
+        organCell = (new OrganCell(this));
+        organ->updateRepresentationAt(position);
+    }}
 
 
 void CellsLayer::setBlood(TypeBloodCell type){
     if (bloodCell==nullptr){
         bloodCell = new BloodCell(this, type);
+        organ->updateRepresentationAt(position);
     }
 }
 
