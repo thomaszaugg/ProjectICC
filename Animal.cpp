@@ -225,7 +225,6 @@ void Animal::deleteOrgan(){
 
 
 void Animal::transplant(Organ* o){
-    if(organ == nullptr){
+    delete organ;
         organ = o;
-    }
 }

@@ -32,15 +32,16 @@ bool CellsLayer::hasBloodCell(){
 
 void CellsLayer::setECMCell(){
     if (ecm==nullptr){
-        ecm = new ECMCell(this);
-    }
-}
+            ecm = new ECMCell(this);
+
+}}
 
 void CellsLayer::setOrganCell(){
-    if (organCell==nullptr){
+    //if (organCell==nullptr){
+    delete organCell;
         organCell = new OrganCell(this);
     }
-}
+
 
 void CellsLayer::setBlood(TypeBloodCell type){
     if (bloodCell==nullptr){

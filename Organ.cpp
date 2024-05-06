@@ -91,9 +91,9 @@ void Organ::drawCells(std::string name_cell){
 }
 
 void Organ::setVertexes(std::vector<std::size_t> indexes, int a_blood, int a_organ){
-    for( auto i : indexes){
-        bloodVertexes[indexes[i]].color.a= a_blood;
-        organVertexes[indexes[i]].color.a=a_organ;
+    for( auto index : indexes){
+        bloodVertexes[index].color.a= a_blood;
+        organVertexes[index].color.a=a_organ;
     }
 }
 
@@ -126,16 +126,17 @@ CellCoord Organ::toCellCoord(const Vec2d& position) const{
 }
 
 void Organ::updateCellsLayer(const CellCoord& pos, Kind kind){
-    if (kind == Kind::ECM){
+    switch(kind){
+    case Kind::ECM:{
         cellsLayers[pos.x][pos.y]->setECMCell();
     }
-    if (kind == Kind::Organ){
+    case Kind::Organ:{
         cellsLayers[pos.x][pos.y]->setOrganCell();
     }
-    if (kind == Kind::Artery){
+   case Kind::Artery:{
         cellsLayers[pos.x][pos.y]->setBlood(ARTERY);
     }
-    if (kind == Kind::Capillary){
+    case Kind::Capillary:{
         cellsLayers[pos.x][pos.y]->setBlood(CAPILLARY);
-    }
+    }}
 }
