@@ -6,6 +6,7 @@
 #include "BloodCell.hpp"
 #include "OrganCell.hpp"
 
+
 class Organ;
 
 class CellsLayer
@@ -47,6 +48,9 @@ public:
     bool isOut(const CellCoord& coord);
 
     Cell* topCell();
+
+    //5.1
+    void updateCells();
 };
 
 #endif // CELLSLAYER_HPP

@@ -23,3 +23,4 @@ void Cell::uptakeSubstance(double fraction, Cell* cellType,  SubstanceId id){
     Substance& receiver = *(cellType->substance);
     substance->uptakeOnGradient(fraction, receiver, id);
 }
+

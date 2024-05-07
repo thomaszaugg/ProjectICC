@@ -125,6 +125,7 @@ public:
     void deleteOrgan();
 
     //whats the idea of this setter?
+    //transplants an organ
     void transplant(Organ*);
 };
 
