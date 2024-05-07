@@ -9,7 +9,13 @@ Organ::Organ(bool generation)
     { if(generation) generate(); //initialize attributes!!!
 }
 
+//5.1
 void Organ::update(){
+    for(int i(0); i < nbCells; ++i){
+        for(int j(0); j < nbCells; ++j){
+      //      cellsLayers[i][j]->updateCells(); //function in CellsLayer does the updating of the cells, since there we habe access to the cells
+        }
+    }
     updateRepresentation();
 }
 
@@ -21,9 +27,9 @@ void Organ::drawOn(sf::RenderTarget& target){
 void Organ::generate(){
     reloadConfig();
     initOrganTexture (); //initalize organTexture & initalize vertexes
-    //createOrgan(); //create organ fragment
+    createOrgan(); //create organ fragment
     createBloodSystem(); //create blood network
-    updateRepresentation(true); //is that the right value?
+    updateRepresentation(true);
 }
 
 int Organ::getWidth () const{
@@ -37,7 +43,7 @@ int Organ::getHeight() const{
 void Organ::reloadConfig(){
     nbCells=getAppConfig().simulation_organ_nbCells;
     cellSize=getWidth()/nbCells;
-  std::vector<CellsLayer*> oneCellsLayers;
+    std::vector<CellsLayer*> oneCellsLayers;
 
     for(int i(0); i < nbCells; ++i){
         oneCellsLayers.clear();
@@ -46,7 +52,7 @@ void Organ::reloadConfig(){
             CellsLayer* ptr(new CellsLayer(coord, this));
             oneCellsLayers.push_back(ptr);
         }
-         cellsLayers.push_back(oneCellsLayers);
+    cellsLayers.push_back(oneCellsLayers);
     }
 }
 
@@ -58,8 +64,6 @@ void Organ::initOrganTexture (){
 }
 
 
-//void createOrgan(); //create organ fragment
-
 void Organ::createBloodSystem(bool generateCapillaries){
     int leftColumn(0);
     int rightColumn(0);
@@ -67,11 +71,11 @@ void Organ::createBloodSystem(bool generateCapillaries){
     this->generateArtery(leftColumn, rightColumn);
 
     --leftColumn;   //transform the value from where the artery begins
-    ++rightColumn;  //to where the capillary starts
+                    //to where the capillary starts
 
     if(generateCapillaries) this->generateCapillary(leftColumn, rightColumn);
 
-  }
+}
 
 void Organ::generateArtery(int& leftColumn, int& rightColumn){
     int SIZE_ARTERY=1;
@@ -80,20 +84,19 @@ void Organ::generateArtery(int& leftColumn, int& rightColumn){
     leftColumn=((nbCells-SIZE_ARTERY)/2);
     rightColumn=leftColumn+SIZE_ARTERY;
 
-       for(int i(leftColumn); i < rightColumn; ++i){
-               CellCoord pos(i,0);
-           for(int j(0); j < nbCells ; ++j){
-               pos.y=j;
-               updateCellsLayer(pos, Kind::Artery);
-       }
-
-   }}
+    for(int i(leftColumn); i < rightColumn; ++i){
+        CellCoord pos(i,0);
+        for(int j(0); j < nbCells ; ++j){
+            pos.y=j;
+            updateCellsLayer(pos, Kind::Artery);
+        }
+    }}
 
 void Organ::generateCapillary(int const& leftColumn, int const& rightColumn){
 
     generateOneSideCapillary({-1,0},  leftColumn);
     generateOneSideCapillary({1,0},  rightColumn);
-  }
+}
 
 void Organ::generateOneSideCapillary(CellCoord const& direction, int const& column){
     std::vector<CellCoord> starting_points(generateStartingPositions(column));
@@ -102,31 +105,34 @@ void Organ::generateOneSideCapillary(CellCoord const& direction, int const& colu
     }
 }
 std::vector<CellCoord> const Organ::generateStartingPositions(int const& column){
-        std::vector<CellCoord> starting_points;
+    std::vector<CellCoord> starting_points;
 
-        int minDistance=getAppConfig().blood_capillary_min_dist;
-        int START_CREATION_FROM(getAppConfig().blood_creation_start);
-        unsigned int maxNB_CAPILLARY=(nbCells-START_CREATION_FROM)/3;
-        int random_nb(0);
+    int minDistance=getAppConfig().blood_capillary_min_dist;
+    int START_CREATION_FROM(getAppConfig().blood_creation_start);
+    unsigned int maxNB_CAPILLARY=(nbCells-START_CREATION_FROM)/3;
+    int random_nb(0);
+    int lastValue(START_CREATION_FROM); //initialized as big enough value
 
-          for(int i(START_CREATION_FROM); i < nbCells; ++i){
+    for(int i(START_CREATION_FROM); i < nbCells; ++i){
 
-             random_nb= uniform(1,3);           //doesn't seem to work
-             if(random_nb==2 and (starting_points.empty() or (minDistance >= (i - starting_points.back().y)))){  //only creates new starting point with 1/3 probability
-                     starting_points.push_back({column, i});                     // and after cecking that the last starting point is far enough
-             }
+        random_nb= uniform(1,3);
+          int variable  (i - lastValue);              //doesn't seem to work
+        if(random_nb==2 and (minDistance <=variable)){  //only creates new starting point with 1/3 probability
+            starting_points.push_back({column, i});                     // and after cecking that the last starting point is far enough
+            lastValue=i;
+        }
         if(starting_points.size() == maxNB_CAPILLARY) return starting_points;
 
-}
+    }
 
-        return starting_points;
+    return starting_points;
 }
 
 
 
 void Organ::checkStep(bool& direction_step_possible, bool& empty_neighboor_found, CellCoord  current_position, CellCoord  dir){
 
-    direction_step_possible= !(isOut(dir+current_position) and cellsLayers[current_position.x+dir.x][current_position.y+dir.y]->hasOrganCell());
+    direction_step_possible= !(isOut(dir+current_position) and cellsLayers[current_position.x+dir.x][current_position.y+dir.y]->hasBloodCell());
     empty_neighboor_found = direction_step_possible;
 }
 bool Organ::generateCapillaryOneStep(CellCoord& current_position , const CellCoord& dir, int& nbCells, const int& maxLength){
@@ -140,118 +146,130 @@ bool Organ::generateCapillaryOneStep(CellCoord& current_position , const CellCoo
     int random_nb(0);
 
     do{                                     //following algorithm chooses a direction to next grow into
-               random_nb=uniform(1,6);   //first, it draws a int out of 6, the probility to go up, down and straight is 1/6,1/6, 4/6 respectively
-                                            //then, it checks whether this step is possible using the stepCheck function:
-                                                //if yes, empty_neighboor_found indicates to stop the while loop
-                                                //if no, the corresponding direction_step_variable marks the direction as not possible
-                                                //if all the directions have been marked as not possible, the function return false
-                if(random_nb==1 and up_step_possible){            //up
-                    direction_step={-1,0};
-                    checkStep(up_step_possible, empty_neighboor_found, current_position, direction_step);
-                }else if (random_nb==2 and down_step_possible){   //down
-                    direction_step={1,0};
-                    checkStep(down_step_possible, empty_neighboor_found, current_position, direction_step);
-                }else if (straight_step_possible){                //straight
-                    direction_step=dir;
-                    checkStep(straight_step_possible, empty_neighboor_found, current_position, direction_step);
-                } else if (!(up_step_possible and down_step_possible and straight_step_possible)){                                          //no step possible
-                    return false;
-                }
+        random_nb=uniform(1,6);   //first, it draws a int out of 6, the probility to go up, down and straight is 1/6,1/6, 4/6 respectively
+            //then, it checks whether this step is possible using the stepCheck function:
+            //if yes, empty_neighboor_found indicates to stop the while loop
+            //if no, the corresponding direction_step_variable marks the direction as not possible
+            //if all the directions have been marked as not possible, the function return false
+        if(random_nb==1 and up_step_possible){            //up
+            direction_step={0,-1};
+            checkStep(up_step_possible, empty_neighboor_found, current_position, direction_step);
+        }else if (random_nb==2 and down_step_possible){   //down
+            direction_step={0,1};
+            checkStep(down_step_possible, empty_neighboor_found, current_position, direction_step);
+        }else if (straight_step_possible){                //straight
+            direction_step=dir;
+            checkStep(straight_step_possible, empty_neighboor_found, current_position, direction_step);
+        } else if (!(up_step_possible and down_step_possible and straight_step_possible)){                                          //no step possible
+            return false;
+        }
 
-          }while (!empty_neighboor_found);
+    }while (!empty_neighboor_found);
 
-          // here, a step is possible
-              current_position+=direction_step;
-              updateCellsLayer(current_position, Kind::Capillary);
-              ++nbCells;
-              return true;
-          }
+    // here, a step is possible
+    current_position+=direction_step;
+    updateCellsLayer(current_position, Kind::Capillary);
+    ++nbCells;
+    return true;
+}
 
-      void Organ::generateCapillaryFromPosition(CellCoord &current_position , CellCoord dir){
-         //generate the first cell
-          updateCellsLayer(current_position, Kind::Capillary);
-          int nbCells(1);
-          int LENGTH_CAPILLARY = ((Organ::nbCells/2)-4);
+void Organ::generateCapillaryFromPosition(CellCoord &current_position , CellCoord dir){
+    //generate the first cell
+    updateCellsLayer(current_position, Kind::Capillary);
+    int nbCells(1);
+    int LENGTH_CAPILLARY = ((Organ::nbCells/2)-4);
 
-          //genereate the rest
-          while(generateCapillaryOneStep(current_position,dir,nbCells, LENGTH_CAPILLARY));
-      }
+    //genereate the rest
+    while(generateCapillaryOneStep(current_position,dir,nbCells, LENGTH_CAPILLARY));
+}
 
-
-      void Organ::updateRepresentation(bool changed){
-          if(changed){                                //only if the organ changed
-              for(int i(0); i < nbCells; ++i){        //iterates through the cells and updates them
-                  for(int j(0); j < nbCells; ++j){
-                      CellCoord coord(i,j);
-                      updateRepresentationAt(coord);
-                  }
-              }
-          }
-          drawRepresentation();
-      }
-
-      void Organ::drawRepresentation(){
-          organTexture.clear(sf::Color(223,196,176));
-          drawCells("blood cell");
-          drawCells("organ cell");
-          organTexture.display();
-      }
+//5.1
+void Organ::createOrgan(){
+    for(int i(0); i < nbCells; ++i){
+        for(int j(0); j < nbCells; ++j){
+            if (pow(i,2) + pow((j-nbCells),2) < pow((nbCells+1),2) && pow((i-nbCells),2) + pow(j,2) < pow((nbCells+1),2)){ //condition for being in organ
+                CellCoord position(i,j);
+                updateCellsLayer(position, Kind::Organ); //set the organCell with this function
+            }
+        }
+    }
+}
 
 
-      void Organ::drawCells(std::string name_cell){
-          sf::RenderStates rs;
-          auto textures = getAppConfig().simulation_organ["textures"];
-          rs.texture = &getAppTexture(textures[name_cell].toString()); // here for the texture linked to a blood cell
-         if(name_cell=="blood cell"){
-              organTexture.draw(bloodVertexes.data(), bloodVertexes.size(), sf::Quads, rs);
-         }else if(name_cell=="organ cell"){
-              organTexture.draw(organVertexes.data(), organVertexes.size(), sf::Quads, rs);
+void Organ::updateRepresentation(bool changed){
+    if(changed){                                //only if the organ changed
+        for(int i(0); i < nbCells; ++i){        //iterates through the cells and updates them
+            for(int j(0); j < nbCells; ++j){
+                CellCoord coord(i,j);
+                updateRepresentationAt(coord);
+            }
+        }
+    }
+    drawRepresentation();
+}
 
-         }}
+void Organ::drawRepresentation(){
+    organTexture.clear(sf::Color(223,196,176));
+    drawCells("blood cell");
+    drawCells("organ cell");
+    organTexture.display();
+}
 
-      void Organ::setVertexes1(const std::vector<std::size_t>& indexes, int a_blood, int a_organ){
-          for( auto index : indexes){
-              bloodVertexes[index].color.a= a_blood;
-              organVertexes[index].color.a=a_organ;
-          }
-      }
 
-      void Organ::updateRepresentationAt(const CellCoord& coord){
-          int i = coord.x;
-          int j = coord.y;
-          std::vector<std::size_t> indexes = indexesForCellVertexes(i, j, nbCells);
-          if (cellsLayers[i][j]->hasBloodCell()){
-                    setVertexes1(indexes, 255, 0);
-          }else if (cellsLayers[i][j]->hasOrganCell() ){
-              this->setVertexes1(indexes, 0, 255);
-          }else{
-             setVertexes1(indexes, 0, 0);
-          }
-      }
+void Organ::drawCells(std::string name_cell){
+    sf::RenderStates rs;
+    auto textures = getAppConfig().simulation_organ["textures"];
+    rs.texture = &getAppTexture(textures[name_cell].toString()); // here for the texture linked to a blood cell
+   if(name_cell=="blood cell"){
+        organTexture.draw(bloodVertexes.data(), bloodVertexes.size(), sf::Quads, rs);
+   }else if(name_cell=="organ cell"){
+        organTexture.draw(organVertexes.data(), organVertexes.size(), sf::Quads, rs);
 
-      bool Organ::isOut(CellCoord position){
-          return position.x<0 or position.x>=nbCells or
-                 position.y<0 or position.y>=nbCells;
-      }
+   }}
 
-      CellCoord Organ::toCellCoord(const Vec2d& position) const{
+void Organ::setVertexes1(const std::vector<std::size_t>& indexes, int a_blood, int a_organ){
+    for( auto index : indexes){
+        bloodVertexes[index].color.a= a_blood;
+        organVertexes[index].color.a=a_organ;
+    }
+}
 
-          return  vec2dToCellCoord(position, getWidth(), getHeight(), cellSize);
-      }
+void Organ::updateRepresentationAt(const CellCoord& coord){
+    int i = coord.x;
+    int j = coord.y;
+    //cellsLayers[i][j]->updateCells();
+    std::vector<std::size_t> indexes = indexesForCellVertexes(i, j, nbCells);
+    if (cellsLayers[i][j]->hasBloodCell()){
+        setVertexes1(indexes, 255, 0);
+    }else if (cellsLayers[i][j]->hasOrganCell()){
+        setVertexes1(indexes, 0, 255);
+    }else{
+        setVertexes1(indexes, 0, 0);
+    }
+}
 
-      void Organ::updateCellsLayer(const CellCoord& pos, Kind kind){
-          switch(kind){
-          case Kind::ECM:
-              cellsLayers[pos.x][pos.y]->setECMCell();
-              break;
-          case Kind::Organ:
-              cellsLayers[pos.x][pos.y]->setOrganCell();
-              break;
-          case Kind::Artery:
-              cellsLayers[pos.x][pos.y]->setBlood(ARTERY);
-              break;
-          case Kind::Capillary:
-              cellsLayers[pos.x][pos.y]->setBlood(CAPILLARY);
-              break;
+bool Organ::isOut(CellCoord position){
+    return position.x<0 or position.x>=nbCells
+        or position.y<0 or position.y>=nbCells;
+}
 
-      }}
+CellCoord Organ::toCellCoord(const Vec2d& position) const{
+    return  vec2dToCellCoord(position, getWidth(), getHeight(), cellSize);
+}
+
+void Organ::updateCellsLayer(const CellCoord& pos, Kind kind){
+    switch(kind){
+    case Kind::ECM:
+        cellsLayers[pos.x][pos.y]->setECMCell();
+        break;
+    case Kind::Organ:
+        cellsLayers[pos.x][pos.y]->setOrganCell();
+        break;
+    case Kind::Artery:
+        cellsLayers[pos.x][pos.y]->setBlood(ARTERY);
+        break;
+    case Kind::Capillary:
+        cellsLayers[pos.x][pos.y]->setBlood(CAPILLARY);
+        break;
+}}
+
