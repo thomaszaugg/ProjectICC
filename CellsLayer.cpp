@@ -1,6 +1,6 @@
 #include "CellsLayer.hpp"
 #include "Organ.hpp"
-#include "Application.hpp"
+
 
 
 CellsLayer::CellsLayer(CellCoord position, Organ* organ)
@@ -8,10 +8,12 @@ CellsLayer::CellsLayer(CellCoord position, Organ* organ)
 
 
 CellsLayer::~CellsLayer(){
-    delete ecm;
-    delete organCell;
-    delete bloodCell;
-
+    if(ecm!=nullptr)delete ecm;
+    ecm=nullptr;
+    if(organCell!=nullptr)delete organCell;
+    organCell=nullptr;
+    if(bloodCell!=nullptr)delete bloodCell;
+    bloodCell=nullptr;
 }
 
 bool CellsLayer::hasECMCell(){
@@ -55,8 +57,8 @@ double CellsLayer::getECMQuantity(SubstanceId id){
     if (hasECMCell()){
         return ecm->getQuantitiy(id);
     } else {return 0;}
-}// is it okay with return 0 ? or throw error ?
-//@lisa I think that is something to ask the TA, either way, comment it in the hpp file
+}// return 0 when there is no quantiy
+
 
 double CellsLayer::getOrganCellQuantity(SubstanceId id){
     if (hasOrganCell()){
@@ -86,20 +88,4 @@ Cell* CellsLayer::topCell(){
     }else if (hasOrganCell()){
         return organCell;
     }else {return ecm;}
-}
-
-//5.1
-void CellsLayer::updateCells(){
-    ecm->update(sf::seconds(getAppConfig().simulation_fixed_step));
-    if (hasBloodCell()){
-        bloodCell->update(sf::seconds(getAppConfig().simulation_fixed_step));
-    }
-    if (hasOrganCell()){
-        if(organCell->isDead()){
-            delete organCell;
-            organCell = nullptr;
-        } else {
-            organCell->update(sf::seconds(getAppConfig().simulation_fixed_step));
-        }
-    }
 }

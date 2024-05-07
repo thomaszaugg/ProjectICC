@@ -11,7 +11,7 @@ Intervals intervals = { -180, -100, -55, -25, -10, 0, 10, 25, 55, 100, 180};
 std::vector<double> probabilities = {0.0000,0.0000,0.0005,0.0010,0.0050,0.9870,0.0050,0.0010,0.0005,0.0000,0.0000};
 
 Animal::Animal(const Vec2d& position, double energy)
-    : Entity(position, energy), speed(0), organ(new Organ){
+    : Entity(position, energy), speed(0), organ(new Organ()){ //does every animal have an organ
     }
 
 Animal::~Animal() {
@@ -215,9 +215,7 @@ void Animal::drawOrgan(sf::RenderTarget& target){
 }
 
 void Animal::initializeOrgan(){
-    if(organ == nullptr){
-        organ=(new Organ(true));
-    }
+    organ=(new Organ(true));
 }
 
 void Animal::deleteOrgan(){

@@ -12,8 +12,6 @@ private:
 
 public:
     BloodCell(CellsLayer* cellslayer, TypeBloodCell=ARTERY);
-
-    virtual void update(sf::Time dt) override;
 };
 
 #endif // BLOODCELL_HPP
