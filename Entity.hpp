@@ -20,6 +20,7 @@ private:
     double energy;
     Cage* cage;
 
+
 public:
     /*!
     * @brief Constuctor
@@ -27,7 +28,7 @@ public:
     Entity(const Vec2d& position, double energy);
 
     /*!
-    * @brief default destructor
+    * @brief  destructor
     */
     virtual ~Entity()=default;
 
@@ -43,6 +44,8 @@ public:
     virtual sf::Time getLongevity();
     virtual double getSize() const =0;
     virtual sf::Texture& getTexture()=0;
+    //4.1
+
 
 
     /*!

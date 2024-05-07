@@ -13,6 +13,8 @@ Entity::Entity(const Vec2d& position, double energy)
     orientation = uniform(0.0, TAU);
 }
 
+
+
 Vec2d Entity::getCenter() const {return position;}
 sf::Time Entity::getAge(){return age;}
 Angle Entity::getOrientation(){return orientation;}
@@ -47,6 +49,7 @@ void Entity::drawOn(sf::RenderTarget& target){
                                          getTexture(), getOrientation()/ DEG_TO_RAD); // conversion degree to radians becauce SFML uses these units
     target.draw(entitySprite);
    if(isDebugOn()) drawDebug(target);
+
 }
 
 bool Entity::isAnimal(){
@@ -113,10 +116,13 @@ void Entity::setEnergy(double e){
 void Entity::update(sf::Time dt){
     age+=dt;
 }
+
 bool Entity::isDead(){
     return (age>= this->getLongevity() or getEnergy()<=0);
-     }
+}
 
 double Entity::provideEnergy(Quantity ){
     return 0;
 }
+
+
