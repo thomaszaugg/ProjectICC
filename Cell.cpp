@@ -7,7 +7,7 @@ Cell::Cell(CellsLayer* cellsLayer)
 
 Cell::~Cell(){
     delete substance;   //free up allocated memory
-    // cellsLayer = nullptr; not needed
+    std::cout << "I die";
 }
 
 
