@@ -7,9 +7,8 @@ Cell::Cell(CellsLayer* cellsLayer)
 
 Cell::~Cell(){
     delete substance;   //free up allocated memory
-    std::cout << "I die";
+    //std::cout << "I die";
 }
-
 
 void Cell::addSubstance(Substance newSubstance){
     *substance += newSubstance;

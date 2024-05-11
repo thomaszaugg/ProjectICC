@@ -30,15 +30,16 @@ bool CellsLayer::hasBloodCell(){
 
 void CellsLayer::setECMCell(){
     if (ecm==nullptr){
-            ecm = new ECMCell(this);
-           }}
+        ecm = new ECMCell(this);
+    }
+}
 
 void CellsLayer::setOrganCell(){
     if (organCell==nullptr){
         organCell = (new OrganCell(this));
         organ->updateRepresentationAt(position);
-    }}
-
+    }
+}
 
 void CellsLayer::setBlood(TypeBloodCell type){
     if (bloodCell==nullptr){
@@ -58,7 +59,6 @@ double CellsLayer::getECMQuantity(SubstanceId id){
         return ecm->getQuantitiy(id);
     } else {return 0;}
 }// return 0 when there is no quantiy
-
 
 double CellsLayer::getOrganCellQuantity(SubstanceId id){
     if (hasOrganCell()){

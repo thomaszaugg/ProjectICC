@@ -32,18 +32,18 @@ public:
     /*!
     * @brief return true if the entity can consume the entity passed as a parameter
     */
-bool canConsume(Entity const* entity) const override;
+    bool canConsume(Entity const* entity) const override;
 
-/*!
-* @brief returns FOOD_PRIORITY
-*/
-DrawingPriority getDepth()override;
+    /*!
+    * @brief returns FOOD_PRIORITY
+    */
+    DrawingPriority getDepth()override;
 
-/*!
-* @brief Helpers for the canConsume function
-*/
-bool consumableBy(Pellets const*) const override;
-bool consumableBy(Hamster const*) const override;
+    /*!
+    * @brief Helpers for the canConsume function
+    */
+    bool consumableBy(Pellets const*) const override;
+    bool consumableBy(Hamster const*) const override;
 };
 
 #endif // PELLETS_HPP

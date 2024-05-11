@@ -13,7 +13,7 @@ Organ::Organ(bool generation)
 void Organ::update(){
     for(int i(0); i < nbCells; ++i){
         for(int j(0); j < nbCells; ++j){
-      //      cellsLayers[i][j]->updateCells(); //function in CellsLayer does the updating of the cells, since there we habe access to the cells
+      //      cellsLayers[i][j]->updateCells(); //function in CellsLayer does the updating of the cells, since there we have access to the cells
         }
     }
     updateRepresentation();
@@ -28,7 +28,7 @@ void Organ::generate(){
     reloadConfig();
     initOrganTexture (); //initalize organTexture & initalize vertexes
     createOrgan(); //create organ fragment
-    createBloodSystem(); //create blood network
+    //createBloodSystem(); //create blood network
     updateRepresentation(true);
 }
 
@@ -47,7 +47,7 @@ void Organ::reloadConfig(){
 
     for(int i(0); i < nbCells; ++i){
         oneCellsLayers.clear();
-         for(int j(0); j < nbCells; ++j){
+        for(int j(0); j < nbCells; ++j){
             CellCoord coord(i,j);
             CellsLayer* ptr(new CellsLayer(coord, this));
             oneCellsLayers.push_back(ptr);
@@ -60,10 +60,9 @@ void Organ::initOrganTexture (){
     organTexture.create(getWidth(), getHeight());
     bloodVertexes = generateVertexes(getAppConfig().simulation_organ["textures"], nbCells, cellSize);
     organVertexes = generateVertexes(getAppConfig().simulation_organ["textures"], nbCells, cellSize);
-
 }
 
-
+/*
 void Organ::createBloodSystem(bool generateCapillaries){
     int leftColumn(0);
     int rightColumn(0);
@@ -116,7 +115,7 @@ std::vector<CellCoord> const Organ::generateStartingPositions(int const& column)
     for(int i(START_CREATION_FROM); i < nbCells; ++i){
 
         random_nb= uniform(1,3);
-          int variable  (i - lastValue);              //doesn't seem to work
+        int variable  (i - lastValue);              //doesn't seem to work
         if(random_nb==2 and (minDistance <=variable)){  //only creates new starting point with 1/3 probability
             starting_points.push_back({column, i});                     // and after cecking that the last starting point is far enough
             lastValue=i;
@@ -129,13 +128,13 @@ std::vector<CellCoord> const Organ::generateStartingPositions(int const& column)
 }
 
 
+void Organ::checkStep(bool& direction_step_possible, bool& empty_neighboor_found, CellCoord current_position, CellCoord dir){
 
-void Organ::checkStep(bool& direction_step_possible, bool& empty_neighboor_found, CellCoord  current_position, CellCoord  dir){
-
-    direction_step_possible= !(isOut(dir+current_position) and cellsLayers[current_position.x+dir.x][current_position.y+dir.y]->hasBloodCell());
+    direction_step_possible = !(isOut(dir+current_position) and cellsLayers[current_position.x+dir.x][current_position.y+dir.y]->hasBloodCell());
     empty_neighboor_found = direction_step_possible;
 }
-bool Organ::generateCapillaryOneStep(CellCoord& current_position , const CellCoord& dir, int& nbCells, const int& maxLength){
+
+bool Organ::generateCapillaryOneStep(CellCoord& current_position, const CellCoord& dir, int& nbCells, const int& maxLength){
     if(nbCells==maxLength) return false;    //stops process if maxLength reached
 
     CellCoord direction_step=dir;
@@ -181,7 +180,7 @@ void Organ::generateCapillaryFromPosition(CellCoord &current_position , CellCoor
 
     //genereate the rest
     while(generateCapillaryOneStep(current_position,dir,nbCells, LENGTH_CAPILLARY));
-}
+}*/
 
 //5.1
 void Organ::createOrgan(){
@@ -220,12 +219,12 @@ void Organ::drawCells(std::string name_cell){
     sf::RenderStates rs;
     auto textures = getAppConfig().simulation_organ["textures"];
     rs.texture = &getAppTexture(textures[name_cell].toString()); // here for the texture linked to a blood cell
-   if(name_cell=="blood cell"){
+    if(name_cell=="blood cell"){
         organTexture.draw(bloodVertexes.data(), bloodVertexes.size(), sf::Quads, rs);
-   }else if(name_cell=="organ cell"){
+    }else if(name_cell=="organ cell"){
         organTexture.draw(organVertexes.data(), organVertexes.size(), sf::Quads, rs);
-
-   }}
+    }
+}
 
 void Organ::setVertexes1(const std::vector<std::size_t>& indexes, int a_blood, int a_organ){
     for( auto index : indexes){

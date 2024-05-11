@@ -21,7 +21,7 @@ sf::Texture& Hamster::getTexture(){
 
 double Hamster::getMaxSpeed(){
     return getAppConfig().hamster_max_speed;
-   }
+}
 
 double Hamster::getFatigueEnergy(){
     return 300;
