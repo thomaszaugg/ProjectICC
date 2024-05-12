@@ -1,6 +1,6 @@
 #include "CellsLayer.hpp"
 #include "Organ.hpp"
-
+#include "Application.hpp"
 
 
 CellsLayer::CellsLayer(CellCoord position, Organ* organ)
@@ -89,3 +89,20 @@ Cell* CellsLayer::topCell(){
         return organCell;
     }else {return ecm;}
 }
+
+//5.1
+void CellsLayer::updateCells(){
+    ecm->update(sf::seconds(getAppConfig().simulation_fixed_step));
+    if (hasBloodCell()){
+        bloodCell->update(sf::seconds(getAppConfig().simulation_fixed_step));
+    }
+    if (hasOrganCell()){
+        if(organCell->isDead()){
+            delete organCell;
+            organCell = nullptr;
+        } else {
+            organCell->update(sf::seconds(getAppConfig().simulation_fixed_step));
+        }
+    }
+}
+

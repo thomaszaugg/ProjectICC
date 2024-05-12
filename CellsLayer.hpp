@@ -47,6 +47,8 @@ public:
     bool isOut(const CellCoord& coord);
 
     Cell* topCell();
+
+    void updateCells();
 };
 
 #endif // CELLSLAYER_HPP
