@@ -53,11 +53,11 @@ void Organ::createOrgan(){
 
 //5.1
 void Organ::update(){
-    /*for(int i(0); i < nbCells; ++i){
+    for(int i(0); i < nbCells; ++i){
         for(int j(0); j < nbCells; ++j){
             cellsLayers[i][j]->updateCells(); //function in CellsLayer does the updating of the cells, since there we have access to the cells
         }
-    }*/
+    }
     updateRepresentation();
 }
 

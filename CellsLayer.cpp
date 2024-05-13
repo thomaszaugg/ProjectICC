@@ -97,11 +97,10 @@ void CellsLayer::updateCells(){
         bloodCell->update(sf::seconds(getAppConfig().simulation_fixed_step));
     }
     if (hasOrganCell()){
+        organCell->update(sf::seconds(getAppConfig().simulation_fixed_step));
         if(organCell->isDead()){
             delete organCell;
             organCell = nullptr;
-        } else {
-            organCell->update(sf::seconds(getAppConfig().simulation_fixed_step));
         }
     }
 }

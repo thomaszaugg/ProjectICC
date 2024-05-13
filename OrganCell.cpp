@@ -12,10 +12,7 @@ void OrganCell::update(sf::Time dt){
     double atp_max = atp_min + getAppConfig().range_atp_usage;
     double feedingloss =uniform(atp_min, atp_max);
 
-    atp = atp *(1-exp(-getAppConfig().organ_decay_atp*dt.asSeconds()));
-    //atp = atp *(1-exp(-getAppConfig().organ_decay_atp*dt.asSeconds())) - feedingloss;
-
-    std::cout << "atp = " << atp << std::endl;
+    atp = atp *(1-exp(-getAppConfig().organ_decay_atp*dt.asSeconds())) - feedingloss;
 }
 
 bool OrganCell::isDead(){
