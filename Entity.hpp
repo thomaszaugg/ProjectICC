@@ -44,9 +44,6 @@ public:
     virtual sf::Time getLongevity();
     virtual double getSize() const =0;
     virtual sf::Texture& getTexture()=0;
-    //4.1
-
-
 
     /*!
     * @brief Setters
@@ -75,8 +72,7 @@ public:
     /*!
     * @brief draws the informations given by debug mode
     */
-  virtual  void drawDebug(sf::RenderTarget& target);
-
+    virtual  void drawDebug(sf::RenderTarget& target);
 
     /*!
     * @brief updates the age of an entitiy by time dt
@@ -128,9 +124,8 @@ public:
     /*!
     * @brief Helpers for the canConsume function
     */
-   virtual bool consumableBy(Pellets const*) const =0;
-   virtual bool consumableBy(Hamster const*) const =0;
-
+    virtual bool consumableBy(Pellets const*) const =0;
+    virtual bool consumableBy(Hamster const*) const =0;
 
     /*!
     * @brief empty function that can be changed in subclasses for implementation of eating

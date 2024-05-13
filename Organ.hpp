@@ -34,10 +34,11 @@ private:
     void checkStep(bool& direction_step_possible, bool& empty_neighboor_found,CellCoord  current_position, CellCoord  dir);
     std::vector<CellCoord> const generateStartingPositions(int const& column);
     void generateOneSideCapillary(CellCoord const& direction, int const& column);
+
 protected:
 
 protected:
-    virtual void generate();
+     void generate(); //virtual (only in debug removed
 
     //helpers generate
     void reloadConfig();
@@ -78,7 +79,10 @@ public:
 
     void drawRepresentation();
 
-
+    //5.2
+   void updateCellsLayerAt(const CellCoord& pos, const Substance& diffusedSubst);
+   //for test at 5
+   double getConcentrationAt(const CellCoord& pos, SubstanceId id);
 
 };
 

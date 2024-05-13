@@ -8,6 +8,8 @@ class ECMCell : public Cell
 {
 public:
     ECMCell(CellsLayer* cellsLayer);
+
+    virtual void update(sf::Time dt) override;
 };
 
 #endif // ECMCELL_HPP

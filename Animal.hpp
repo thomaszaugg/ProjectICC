@@ -16,7 +16,6 @@ enum State{
 class Animal : public Entity
 {
 
-
 private:
    State state;
    double speed;
@@ -46,7 +45,6 @@ public:
     Angle getNewRotation();
     double getAdjustedMaxSpeed();
     std::string getStateString();
-
 
     /*!
     * @brief purely virtual getters
@@ -92,7 +90,6 @@ public:
     * @brief calculates the new energy of the animal after time dt and lets the animal age
     */
     void updateEnergy(sf::Time dt);
-
 
     /*!
     * @return bool indicating whether or not the animal is hungry

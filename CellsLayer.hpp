@@ -42,11 +42,16 @@ public:
     double getOrganCellQuantity(SubstanceId id);
     double getBloodCellQuantity(SubstanceId id);
 
+    CellCoord getPosition() const;
+
     void organCellTakeFromECM(SubstanceId id, double fraction); //with Substance::uptake On Gradient
 
     bool isOut(const CellCoord& coord);
 
     Cell* topCell();
+
+    void update(sf::Time dt); //has to be named like that
+    void updateCellsLayerAt(const CellCoord& pos, const Substance& diffusedSubst);
 };
 
 #endif // CELLSLAYER_HPP

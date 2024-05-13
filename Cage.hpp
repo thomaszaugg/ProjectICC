@@ -18,7 +18,6 @@ class Cage: public Drawable{
     Walls walls;               //0 = top, 1 = right
                                //2 = bottom, 3 = left
 
-
     bool occupied;  //true if there is an animal in the cage
 
 
@@ -32,7 +31,7 @@ public:
     /*!
     * @brief Destructor
     */
-   virtual ~Cage()=default;
+    virtual ~Cage()=default;
 
     /*!
     * @brief Copy constructer by default
@@ -99,7 +98,6 @@ public:
     */
     void drawOn(sf::RenderTarget& targetWindow) override;
 
-
-    };
+};
 
 #endif // CAGE_HPP
