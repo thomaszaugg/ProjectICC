@@ -4,8 +4,8 @@
 
 
 OrganCell::OrganCell(CellsLayer* cellsLayer)
-    : Cell(cellsLayer), atp(100){} //put this value into app.json at the end of project !!!
-
+    : Cell(cellsLayer), atp(100)//(getAppConfig().initial_atp)
+    {}
 void OrganCell::update(sf::Time dt){
 
     double atp_min = getAppConfig().base_atp_usage;

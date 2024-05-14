@@ -28,6 +28,9 @@ private:
 
     SubstanceId currentSubst;
 
+//initialized as a vector to not use too unneccesary switch statements
+    std::array<double,3> deltas; //glucose=0, .... (like enumerate type)
+
     //helper for the updateRepresentationAt function
     void setVertexes1(const std::vector<std::size_t>& indexes, int a_blood, int a_organ,bool concentrationOn=false, double ratio=0.);
 
@@ -87,6 +90,12 @@ public:
    //for test at 5
    double getConcentrationAt(const CellCoord& pos, SubstanceId id);
 
+   //6
+   void nextSubstance();
+   void changeDeltaSubstance(bool minus);//if minus, delta is substracted
+
+   double getDelta(SubstanceId id) ;
+   SubstanceId getCurrentSubst();
 };
 
 #endif // ORGAN_HPP
