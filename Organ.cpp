@@ -22,6 +22,8 @@ void Organ::reloadConfig(){
     nbCells=getAppConfig().simulation_organ_nbCells;
     cellSize=getWidth()/nbCells;
     std::vector<CellsLayer*> oneCellsLayers;
+    currentSubst=GLUCOSE;
+    deltas={0,0,0};
 
     for(int i(0); i < nbCells; ++i){
         oneCellsLayers.clear();
@@ -38,6 +40,7 @@ void Organ::initOrganTexture (){
     organTexture.create(getWidth(), getHeight());
     bloodVertexes = generateVertexes(getAppConfig().simulation_organ["textures"], nbCells, cellSize);
     organVertexes = generateVertexes(getAppConfig().simulation_organ["textures"], nbCells, cellSize);
+    concentrationVertexes = generateVertexes(getAppConfig().simulation_organ["textures"], nbCells, cellSize);
 }
 
 //5.1
@@ -90,37 +93,70 @@ void Organ::updateRepresentation(bool changed){
 }
 
 void Organ::drawRepresentation(){
-    organTexture.clear(sf::Color(223,196,176));
+    if(getApp().isConcentrationOn()){
+            organTexture.clear(sf::Color(0,0,0));
+            drawCells("concentration");
+            drawCells("blood cell");
+    }else { organTexture.clear(sf::Color(223,196,176));
     drawCells("blood cell");
-    drawCells("organ cell");
+    drawCells("organ cell");}
+
     organTexture.display();
 }
 
 
 void Organ::drawCells(std::string name_cell){
+
+    if(name_cell=="concentration"){     //adjusts name_cell in the case of concentration
+            switch(currentSubst){
+            case GLUCOSE:
+                name_cell="glucose";
+                break;
+            case BROMOPYRUVATE:
+                name_cell="bromopyruvate";
+                break;
+            case VGEF:
+                name_cell="vgef";
+                break;
+             default:
+                ;
+            }}
+
     sf::RenderStates rs;
     auto textures = getAppConfig().simulation_organ["textures"];
     rs.texture = &getAppTexture(textures[name_cell].toString()); // here for the texture linked to a blood cell
+
     if(name_cell=="blood cell"){
         organTexture.draw(bloodVertexes.data(), bloodVertexes.size(), sf::Quads, rs);
     }else if(name_cell=="organ cell"){
         organTexture.draw(organVertexes.data(), organVertexes.size(), sf::Quads, rs);
-    }
+    } else {
+         organTexture.draw(concentrationVertexes.data(), concentrationVertexes.size(), sf::Quads, rs);
+        }
+
 }
 
-void Organ::setVertexes1(const std::vector<std::size_t>& indexes, int a_blood, int a_organ){
+void Organ::setVertexes1(const std::vector<std::size_t>& indexes, int a_blood, int a_organ, bool concentrationOn, double ratio){
     for( auto index : indexes){
-        bloodVertexes[index].color.a= a_blood;
-        organVertexes[index].color.a=a_organ;
+
+       if(concentrationOn){
+           concentrationVertexes[index].color.a= std::max(int(ratio * 255), 5);
+       }else{ bloodVertexes[index].color.a= a_blood;
+        organVertexes[index].color.a=a_organ;}
     }
 }
 
 void Organ::updateRepresentationAt(const CellCoord& coord){
     int i = coord.x;
     int j = coord.y;
-    //cellsLayers[i][j]->updateCells();
-
     std::vector<std::size_t> indexes = indexesForCellVertexes(i, j, nbCells);
+
+    //is this the right place?
+    if(getApp().isConcentrationOn()){
+        double ratio= getConcentrationAt(coord,currentSubst)/getAppConfig().substance_max_value;
+        setVertexes1(indexes,0,0, true, ratio);
+    }else{
+
     if (cellsLayers[i][j]->hasBloodCell()){
         setVertexes1(indexes, 255, 0);
     }else if (cellsLayers[i][j]->hasOrganCell()){
@@ -128,7 +164,7 @@ void Organ::updateRepresentationAt(const CellCoord& coord){
     }else{
         setVertexes1(indexes, 0, 0);
     }
-}
+}}
 
 void Organ::updateCellsLayerAt(const CellCoord& pos, const Substance& diffusedSubst){
     cellsLayers[pos.x][pos.y]->updateSubstance(diffusedSubst); //which one is y and which one x?
@@ -176,7 +212,7 @@ void Organ::createBloodSystem(bool generateCapillaries){
 
 void Organ::generateArtery(int& leftColumn, int& rightColumn){
     int SIZE_ARTERY=1;
-    //SIZE_ARTERY=max(1, 0.03*nbCells) how to use max function
+    SIZE_ARTERY=std::max(1., 0.03*nbCells);
 
     leftColumn=((nbCells-SIZE_ARTERY)/2);
     rightColumn=leftColumn+SIZE_ARTERY;
@@ -210,7 +246,7 @@ std::vector<CellCoord> const Organ::generateStartingPositions(int const& column)
     int random_nb(0);
     int lastValue(START_CREATION_FROM); //initialized as big enough value
 
-    for(int i(START_CREATION_FROM); i < nbCells; ++i){
+    for(int i(START_CREATION_FROM); i < nbCells-START_CREATION_FROM; ++i){
 
         random_nb= uniform(1,3);
         int variable  (i - lastValue);              //doesn't seem to work
@@ -285,5 +321,40 @@ double Organ::getConcentrationAt(const CellCoord& pos, SubstanceId id){
     return cellsLayers[pos.x][pos.y]->getECMQuantity(id);
 }
 
+void  Organ::nextSubstance(){
+   currentSubst = (SubstanceId)((currentSubst+1)%NB_SUBST);
 
+}
 
+void Organ::changeDeltaSubstance(bool minus){
+double deltaSubstance(0);
+switch (currentSubst) {
+    case GLUCOSE:
+        deltaSubstance = getAppConfig().delta_glucose;
+        break;
+    case BROMOPYRUVATE:
+        deltaSubstance = getAppConfig().delta_bromo;
+        break;
+    case VGEF:
+        deltaSubstance = getAppConfig().delta_vgef;
+        break;
+    default:
+        // Handle the default case if necessary
+        break;
+}
+
+    if(minus) deltaSubstance*=(-1);
+
+    deltas[currentSubst]+=deltaSubstance;
+
+    deltas[currentSubst]= std::max(-getAppConfig().substance_max_value, deltas[currentSubst]);
+    deltas[currentSubst]= std::min(getAppConfig().substance_max_value, deltas[currentSubst]);
+}
+
+double Organ::getDelta(SubstanceId id) {
+    return deltas[id];
+}
+
+SubstanceId Organ::getCurrentSubst(){
+return currentSubst;
+}

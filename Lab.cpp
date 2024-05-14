@@ -269,3 +269,25 @@ void Lab::drawCurrentOrgan(sf::RenderTarget& target){
     }
 }
 
+void Lab::nextSubstance(){
+
+  if(isAnyTrackedAnimal()) animal->nextSubstance();
+}
+
+void Lab::increaseCurrentSubst(){
+    if(isAnyTrackedAnimal()) animal->increaseCurrentSubst();
+}
+void Lab::decreaseCurrentSubst(){
+    if(isAnyTrackedAnimal()) animal->decreaseCurrentSubst();
+}
+
+double Lab::getDelta(SubstanceId id){
+    double delta(0);
+  if(isAnyTrackedAnimal()) delta=animal->getDelta(id);
+   return delta;
+}
+SubstanceId Lab::getCurrentSubst(){
+    SubstanceId id(NB_SUBST);       //indicate error if no animal tracked
+    if(isAnyTrackedAnimal()) id=getCurrentSubst();
+    return id;
+}

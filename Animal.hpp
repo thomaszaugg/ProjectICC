@@ -124,6 +124,14 @@ public:
     //whats the idea of this setter?
     //transplants an organ
     void transplant(Organ*);
+
+
+    //6.1
+    void nextSubstance();
+    void increaseCurrentSubst();
+    void decreaseCurrentSubst();
+    double getDelta(SubstanceId id) ;
+    SubstanceId getCurrentSubst();
 };
 
 #endif // ANIMAL_HPP

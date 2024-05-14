@@ -111,6 +111,7 @@ public:
     * @brief add hamsters and pellets, addAnimal and addPellets call addEntity
     * @attention the lab class is responsible for the freeing of the memory of the pointers
     */
+    //write for every
     bool addEntity(Entity* e);
     bool addAnimal(Hamster* h);
     bool addFood(Pellets* p);
@@ -146,6 +147,16 @@ public:
     void drawCurrentOrgan(sf::RenderTarget& target);
 
     void drawOnIcon(sf::RenderTarget& target);
+
+    //changes to next substance
+    void nextSubstance();
+    void increaseCurrentSubst();
+    void decreaseCurrentSubst();
+
+    double getDelta(SubstanceId id) ;
+
+    //return NB_SUBST if there is no animal tracked
+    SubstanceId getCurrentSubst();
 
     };
 

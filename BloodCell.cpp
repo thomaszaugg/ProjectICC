@@ -9,26 +9,29 @@ BloodCell::BloodCell(CellsLayer* cellslayer, TypeBloodCell type)
 void BloodCell::update(sf::Time dt) {
     if(type==ARTERY) return; //do nothing if its an artery
 
-   Substance c0(0., getAppConfig().base_glucose, getAppConfig().base_bromo);
-   Substance c(0.,0.,0.);
-   CellCoord position_bloodcell=getCellsLayer()->getPosition(),j;
-   int x=position_bloodcell.x;
-   int y=position_bloodcell.y;
-   double D=getAppConfig().substance_diffusion_radius;
-   int RAYON_DIFFUSION=getAppConfig().substance_diffusion_radius;
+    Substance c0(0., getAppConfig().base_glucose, getAppConfig().base_bromo);
 
-    for(int i(x-RAYON_DIFFUSION);i<=RAYON_DIFFUSION+x; ++i){
-        for(int j(y-RAYON_DIFFUSION);j<=RAYON_DIFFUSION+y; ++j){
+    CellCoord position_bloodcell=getCellsLayer()->getPosition(); //main cell that is diffusing its substances
+    int x=position_bloodcell.x;
+    int y=position_bloodcell.y;
+    double D=getAppConfig().substance_diffusion_radius;
 
-            update(position_bloodcell, {i,j}, c0, D, dt);
-  }}
+    for(int i(x-D);i<=D+x; ++i){ //iteration trought all the cells in the diffusion radius
+        for(int j(y-D);j<=D+y; ++j){
+            CellCoord pos_ecm_cell(i,j);
+            update(position_bloodcell, pos_ecm_cell, c0, D, dt);
+    }}
 }
 
-void BloodCell::update(CellCoord const& pos_bloodcell, CellCoord const& pos_ecm_cell, Substance c, double const& D, sf::Time  dt){
+void BloodCell::update(CellCoord const& pos_bloodcell, CellCoord const& pos_ecm_cell, Substance c0, double const& D, sf::Time  dt){
     if(getCellsLayer()->isOut(pos_ecm_cell)) return;
-    Vec2d distanceV=pos_bloodcell,position_othercell;
-    double r=distanceV.length();
-     c=c*(0.5*( 1-erf(r/sqrt(4*D*dt.asSeconds()))));
+    double i = pos_bloodcell.x - pos_ecm_cell.x;
+    double j = pos_bloodcell.x - pos_ecm_cell.y;
+    Vec2d distance(i,j);
+    double r=distance.length();
+    double function = 0.5* (1-erf(r/(sqrt(4*D*dt.asSeconds()))));
+    Substance c = c0 * function;
+
     if(!c.isNull()){
         getCellsLayer()->updateCellsLayerAt(pos_ecm_cell, c);
     }
