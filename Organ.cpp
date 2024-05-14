@@ -12,8 +12,9 @@ Organ::Organ(bool generation)
 void Organ::generate(){
     reloadConfig();
     initOrganTexture (); //initalize organTexture & initalize vertexes
+    createBloodSystem(); //create blood network
     createOrgan(); //create organ fragment
-    //createBloodSystem(); //create blood network
+
     updateRepresentation(true);
 }
 
@@ -21,6 +22,7 @@ void Organ::reloadConfig(){
     nbCells=getAppConfig().simulation_organ_nbCells;
     cellSize=getWidth()/nbCells;
     std::vector<CellsLayer*> oneCellsLayers;
+    currentSubst=GLUCOSE;
 
     for(int i(0); i < nbCells; ++i){
         oneCellsLayers.clear();
@@ -37,6 +39,7 @@ void Organ::initOrganTexture (){
     organTexture.create(getWidth(), getHeight());
     bloodVertexes = generateVertexes(getAppConfig().simulation_organ["textures"], nbCells, cellSize);
     organVertexes = generateVertexes(getAppConfig().simulation_organ["textures"], nbCells, cellSize);
+    concentrationVertexes = generateVertexes(getAppConfig().simulation_organ["textures"], nbCells, cellSize);
 }
 
 //5.1
@@ -53,12 +56,14 @@ void Organ::createOrgan(){
 
 //5.1
 void Organ::update(){
+    sf::Time dt=sf::seconds(getAppConfig().simulation_fixed_step);
+
     for(int i(0); i < nbCells; ++i){
         for(int j(0); j < nbCells; ++j){
-            cellsLayers[i][j]->updateCells(); //function in CellsLayer does the updating of the cells, since there we have access to the cells
+            cellsLayers[i][j]->update(dt); //function in CellsLayer does the updating of the cells, since there we have access to the cells
         }
     }
-    updateRepresentation();
+    updateRepresentation(); //do we need that?
 }
 
 void Organ::drawOn(sf::RenderTarget& target){
@@ -87,37 +92,64 @@ void Organ::updateRepresentation(bool changed){
 }
 
 void Organ::drawRepresentation(){
-    organTexture.clear(sf::Color(223,196,176));
+    if(getApp().isConcentrationOn()){
+            organTexture.clear(sf::Color(0,0,0));
+            drawCells("concentration");
+    }else { organTexture.clear(sf::Color(223,196,176));
     drawCells("blood cell");
-    drawCells("organ cell");
+    drawCells("organ cell");}
+
     organTexture.display();
 }
 
 
 void Organ::drawCells(std::string name_cell){
+
+    if(name_cell=="concentration"){     //adjusts name_cell in the case of concentration
+            switch(currentSubst){
+            case GLUCOSE:
+                name_cell="glucose";
+            case BROMOPYRUVATE:
+                name_cell="bromopyruvate";
+            case VGEF:
+                name_cell="vgef";
+            }}
+
     sf::RenderStates rs;
     auto textures = getAppConfig().simulation_organ["textures"];
     rs.texture = &getAppTexture(textures[name_cell].toString()); // here for the texture linked to a blood cell
+
     if(name_cell=="blood cell"){
         organTexture.draw(bloodVertexes.data(), bloodVertexes.size(), sf::Quads, rs);
     }else if(name_cell=="organ cell"){
         organTexture.draw(organVertexes.data(), organVertexes.size(), sf::Quads, rs);
-    }
+    } else {
+         organTexture.draw(concentrationVertexes.data(), concentrationVertexes.size(), sf::Quads, rs);
+        }
+
 }
 
-void Organ::setVertexes1(const std::vector<std::size_t>& indexes, int a_blood, int a_organ){
+void Organ::setVertexes1(const std::vector<std::size_t>& indexes, int a_blood, int a_organ, bool concentrationOn, double ratio){
     for( auto index : indexes){
-        bloodVertexes[index].color.a= a_blood;
-        organVertexes[index].color.a=a_organ;
+
+       if(concentrationOn){
+           concentrationVertexes[index].color.a= std::max(int(ratio * 255), 5);
+       }else{ bloodVertexes[index].color.a= a_blood;
+        organVertexes[index].color.a=a_organ;}
     }
 }
 
 void Organ::updateRepresentationAt(const CellCoord& coord){
     int i = coord.x;
     int j = coord.y;
-    //cellsLayers[i][j]->updateCells();
-
     std::vector<std::size_t> indexes = indexesForCellVertexes(i, j, nbCells);
+
+    //is this the right place?
+    if(getApp().isConcentrationOn()){
+        double ratio= getConcentrationAt(coord,currentSubst)/getAppConfig().substance_max_value;
+        setVertexes1(indexes,0,0, true, ratio);
+    }else{
+
     if (cellsLayers[i][j]->hasBloodCell()){
         setVertexes1(indexes, 255, 0);
     }else if (cellsLayers[i][j]->hasOrganCell()){
@@ -125,6 +157,11 @@ void Organ::updateRepresentationAt(const CellCoord& coord){
     }else{
         setVertexes1(indexes, 0, 0);
     }
+}}
+
+void Organ::updateCellsLayerAt(const CellCoord& pos, const Substance& diffusedSubst){
+    cellsLayers[pos.x][pos.y]->updateSubstance(diffusedSubst); //which one is y and which one x?
+
 }
 
 bool Organ::isOut(CellCoord position){
@@ -152,7 +189,7 @@ void Organ::updateCellsLayer(const CellCoord& pos, Kind kind){
         break;
     }}
 
-/*
+
 void Organ::createBloodSystem(bool generateCapillaries){
     int leftColumn(0);
     int rightColumn(0);
@@ -168,7 +205,7 @@ void Organ::createBloodSystem(bool generateCapillaries){
 
 void Organ::generateArtery(int& leftColumn, int& rightColumn){
     int SIZE_ARTERY=1;
-    //SIZE_ARTERY=max(1, 0.03*nbCells) how to use max function
+    SIZE_ARTERY=std::max(1., 0.03*nbCells);
 
     leftColumn=((nbCells-SIZE_ARTERY)/2);
     rightColumn=leftColumn+SIZE_ARTERY;
@@ -202,7 +239,7 @@ std::vector<CellCoord> const Organ::generateStartingPositions(int const& column)
     int random_nb(0);
     int lastValue(START_CREATION_FROM); //initialized as big enough value
 
-    for(int i(START_CREATION_FROM); i < nbCells; ++i){
+    for(int i(START_CREATION_FROM); i < nbCells-START_CREATION_FROM; ++i){
 
         random_nb= uniform(1,3);
         int variable  (i - lastValue);              //doesn't seem to work
@@ -220,7 +257,7 @@ std::vector<CellCoord> const Organ::generateStartingPositions(int const& column)
 
 void Organ::checkStep(bool& direction_step_possible, bool& empty_neighboor_found, CellCoord current_position, CellCoord dir){
 
-    direction_step_possible = !(isOut(dir+current_position) and cellsLayers[current_position.x+dir.x][current_position.y+dir.y]->hasBloodCell());
+    direction_step_possible = (!isOut(dir+current_position) and !cellsLayers[current_position.x+dir.x][current_position.y+dir.y]->hasBloodCell());
     empty_neighboor_found = direction_step_possible;
 }
 
@@ -270,10 +307,12 @@ void Organ::generateCapillaryFromPosition(CellCoord &current_position , CellCoor
 
     //genereate the rest
     while(generateCapillaryOneStep(current_position,dir,nbCells, LENGTH_CAPILLARY));
-}*/
+}
 
 
-
+double Organ::getConcentrationAt(const CellCoord& pos, SubstanceId id){
+    return cellsLayers[pos.x][pos.y]->getECMQuantity(id);
+}
 
 
 

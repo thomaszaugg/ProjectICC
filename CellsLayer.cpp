@@ -72,6 +72,10 @@ double CellsLayer::getBloodCellQuantity(SubstanceId id){
     } else {return 0;}
 }
 
+CellCoord CellsLayer::getPosition() const {
+    return position;
+}
+
 void CellsLayer::organCellTakeFromECM(SubstanceId id, double fraction){
     if (hasOrganCell() && hasECMCell()){
         ecm->uptakeSubstance(fraction, organCell,  id);
@@ -91,17 +95,21 @@ Cell* CellsLayer::topCell(){
 }
 
 //5.1
-void CellsLayer::updateCells(){
-    ecm->update(sf::seconds(getAppConfig().simulation_fixed_step));
+void CellsLayer::update(sf::Time dt){
+    ecm->update(dt);
     if (hasBloodCell()){
-        bloodCell->update(sf::seconds(getAppConfig().simulation_fixed_step));
+        bloodCell->update(dt);
     }
     if (hasOrganCell()){
-        organCell->update(sf::seconds(getAppConfig().simulation_fixed_step));
+        organCell->update(dt);
         if(organCell->isDead()){
             delete organCell;
             organCell = nullptr;
+            organ->updateRepresentationAt(position); //after the cell is killed, the texture is updated
         }
     }
 }
 
+void CellsLayer::updateCellsLayerAt(const CellCoord& pos, const Substance& diffusedSubst){
+    organ->updateCellsLayerAt( pos, diffusedSubst);
+}
