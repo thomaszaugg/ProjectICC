@@ -218,3 +218,22 @@ void Animal::transplant(Organ* o){
     delete organ;
     organ = o;
 }
+
+
+void Animal::nextSubstance(){
+   organ->nextSubstance();
+}
+
+void Animal::increaseCurrentSubst(){
+    organ->changeDeltaSubstance(false);
+}
+void Animal::decreaseCurrentSubst(){
+    organ->changeDeltaSubstance(true);
+}
+
+double Animal::getDelta(SubstanceId id){
+   return organ->getDelta(id);
+}
+SubstanceId Animal::getCurrentSubst(){
+    return organ->getCurrentSubst();
+}

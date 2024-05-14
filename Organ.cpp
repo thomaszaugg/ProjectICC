@@ -23,6 +23,7 @@ void Organ::reloadConfig(){
     cellSize=getWidth()/nbCells;
     std::vector<CellsLayer*> oneCellsLayers;
     currentSubst=GLUCOSE;
+    deltas={0,0,0};
 
     for(int i(0); i < nbCells; ++i){
         oneCellsLayers.clear();
@@ -93,15 +94,16 @@ void Organ::updateRepresentation(bool changed){
 
 void Organ::drawRepresentation(){
     if(getApp().isConcentrationOn()){
-            organTexture.clear(sf::Color(0,0,0));
-            drawCells("concentration");
-    }else { organTexture.clear(sf::Color(223,196,176));
-    drawCells("blood cell");
-    drawCells("organ cell");}
-
+        organTexture.clear(sf::Color(0,0,0));
+        drawCells("concentration");
+        drawCells("blood cell");
+    }else {
+        organTexture.clear(sf::Color(223,196,176));
+        drawCells("blood cell");
+        drawCells("organ cell");
+    }
     organTexture.display();
 }
-
 
 void Organ::drawCells(std::string name_cell){
 
@@ -109,10 +111,15 @@ void Organ::drawCells(std::string name_cell){
             switch(currentSubst){
             case GLUCOSE:
                 name_cell="glucose";
+                break;
             case BROMOPYRUVATE:
                 name_cell="bromopyruvate";
+                break;
             case VGEF:
                 name_cell="vgef";
+                break;
+            default:
+                ;
             }}
 
     sf::RenderStates rs;
@@ -123,19 +130,19 @@ void Organ::drawCells(std::string name_cell){
         organTexture.draw(bloodVertexes.data(), bloodVertexes.size(), sf::Quads, rs);
     }else if(name_cell=="organ cell"){
         organTexture.draw(organVertexes.data(), organVertexes.size(), sf::Quads, rs);
-    } else {
-         organTexture.draw(concentrationVertexes.data(), concentrationVertexes.size(), sf::Quads, rs);
-        }
-
+    }else{
+        organTexture.draw(concentrationVertexes.data(), concentrationVertexes.size(), sf::Quads, rs);
+    }
 }
 
 void Organ::setVertexes1(const std::vector<std::size_t>& indexes, int a_blood, int a_organ, bool concentrationOn, double ratio){
     for( auto index : indexes){
-
-       if(concentrationOn){
-           concentrationVertexes[index].color.a= std::max(int(ratio * 255), 5);
-       }else{ bloodVertexes[index].color.a= a_blood;
-        organVertexes[index].color.a=a_organ;}
+        if(concentrationOn){
+            bloodVertexes[index].color.a = a_blood;
+            concentrationVertexes[index].color.a = std::max(int(ratio * 255), 5);
+        }else{
+            bloodVertexes[index].color.a = a_blood;
+            organVertexes[index].color.a = a_organ;}
     }
 }
 
@@ -145,19 +152,36 @@ void Organ::updateRepresentationAt(const CellCoord& coord){
     std::vector<std::size_t> indexes = indexesForCellVertexes(i, j, nbCells);
 
     //is this the right place?
-    if(getApp().isConcentrationOn()){
-        double ratio= getConcentrationAt(coord,currentSubst)/getAppConfig().substance_max_value;
-        setVertexes1(indexes,0,0, true, ratio);
-    }else{
-
     if (cellsLayers[i][j]->hasBloodCell()){
         setVertexes1(indexes, 255, 0);
+    }else if(getApp().isConcentrationOn()){
+        double ratio= (getConcentrationAt(coord,currentSubst))/getAppConfig().substance_max_value;
+        //if (coord.x == 15 && coord.y == 10) std::cout << "here : " << ratio << std::endl;
+        setVertexes1(indexes,0,0, true, ratio);
     }else if (cellsLayers[i][j]->hasOrganCell()){
         setVertexes1(indexes, 0, 255);
     }else{
         setVertexes1(indexes, 0, 0);
     }
+}
+/*
+    if(getApp().isConcentrationOn()){
+        double ratio= (getConcentrationAt(coord,currentSubst))/getAppConfig().substance_max_value;
+        setVertexes1(indexes,0,0, true, ratio);
+        if (cellsLayers[i][j]->hasBloodCell()){
+            setVertexes1(indexes, 255, 0);
+        }
+    }else{
+        if (cellsLayers[i][j]->hasBloodCell()){
+            setVertexes1(indexes, 255, 0);
+        }
+        else if (cellsLayers[i][j]->hasOrganCell()){
+            setVertexes1(indexes, 0, 255);
+        }else{
+            setVertexes1(indexes, 0, 0);
+        }
 }}
+*/
 
 void Organ::updateCellsLayerAt(const CellCoord& pos, const Substance& diffusedSubst){
     cellsLayers[pos.x][pos.y]->updateSubstance(diffusedSubst); //which one is y and which one x?
@@ -314,5 +338,40 @@ double Organ::getConcentrationAt(const CellCoord& pos, SubstanceId id){
     return cellsLayers[pos.x][pos.y]->getECMQuantity(id);
 }
 
+void  Organ::nextSubstance(){
+   currentSubst = (SubstanceId)((currentSubst+1)%NB_SUBST);
 
+}
 
+void Organ::changeDeltaSubstance(bool minus){
+double deltaSubstance(0);
+switch (currentSubst) {
+    case GLUCOSE:
+        deltaSubstance = getAppConfig().delta_glucose;
+        break;
+    case BROMOPYRUVATE:
+        deltaSubstance = getAppConfig().delta_bromo;
+        break;
+    case VGEF:
+        deltaSubstance = getAppConfig().delta_vgef;
+        break;
+    default:
+        // Handle the default case if necessary
+        break;
+}
+
+    if(minus) deltaSubstance*=(-1);
+
+    deltas[currentSubst]+=deltaSubstance;
+
+    deltas[currentSubst]= std::max(-getAppConfig().substance_max_value, deltas[currentSubst]);
+    deltas[currentSubst]= std::min(getAppConfig().substance_max_value, deltas[currentSubst]);
+}
+
+double Organ::getDelta(SubstanceId id) {
+    return deltas[id];
+}
+
+SubstanceId Organ::getCurrentSubst(){
+return currentSubst;
+}

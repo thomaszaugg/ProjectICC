@@ -7,11 +7,11 @@ Cell::Cell(CellsLayer* cellsLayer)
 
 Cell::~Cell(){
     delete substance;   //free up allocated memory
+    //std::cout << "I die";
 }
 
 void Cell::addSubstance(Substance newSubstance){
     *substance += newSubstance;
-    //std::cout<< *substance << std::endl;
 }
 
 double Cell::getQuantitiy(SubstanceId id){
