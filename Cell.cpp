@@ -7,9 +7,8 @@ Cell::Cell(CellsLayer* cellsLayer)
 
 Cell::~Cell(){
     delete substance;   //free up allocated memory
-    cellsLayer = nullptr;
+    //std::cout << "I die";
 }
-
 
 void Cell::addSubstance(Substance newSubstance){
     *substance += newSubstance;
@@ -22,5 +21,9 @@ double Cell::getQuantitiy(SubstanceId id){
 void Cell::uptakeSubstance(double fraction, Cell* cellType,  SubstanceId id){
     Substance& receiver = *(cellType->substance);
     substance->uptakeOnGradient(fraction, receiver, id);
+}
+
+CellsLayer* Cell::getCellsLayer() const{
+    return cellsLayer;
 }
 

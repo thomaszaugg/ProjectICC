@@ -11,12 +11,12 @@ Intervals intervals = { -180, -100, -55, -25, -10, 0, 10, 25, 55, 100, 180};
 std::vector<double> probabilities = {0.0000,0.0000,0.0005,0.0010,0.0050,0.9870,0.0050,0.0010,0.0005,0.0000,0.0000};
 
 Animal::Animal(const Vec2d& position, double energy)
-    : Entity(position, energy), speed(0), organ(new Organ){
+    : Entity(position, energy), speed(0), organ(new Organ()){ //does every animal have an organ?
     }
 
 Animal::~Animal() {
     if(getCage()!=nullptr) getCage()->reset();
-   delete organ;
+    delete organ;
 }
 
 bool Animal::isAnimal() {
@@ -28,13 +28,12 @@ bool Animal::canBeConfinedIn(Cage* cage){
 }
 
 void Animal::update(sf::Time dt){
- updateEnergy(dt);
-
+    updateEnergy(dt);
 
     Entity* food(getAppEnv().getClosesedEatableEntity(getCage(), this));
-     updateState( dt, food);
+    updateState( dt, food);
 
-    switch (state) {
+    switch (state){
        case TARGETING_FOOD :{
             Vec2d force=calculateForce(food);
             move(force, dt, false);
@@ -52,8 +51,7 @@ void Animal::update(sf::Time dt){
        case IDLE:{
 
            break;}
-       }
-
+    }
 }
 
 void Animal::updateState(sf::Time dt, Entity* food){
@@ -71,14 +69,10 @@ void Animal::updateState(sf::Time dt, Entity* food){
            counter=sf::Time::Zero;
        }
     }
-
 }
 
-
-
 void Animal::move(sf::Time dt){     //Wandering
-
-  changeOrientation(dt);        //happens when counter is high enough
+    changeOrientation(dt);        //happens when counter is high enough
 
   //change of position
     Vec2d step=getSpeedVector()*dt.asSeconds();
@@ -89,11 +83,12 @@ void Animal::move(sf::Time dt){     //Wandering
 }
 
 void Animal::changeOrientation(sf::Time dt){
-  counter+=dt;
-  if(counter >= sf::seconds(getAppConfig().animal_rotation_delay)){    //since seconds are floats, we use comparison instead of egality
-      setOrientation(getOrientation()+getNewRotation());             //orientation can become negatif
-      counter =sf::Time::Zero;
-  }}
+    counter+=dt;
+    if(counter >= sf::seconds(getAppConfig().animal_rotation_delay)){    //since seconds are floats, we use comparison instead of egality
+        setOrientation(getOrientation()+getNewRotation());             //orientation can become negatif
+        counter =sf::Time::Zero;
+    }
+}
 
 Vec2d Animal::getSpeedVector(){
     return getHeading()*speed;
@@ -119,26 +114,26 @@ double Animal::getAdjustedMaxSpeed(){
 }
 
 void Animal::move(const Vec2d& force, sf::Time dt, bool feeding){     //TARGETING and FEEDING
-
     if(feeding){
         if(force.length()>0.5){
-           setOrientation(force.angle());
-         takeStep(force*dt.asSeconds());
-    } }else{
-    Vec2d acceleration = force / getMass();
-    setOrientation(force.angle());
-    Vec2d speedVector = getSpeedVector() + acceleration * dt.asSeconds();
-    if(speedVector.length()>getAdjustedMaxSpeed()){
-        speedVector=getHeading()*getAdjustedMaxSpeed();
-    }
+            setOrientation(force.angle());
+            takeStep(force*dt.asSeconds());
+        }
+    }else{
+        Vec2d acceleration = force / getMass();
+        setOrientation(force.angle());
+        Vec2d speedVector = getSpeedVector() + acceleration * dt.asSeconds();
+        if(speedVector.length()>getAdjustedMaxSpeed()){
+            speedVector=getHeading()*getAdjustedMaxSpeed();
+        }
         takeStep( speedVector * dt.asSeconds());
-}
+    }
 }
 
 bool Animal::isHungry(){
     if(state==FEEDING){
         return getEnergy()<getAppConfig().animal_satiety_max;
-    } else{
+    }else{
         return getEnergy()<getAppConfig().animal_satiety_min;
     }
 }
@@ -146,21 +141,16 @@ bool Animal::isHungry(){
 Vec2d Animal::calculateForce(Entity* food, double deceleration){
     Vec2d to_target(food->getCenter()- this->getCenter());
 
-        if(to_target.length()<70) return to_target*0.;
+    if(to_target.length()<70) return to_target*0.;
 
-     double speed = std::min(to_target.length()/deceleration, getAdjustedMaxSpeed());
+    double speed = std::min(to_target.length()/deceleration, getAdjustedMaxSpeed());
     Vec2d v_wish= to_target.normalised()*speed;
-     return v_wish ;//- getSpeedVector();
+    return v_wish ;//- getSpeedVector();
 }
-
-
-
 
 void Animal::eatFood(Entity* food){
-
    if(this->canConsume(food)) setEnergy((getEnergy()+getAppConfig().animal_meal_retention*food->provideEnergy(getEnergyBite())));
 }
-
 
 void Animal::drawDebug(sf::RenderTarget& target) {
     Entity::drawDebug(target);
@@ -196,7 +186,7 @@ std::string Animal::getStateString(){
            break;}
     default:{
     return "";}
-       }
+    }
 }
 
 DrawingPriority Animal::getDepth(){
@@ -215,9 +205,7 @@ void Animal::drawOrgan(sf::RenderTarget& target){
 }
 
 void Animal::initializeOrgan(){
-    if(organ == nullptr){
-        organ=(new Organ(true));
-    }
+    organ=(new Organ(true));
 }
 
 void Animal::deleteOrgan(){
@@ -228,5 +216,5 @@ void Animal::deleteOrgan(){
 
 void Animal::transplant(Organ* o){
     delete organ;
-        organ = o;
+    organ = o;
 }

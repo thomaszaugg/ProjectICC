@@ -62,7 +62,7 @@ public:
     /*!
     * @brief deconstructer
     */
-   virtual ~Lab();
+    virtual ~Lab();
 
     /*!
     * @brief defines the maxCageNumber
@@ -102,7 +102,6 @@ public:
     */
     void reset(bool reset = false);
 
-
     /*!
     * @brief to make it impossible to copy a Lab
     */
@@ -117,9 +116,9 @@ public:
     bool addFood(Pellets* p);
 
     /*!
-     * @brief finds the closest eatable entity to e that is in cage c
-     * @return either pointer to the eatable entity or nullptr if there is none
-     */
+    * @brief finds the closest eatable entity to e that is in cage c
+    * @return either pointer to the eatable entity or nullptr if there is none
+    */
     Entity* getClosesedEatableEntity(Cage* c, Entity* const& e);
 
     //4.1
@@ -147,8 +146,6 @@ public:
     void drawCurrentOrgan(sf::RenderTarget& target);
 
     void drawOnIcon(sf::RenderTarget& target);
-
-
 
     };
 

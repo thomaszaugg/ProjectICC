@@ -11,13 +11,11 @@ private:
     double atp; //energylevel of a cell
 
 public:
-
     OrganCell(CellsLayer* cellsLayer);
 
-    virtual void update(sf::Time dt) override;
+    virtual void update(sf::Time dt);
 
     bool isDead();
-
 };
 
 #endif // ORGANCELL_HPP

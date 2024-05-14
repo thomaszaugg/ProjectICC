@@ -24,6 +24,11 @@ public:
 
     virtual void update(sf::Time dt)=0;
 
+    CellsLayer* getCellsLayer() const;
+
+
+
+
 };
 
 #endif // CELL_HPP
