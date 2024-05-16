@@ -1,5 +1,5 @@
 #include "Cell.hpp"
-//#include "Cellslayer.hpp"
+#include "CellsLayer.hpp"
 
 Cell::Cell(CellsLayer* cellsLayer)
     : cellsLayer(cellsLayer), substance(new Substance)
@@ -27,3 +27,12 @@ CellsLayer* Cell::getCellsLayer() const{
     return cellsLayer;
 }
 
+double Cell::getDeltaVGEF() const{
+    return cellsLayer->getDeltaVGEF();
+}
+double Cell::getDeltaGlucose() const{
+    return cellsLayer->getDeltaGlucose();
+}
+double Cell::getDeltaBromo() const{
+    return cellsLayer->getDeltaBromo();
+}

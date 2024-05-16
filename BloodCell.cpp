@@ -9,7 +9,8 @@ BloodCell::BloodCell(CellsLayer* cellslayer, TypeBloodCell type)
 void BloodCell::update(sf::Time dt) {
     if(type==ARTERY) return; //do nothing if its an artery
 
-    Substance c0(0., getAppConfig().base_glucose, getAppConfig().base_bromo);
+
+    Substance c0(0.+getDeltaVGEF()+100, getAppConfig().base_glucose+getDeltaGlucose(), getAppConfig().base_bromo+getDeltaBromo()+100);
 
     CellCoord position_bloodcell=getCellsLayer()->getPosition(); //main cell that is diffusing its substances
     int x=position_bloodcell.x;

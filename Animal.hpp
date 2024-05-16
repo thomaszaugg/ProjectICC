@@ -132,6 +132,8 @@ public:
     void decreaseCurrentSubst();
     double getDelta(SubstanceId id) ;
     SubstanceId getCurrentSubst();
+
+    void setCancerAt(const Vec2d& pos);
 };
 
 #endif // ANIMAL_HPP

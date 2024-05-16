@@ -287,7 +287,11 @@ double Lab::getDelta(SubstanceId id){
    return delta;
 }
 SubstanceId Lab::getCurrentSubst(){
-    SubstanceId id(NB_SUBST);       //indicate error if no animal tracked
-    if(isAnyTrackedAnimal()) id=getCurrentSubst();
-    return id;
+    //indicate error if no animal tracked?
+  if(animal!=nullptr) return animal->getCurrentSubst();
+    return GLUCOSE;
+}
+
+void Lab::setCancerAt(const Vec2d& pos){
+    if(isAnyTrackedAnimal()) animal->setCancerAt(pos);
 }
