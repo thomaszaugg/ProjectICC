@@ -287,7 +287,8 @@ double Lab::getDelta(SubstanceId id){
    return delta;
 }
 SubstanceId Lab::getCurrentSubst(){
-    SubstanceId id(NB_SUBST);       //indicate error if no animal tracked
-    if(isAnyTrackedAnimal()) id=getCurrentSubst();
-    return id;
+    //indicate error if no animal tracked
+  //  if(animal!=nullptr) return getCurrentSubst();
+    return GLUCOSE;
+
 }

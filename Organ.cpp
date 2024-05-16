@@ -152,11 +152,6 @@ void Organ::updateRepresentationAt(const CellCoord& coord){
     std::vector<std::size_t> indexes = indexesForCellVertexes(i, j, nbCells);
 
     //is this the right place?
-    if(getApp().isConcentrationOn()){
-        double ratio= getConcentrationAt(coord,currentSubst)/getAppConfig().substance_max_value;
-        setVertexes1(indexes,0,0, true, ratio);
-    }else{
-
     if (cellsLayers[i][j]->hasBloodCell()){
         setVertexes1(indexes, 255, 0);
     }else if (cellsLayers[i][j]->hasOrganCell()){
@@ -164,7 +159,11 @@ void Organ::updateRepresentationAt(const CellCoord& coord){
     }else{
         setVertexes1(indexes, 0, 0);
     }
-}}
+    if(getApp().isConcentrationOn() && !cellsLayers[i][j]->hasBloodCell()){
+        double ratio= (getConcentrationAt(coord,currentSubst))/getAppConfig().substance_max_value;
+        setVertexes1(indexes,0,0, true, ratio);
+    }
+}
 
 void Organ::updateCellsLayerAt(const CellCoord& pos, const Substance& diffusedSubst){
     cellsLayers[pos.x][pos.y]->updateSubstance(diffusedSubst); //which one is y and which one x?
