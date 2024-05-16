@@ -32,7 +32,7 @@ private:
     std::array<double,3> deltas; //glucose=0, .... (like enumerate type)
 
     //helper for the updateRepresentationAt function
-    void setVertexes1(const std::vector<std::size_t>& indexes, int a_blood, int a_organ, bool concentrationOn=false, double ratio=0.);
+    void setVertexes1(const std::vector<std::size_t>& indexes, int a_blood, int a_organ,bool concentrationOn=false, double ratio=0.);
 
     //helpers initializeBloodNetwork
     virtual void generateArtery(int& leftColumn, int& rightColumn);
