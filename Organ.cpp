@@ -94,16 +94,16 @@ void Organ::updateRepresentation(bool changed){
 
 void Organ::drawRepresentation(){
     if(getApp().isConcentrationOn()){
-            organTexture.clear(sf::Color(0,0,0));
-            drawCells("concentration");
-            drawCells("blood cell");
-    }else { organTexture.clear(sf::Color(223,196,176));
-    drawCells("blood cell");
-    drawCells("organ cell");}
-
+        organTexture.clear(sf::Color(0,0,0));
+        drawCells("concentration");
+        drawCells("blood cell");
+    }else {
+        organTexture.clear(sf::Color(223,196,176));
+        drawCells("blood cell");
+        drawCells("organ cell");
+    }
     organTexture.display();
 }
-
 
 void Organ::drawCells(std::string name_cell){
 
@@ -118,7 +118,7 @@ void Organ::drawCells(std::string name_cell){
             case VGEF:
                 name_cell="vgef";
                 break;
-             default:
+            default:
                 ;
             }}
 
@@ -130,19 +130,19 @@ void Organ::drawCells(std::string name_cell){
         organTexture.draw(bloodVertexes.data(), bloodVertexes.size(), sf::Quads, rs);
     }else if(name_cell=="organ cell"){
         organTexture.draw(organVertexes.data(), organVertexes.size(), sf::Quads, rs);
-    } else {
-         organTexture.draw(concentrationVertexes.data(), concentrationVertexes.size(), sf::Quads, rs);
-        }
-
+    }else{
+        organTexture.draw(concentrationVertexes.data(), concentrationVertexes.size(), sf::Quads, rs);
+    }
 }
 
 void Organ::setVertexes1(const std::vector<std::size_t>& indexes, int a_blood, int a_organ, bool concentrationOn, double ratio){
     for( auto index : indexes){
-
-       if(concentrationOn){
-           concentrationVertexes[index].color.a= std::max(int(ratio * 255), 5);
-       }else{ bloodVertexes[index].color.a= a_blood;
-        organVertexes[index].color.a=a_organ;}
+        if(concentrationOn){
+            bloodVertexes[index].color.a = a_blood;
+            concentrationVertexes[index].color.a = std::max(int(ratio * 255), 5);
+        }else{
+            bloodVertexes[index].color.a = a_blood;
+            organVertexes[index].color.a = a_organ;}
     }
 }
 
@@ -152,11 +152,6 @@ void Organ::updateRepresentationAt(const CellCoord& coord){
     std::vector<std::size_t> indexes = indexesForCellVertexes(i, j, nbCells);
 
     //is this the right place?
-    if(getApp().isConcentrationOn()){
-        double ratio= getConcentrationAt(coord,currentSubst)/getAppConfig().substance_max_value;
-        setVertexes1(indexes,0,0, true, ratio);
-    }else{
-
     if (cellsLayers[i][j]->hasBloodCell()){
         setVertexes1(indexes, 255, 0);
     }else if (cellsLayers[i][j]->hasOrganCell()){
@@ -164,7 +159,29 @@ void Organ::updateRepresentationAt(const CellCoord& coord){
     }else{
         setVertexes1(indexes, 0, 0);
     }
+    if(getApp().isConcentrationOn() && !cellsLayers[i][j]->hasBloodCell()){
+        double ratio= (getConcentrationAt(coord,currentSubst))/getAppConfig().substance_max_value;
+        setVertexes1(indexes,0,0, true, ratio);
+    }
+}
+/*
+    if(getApp().isConcentrationOn()){
+        double ratio= (getConcentrationAt(coord,currentSubst))/getAppConfig().substance_max_value;
+        setVertexes1(indexes,0,0, true, ratio);
+        if (cellsLayers[i][j]->hasBloodCell()){
+            setVertexes1(indexes, 255, 0);
+        }
+    }else{
+        if (cellsLayers[i][j]->hasBloodCell()){
+            setVertexes1(indexes, 255, 0);
+        }
+        else if (cellsLayers[i][j]->hasOrganCell()){
+            setVertexes1(indexes, 0, 255);
+        }else{
+            setVertexes1(indexes, 0, 0);
+        }
 }}
+*/
 
 void Organ::updateCellsLayerAt(const CellCoord& pos, const Substance& diffusedSubst){
     cellsLayers[pos.x][pos.y]->updateSubstance(diffusedSubst); //which one is y and which one x?
