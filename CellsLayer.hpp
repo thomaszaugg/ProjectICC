@@ -52,6 +52,10 @@ public:
 
     void update(sf::Time dt); //has to be named like that
     void updateCellsLayerAt(const CellCoord& pos, const Substance& diffusedSubst);
+
+    double getDeltaVGEF() const;
+    double getDeltaGlucose() const;
+    double getDeltaBromo() const;
 };
 
 #endif // CELLSLAYER_HPP

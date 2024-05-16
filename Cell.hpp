@@ -26,7 +26,9 @@ public:
 
     CellsLayer* getCellsLayer() const;
 
-
+double getDeltaVGEF() const;
+double getDeltaGlucose() const;
+double getDeltaBromo() const;
 
 
 };

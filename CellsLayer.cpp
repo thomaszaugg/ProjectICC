@@ -113,3 +113,13 @@ void CellsLayer::update(sf::Time dt){
 void CellsLayer::updateCellsLayerAt(const CellCoord& pos, const Substance& diffusedSubst){
     organ->updateCellsLayerAt( pos, diffusedSubst);
 }
+
+double CellsLayer::getDeltaVGEF() const{
+   return organ->getDelta(VGEF);
+}
+double CellsLayer::getDeltaGlucose() const{
+   return organ->getDelta(GLUCOSE);
+}
+double CellsLayer::getDeltaBromo() const{
+   return organ->getDelta(BROMOPYRUVATE);
+}
