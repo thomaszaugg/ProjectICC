@@ -5,6 +5,7 @@
 #include "ECMCell.hpp"
 #include "BloodCell.hpp"
 #include "OrganCell.hpp"
+#include "TumoralCell.hpp"
 
 class Organ;
 
@@ -56,6 +57,12 @@ public:
     double getDeltaVGEF() const;
     double getDeltaGlucose() const;
     double getDeltaBromo() const;
+
+    bool hasCancer();
+
+    void setCancer();
+
+    Cell* getECM() const;
 };
 
 #endif // CELLSLAYER_HPP

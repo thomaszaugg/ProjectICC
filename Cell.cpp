@@ -22,6 +22,9 @@ void Cell::uptakeSubstance(double fraction, Cell* cellType,  SubstanceId id){
     Substance& receiver = *(cellType->substance);
     substance->uptakeOnGradient(fraction, receiver, id);
 }
+void Cell::takeSubstance(double fraction, Cell* donour,SubstanceId id){
+    donour->uptakeSubstance(fraction, this, id);
+}
 
 CellsLayer* Cell::getCellsLayer() const{
     return cellsLayer;
@@ -35,4 +38,12 @@ double Cell::getDeltaGlucose() const{
 }
 double Cell::getDeltaBromo() const{
     return cellsLayer->getDeltaBromo();
+}
+
+void Cell::multiplySubstance(SubstanceId id, double multiplier) const{
+   substance->update(id, multiplier);
+}
+
+Cell* Cell::getECM() const{
+    return cellsLayer->getECM();
 }

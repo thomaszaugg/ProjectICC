@@ -291,3 +291,7 @@ SubstanceId Lab::getCurrentSubst(){
   if(animal!=nullptr) return animal->getCurrentSubst();
     return GLUCOSE;
 }
+
+void Lab::setCancerAt(const Vec2d& pos){
+    if(isAnyTrackedAnimal()) animal->setCancerAt(pos);
+}

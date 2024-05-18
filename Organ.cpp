@@ -41,6 +41,7 @@ void Organ::initOrganTexture (){
     bloodVertexes = generateVertexes(getAppConfig().simulation_organ["textures"], nbCells, cellSize);
     organVertexes = generateVertexes(getAppConfig().simulation_organ["textures"], nbCells, cellSize);
     concentrationVertexes = generateVertexes(getAppConfig().simulation_organ["textures"], nbCells, cellSize);
+    organCancerVertexes = generateVertexes(getAppConfig().simulation_organ["textures"], nbCells, cellSize);
 }
 
 //5.1
@@ -98,8 +99,10 @@ void Organ::drawRepresentation(){
             drawCells("concentration");
             drawCells("blood cell");
     }else { organTexture.clear(sf::Color(223,196,176));
-    drawCells("blood cell");
-    drawCells("organ cell");}
+        drawCells("blood cell");
+        drawCells("organ cell");
+        drawCells("cancer");
+        }
 
     organTexture.display();
 }
@@ -130,19 +133,24 @@ void Organ::drawCells(std::string name_cell){
         organTexture.draw(bloodVertexes.data(), bloodVertexes.size(), sf::Quads, rs);
     }else if(name_cell=="organ cell"){
         organTexture.draw(organVertexes.data(), organVertexes.size(), sf::Quads, rs);
+    }else if(name_cell=="cancer"){
+        organTexture.draw(organCancerVertexes.data(), organCancerVertexes.size(), sf::Quads, rs);
     } else {
          organTexture.draw(concentrationVertexes.data(), concentrationVertexes.size(), sf::Quads, rs);
         }
 
 }
 
-void Organ::setVertexes1(const std::vector<std::size_t>& indexes, int a_blood, int a_organ, bool concentrationOn, double ratio){
+void Organ::setVertexes1(const std::vector<std::size_t>& indexes, int a_blood, int a_organ, int a_cancer, bool concentrationOn, double ratio){
     for( auto index : indexes){
 
-       if(concentrationOn){
-           concentrationVertexes[index].color.a= std::max(int(ratio * 255), 5);
-       }else{ bloodVertexes[index].color.a= a_blood;
-        organVertexes[index].color.a=a_organ;}
+        if(concentrationOn){
+            concentrationVertexes[index].color.a= std::max(int(ratio * 255), 5);
+        }else{
+            bloodVertexes[index].color.a= a_blood;
+            organVertexes[index].color.a= a_organ;
+            organCancerVertexes[index].color.a = a_cancer;
+        }
     }
 }
 
@@ -153,15 +161,17 @@ void Organ::updateRepresentationAt(const CellCoord& coord){
 
     //is this the right place?
     if (cellsLayers[i][j]->hasBloodCell()){
-        setVertexes1(indexes, 255, 0);
-    }else if (cellsLayers[i][j]->hasOrganCell()){
-        setVertexes1(indexes, 0, 255);
+        setVertexes1(indexes, 255, 0, 0);
+    }else if (cellsLayers[i][j]->hasOrganCell() && cellsLayers[i][j]->hasCancer()){
+        setVertexes1(indexes, 0, 0, 255);
+    }else if (cellsLayers[i][j]->hasOrganCell() && !cellsLayers[i][j]->hasCancer()){
+        setVertexes1(indexes, 0, 255, 0);
     }else{
-        setVertexes1(indexes, 0, 0);
+        setVertexes1(indexes, 0, 0, 0);
     }
     if(getApp().isConcentrationOn() && !cellsLayers[i][j]->hasBloodCell()){
         double ratio= (getConcentrationAt(coord,currentSubst))/getAppConfig().substance_max_value;
-        setVertexes1(indexes,0,0, true, ratio);
+        setVertexes1(indexes, 0, 0, 0, true, ratio);
     }
 }
 
@@ -192,7 +202,7 @@ void Organ::updateCellsLayer(const CellCoord& pos, Kind kind){
         break;
     case Kind::Capillary:
         cellsLayers[pos.x][pos.y]->setBlood(CAPILLARY);
-        break;
+        break;    
     }}
 
 
@@ -326,7 +336,7 @@ void  Organ::nextSubstance(){
 }
 
 void Organ::changeDeltaSubstance(bool minus){
-double deltaSubstance(0);
+    double deltaSubstance(0);
     switch (currentSubst) {
         case GLUCOSE:
             deltaSubstance = getAppConfig().delta_glucose;
@@ -356,4 +366,9 @@ double Organ::getDelta(SubstanceId id) {
 
 SubstanceId Organ::getCurrentSubst(){
 return currentSubst;
+}
+
+void Organ::setCancerAt(const Vec2d& position){
+    CellCoord pos = toCellCoord(position);
+    cellsLayers[pos.x][pos.y]->setCancer();
 }

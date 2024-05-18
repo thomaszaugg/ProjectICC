@@ -237,3 +237,7 @@ double Animal::getDelta(SubstanceId id){
 SubstanceId Animal::getCurrentSubst(){
     return organ->getCurrentSubst();
 }
+
+void Animal::setCancerAt(const Vec2d& pos){
+    return organ->setCancerAt(pos);
+}
