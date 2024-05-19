@@ -116,23 +116,56 @@ public:
     */
     DrawingPriority getDepth() override;
 
+    /*!
+    * @brief updating of the organ if the animal has an organ
+    */
     void updateOrgan();
+
+    /*!
+    * @brief drawing of the organ if the animal has an organ
+    */
     void drawOrgan(sf::RenderTarget& target);
-    void initializeOrgan();
+
+    /*!
+    * @brief deleting an organ
+    */
     void deleteOrgan();
 
-    //whats the idea of this setter?
-    //transplants an organ
+    /*!
+    * @brief declaration of transplant organ -> needed for tests
+    */
     void transplant(Organ*);
 
-
-    //6.1
+    /*!
+    * @brief increasing of the Substance Id of currentSubst in Organ by 1
+    */
     void nextSubstance();
+
+    /*!
+    * @brief Increasing of the quantity of the currentSubst
+    */
     void increaseCurrentSubst();
+
+    /*!
+    * @brief Decreasing of the quantity of the currentSubst
+    */
     void decreaseCurrentSubst();
-    double getDelta(SubstanceId id) ;
+
+    /*!
+    * @brief Getter
+    * @return delta value of current Substance
+    */
+    double getDelta(SubstanceId id);
+
+    /*!
+    * @brief Getter
+    * @return Substance id of the current Substance
+    */
     SubstanceId getCurrentSubst();
 
+    /*!
+    * @brief setting of a Cancer Cell at the position given with the parameter
+    */
     void setCancerAt(const Vec2d& pos);
 };
 

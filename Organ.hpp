@@ -78,7 +78,7 @@ public:
     int getHeight() const;
 
     //4.2
-    bool isOut(CellCoord position);
+    bool isOut(CellCoord position) const;
 
     virtual CellCoord toCellCoord(const Vec2d& position) const;
 
@@ -99,6 +99,12 @@ public:
    SubstanceId getCurrentSubst();
 
    void setCancerAt(const Vec2d& pos);
+
+   //division
+    bool requestToDivide(CellCoord pos, bool hasCancer);
+    std::vector<CellCoord> getPossiblePositions(CellCoord pos, bool hasCancer)const;
+    bool isDivisonPossible(int x, int y,bool hasCancer) const;
+    bool isInsideLiver(CellCoord pos) const;
 };
 
 #endif // ORGAN_HPP

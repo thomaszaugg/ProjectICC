@@ -11,7 +11,7 @@ Intervals intervals = { -180, -100, -55, -25, -10, 0, 10, 25, 55, 100, 180};
 std::vector<double> probabilities = {0.0000,0.0000,0.0005,0.0010,0.0050,0.9870,0.0050,0.0010,0.0005,0.0000,0.0000};
 
 Animal::Animal(const Vec2d& position, double energy)
-    : Entity(position, energy), speed(0), organ(new Organ()){ //does every animal have an organ?
+    : Entity(position, energy), speed(0), organ(new Organ()){
     }
 
 Animal::~Animal() {
@@ -46,7 +46,7 @@ void Animal::update(sf::Time dt){
            break;}
 
        case WANDERING:{
-        move(dt);
+            move(dt);
            break;}
        case IDLE:{
 
@@ -72,9 +72,9 @@ void Animal::updateState(sf::Time dt, Entity* food){
 }
 
 void Animal::move(sf::Time dt){     //Wandering
-    changeOrientation(dt);        //happens when counter is high enough
+    changeOrientation(dt);          //happens when counter is high enough
 
-  //change of position
+    //change of position
     Vec2d step=getSpeedVector()*dt.asSeconds();
         if(inCollision(step+getCenter())){
             setOrientation((-getHeading()).angle());
@@ -85,7 +85,7 @@ void Animal::move(sf::Time dt){     //Wandering
 void Animal::changeOrientation(sf::Time dt){
     counter+=dt;
     if(counter >= sf::seconds(getAppConfig().animal_rotation_delay)){    //since seconds are floats, we use comparison instead of egality
-        setOrientation(getOrientation()+getNewRotation());             //orientation can become negatif
+        setOrientation(getOrientation()+getNewRotation());               //orientation can become negatif
         counter =sf::Time::Zero;
     }
 }
@@ -160,7 +160,7 @@ void Animal::drawDebug(sf::RenderTarget& target) {
     auto text = buildText(getStateString(),
                 getCenter()+pos,
                 getAppFont(),
-                getAppConfig().default_debug_text_size*2.5,   //why so small
+                getAppConfig().default_debug_text_size*2.5,
                 sf::Color::Blue,
                 0 / DEG_TO_RAD); // if you want to rotate the text
     target.draw(text);
@@ -204,36 +204,32 @@ void Animal::drawOrgan(sf::RenderTarget& target){
     }
 }
 
-void Animal::initializeOrgan(){
-    organ=(new Organ(true));
-}
-
 void Animal::deleteOrgan(){
     delete organ;
     organ=nullptr;
 }
-
 
 void Animal::transplant(Organ* o){
     delete organ;
     organ = o;
 }
 
-
 void Animal::nextSubstance(){
-   organ->nextSubstance();
+    organ->nextSubstance();
 }
 
 void Animal::increaseCurrentSubst(){
     organ->changeDeltaSubstance(false);
 }
+
 void Animal::decreaseCurrentSubst(){
     organ->changeDeltaSubstance(true);
 }
 
 double Animal::getDelta(SubstanceId id){
-   return organ->getDelta(id);
+    return organ->getDelta(id);
 }
+
 SubstanceId Animal::getCurrentSubst(){
     return organ->getCurrentSubst();
 }

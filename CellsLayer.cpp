@@ -94,7 +94,6 @@ Cell* CellsLayer::topCell(){
     }else {return ecm;}
 }
 
-//5.1
 void CellsLayer::update(sf::Time dt){
     ecm->update(dt);
     if (hasBloodCell()){
@@ -142,4 +141,8 @@ void CellsLayer::setCancer(){
 
 Cell* CellsLayer::getECM() const{
     return ecm; //is this too intrusive?
+}
+
+bool CellsLayer::requestToDivide(bool hasCancer){
+    return organ->requestToDivide(position, hasCancer);
 }

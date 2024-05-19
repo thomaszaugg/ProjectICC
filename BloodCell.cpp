@@ -4,7 +4,7 @@
 #include <cmath>
 
 BloodCell::BloodCell(CellsLayer* cellslayer, TypeBloodCell type)
-    : Cell(cellslayer), type(type){}        //@lisa ha hie no type drzegfügt dasme o öpis angers cha drigäh
+    : Cell(cellslayer), type(type){}
 
 void BloodCell::update(sf::Time dt) {
     if(type==ARTERY) return; //do nothing if its an artery
@@ -18,7 +18,7 @@ void BloodCell::update(sf::Time dt) {
     double r=getAppConfig().substance_diffusion_radius;
     double D=getAppConfig().substance_diffusion_constant;
 
-    for(int i(x-r);i<=r+x; ++i){ //iteration trought all the cells in the diffusion radius
+    for(int i(x-r);i<=r+x; ++i){   //iteration trought all the cells in the diffusion radius
         for(int j(y-r);j<=r+y; ++j){
             CellCoord pos_ecm_cell(i,j);
             update(position_bloodcell, pos_ecm_cell, c0, D, dt);

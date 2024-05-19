@@ -6,14 +6,14 @@
 
 
 Organ::Organ(bool generation)
-    { if(generation) generate(); //initialize attributes!!!
+    {if(generation) generate(); //initialize attributes!!!
 }
 
 void Organ::generate(){
-    reloadConfig();
+    reloadConfig();      //create the grid of cellslayers
     initOrganTexture (); //initalize organTexture & initalize vertexes
     createBloodSystem(); //create blood network
-    createOrgan(); //create organ fragment
+    createOrgan();       //create organ fragment
 
     updateRepresentation(true);
 }
@@ -44,7 +44,6 @@ void Organ::initOrganTexture (){
     organCancerVertexes = generateVertexes(getAppConfig().simulation_organ["textures"], nbCells, cellSize);
 }
 
-//5.1
 void Organ::createOrgan(){
     for(int i(0); i < nbCells; ++i){
         for(int j(0); j < nbCells; ++j){
@@ -56,16 +55,18 @@ void Organ::createOrgan(){
     }
 }
 
-//5.1
 void Organ::update(){
     sf::Time dt=sf::seconds(getAppConfig().simulation_fixed_step);
-
+    bool changed = false;
     for(int i(0); i < nbCells; ++i){
         for(int j(0); j < nbCells; ++j){
             cellsLayers[i][j]->update(dt); //function in CellsLayer does the updating of the cells, since there we have access to the cells
         }
     }
-    updateRepresentation(); //do we need that?
+    if(getApp().isConcentrationOn()){
+        changed = true;
+    }
+    updateRepresentation(changed);
 }
 
 void Organ::drawOn(sf::RenderTarget& target){
@@ -180,7 +181,7 @@ void Organ::updateCellsLayerAt(const CellCoord& pos, const Substance& diffusedSu
 
 }
 
-bool Organ::isOut(CellCoord position){
+bool Organ::isOut(CellCoord position)const{
     return position.x<0 or position.x>=nbCells
            or position.y<0 or position.y>=nbCells;
 }
@@ -371,4 +372,44 @@ return currentSubst;
 void Organ::setCancerAt(const Vec2d& position){
     CellCoord pos = toCellCoord(position);
     cellsLayers[pos.x][pos.y]->setCancer();
+}
+
+bool Organ::requestToDivide(CellCoord pos, bool hasCancer){
+    std::vector<CellCoord> possiblePositions= getPossiblePositions(pos, hasCancer);
+
+    int numberOfPositions=possiblePositions.size();
+    if(numberOfPositions==0) return false;
+
+    CellCoord choosenPos=possiblePositions[uniform(0,numberOfPositions-1)];
+
+    if(hasCancer){
+        setCancerAt(choosenPos);
+    }else{
+        cellsLayers[choosenPos.x][choosenPos.y]->setOrganCell();
+    }
+
+    return true;
+
+}
+
+std::vector<CellCoord> Organ::getPossiblePositions(CellCoord pos, bool hasCancer) const{
+    std::vector<CellCoord> possiblePositions;
+    int x=pos.x;
+    int y=pos.y;
+    if(isDivisonPossible(x-1,y-1, hasCancer)) possiblePositions.push_back(CellCoord(x-1,y-1));
+    if(isDivisonPossible(x+1,y-1, hasCancer)) possiblePositions.push_back(CellCoord(x+1,y-1));
+    if(isDivisonPossible(x-1,y+1, hasCancer)) possiblePositions.push_back(CellCoord(x-1,y+1));
+    if(isDivisonPossible(x+1,y+1, hasCancer)) possiblePositions.push_back(CellCoord(x+1,y+1));
+
+    return possiblePositions;
+}
+
+bool Organ::isDivisonPossible(int x, int y, bool hasCancer)const{
+    return (!isOut(CellCoord(x,y))) and
+            (hasCancer or (!cellsLayers[x][y]->hasOrganCell() and isInsideLiver(CellCoord(x,y))));
+}
+
+bool Organ::isInsideLiver(CellCoord pos) const{
+    return true; //this should return true if it is inside the initial bounderies
+                    //@lisa chasch du dini funktion vom kreiere modularisiere dasise hie cha bruche?
 }

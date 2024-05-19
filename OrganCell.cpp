@@ -4,9 +4,10 @@
 
 
 OrganCell::OrganCell(CellsLayer* cellsLayer)
-    : Cell(cellsLayer), atp(100)//(getAppConfig().initial_atp)
+    : Cell(cellsLayer), atp(100), N(0), counter(0)//(getAppConfig().initial_atp)
     {}
 void OrganCell::update(sf::Time dt){
+    ++counter;
     naturalLoss(dt);
     uptakeFromECM();
     ATPSynthesis(dt);
@@ -74,15 +75,43 @@ bool OrganCell::isDead(){
 }
 
 void OrganCell::Division(){
+    if(atp>=getDivisonEnergy() and counter>N){
 
+        if(requestToDivide(hasCancer())){
+        atp-=getAppConfig().organ_division_cost;    //the same for organ and tumor cells
+        counter=0;
+        N = uniform(getMinNbCycles(), getMinNbCycles() + getNbCyclesRange());
+        }
+
+}}
+
+
+    double OrganCell::getMinNbCycles()const{
+   return getAppConfig().organ_time_next_division;
 }
 
-void OrganCell::canDivide(){
+    double OrganCell::getNbCyclesRange()const{
+       return     getAppConfig().organ_range_next_division;
+    }
 
+double OrganCell::getDivisonEnergy() const{
+return getAppConfig().organ_division_energy;
 }
 
 bool OrganCell::hasCancer(){
     return false;
 }
 
+/*  i ha kes internet drum spicheri d antwort zur frag hie:
+ *
+ *  copy to divison method!
+ *
+ *  [Question 6.6] What method(s) do you introduce and in which class(es) to implement cell division of the organ fragment (always avoiding introducing overly intrusive getters like getOrgan or getCellsLayers) ? Answer this question in your REPONSES file, justifying your choices and completing the code accordingly.
+    We coded the method division that handles divison for both organ and tumor cells using polymorphic getters
+    If a cell is ready to divide, it sends a request to divide using the requestToDivide(bool hasCancer) method
+    that is passed up to Cell, then CellsLayer and finally Organ where the neccessary checks are made
+    If there is a free position, the organ sets a new cell and returns a bool (back through the cascade)
+    the cell thereby knows if it has diveded and then resets the counter and substracts the energy
+
+  */
 

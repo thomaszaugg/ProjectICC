@@ -1,94 +1,98 @@
-/*
- * prjsv 2016-2024
- * Marco Antognini
- * PROVIDED CORRECTION
- */
+#include "Types.hpp"
+#include <iostream>
 #pragma once
 
-#include <Types.hpp>
-#include <limits>
-#include <iostream>
+class Substance{
+private:
+    double totalCon;
+    //the 3 possible substances in the ECM:
 
+    double vgef;                //Vascular Endothelial Growth Factor
+    double glucose;
+    double bromopyruvate;
 
-class Substance
-{
-	public:
-	
-	Substance();
     /*!
-     * @brief constructs a substance using vgef, glucose and bormopyruvate quantities
-     */
-	Substance(double,double,double);
+    * @brief Sets the fractions and the values in the bounderies
+    */
+    void setSubstance(double VGEF, double GLUCOSE, double BROMOPYRUVATE);
 
-	Substance(const Substance&);
-
-	~Substance();
     /*!
-     * @brief add to this the quantities of other
-     * (quantity by quantity)
-     */
+    * @brief Sets the concentration in the correct boundary
+    */
+    void checkCon(double& con);
+
+public:
+    /*!
+    * @brief Constructor by default
+    */
+    Substance();
+
+    /*!
+    * @brief Constuctor, including the initialization of the total Concentration and checks the values
+    */
+    Substance(double VGEF, double GLUCOSE, double BROMOPYRUVATE);
+
+    /*!
+    * @brief Default Copy Constructor & Destructor
+    */
+    Substance(const Substance& sub)=default;
+    virtual ~Substance()=default;
+
+    /*!
+    * @brief Getters
+    */
+    double getFractVGEF();
+    double getFractGlucose();
+    double getFractInhibitor();
+    double getTotalConcentration();
+
+    /*!
+    * @brief checks if the concentrations of the substances is equal to zero (up to substance precision)
+    *
+    * @return returns true if they are equal to zero
+    */
+    bool isNull();
+
+    /*!
+    * @brief sets one substance as the other
+    */
+    void operator=(const Substance& sub);
+
+    /*!
+    * @brief checks if two substances are equal or not (up to substance precision)
+    */
+    bool operator==(const Substance& other) const;
+    bool operator!=(const Substance& other) const;
+
+    /*!
+    * @brief operator to access the concentration of a SubstanceId
+    *
+    * @return concentration of the asked SubstanceId
+    */
+    double operator[](const SubstanceId index) const;
+
+    /*!
+    * @brief basic arithmetic operations in the Substance class
+    *
+    * @return Substance passed by reference
+    */
     Substance& operator+=(const Substance& other);
-
-    Substance& operator=(const Substance& other);
-    /*!
-     * @brief deduce from this the quantities of other
-     * (quantity by quantity)
-     */
-	Substance& operator-=(const Substance&);
-    /*!
-     * @brief returns the quantity of a given substance (VGEF, GLUCOSE or BROMOPYRUVATE)
-     *
-     */
-	double operator[] (const SubstanceId) const;
-    /*!
-     * @brief returns the VGEF fraction (quantity / sum of all quantities)
-     */
-	double getFractVGEF() const {return m_fract_vgef;}
-    /*!
-     * @brief returns the GLUCOSE fraction (quantity / sum of all quantities)
-     */
-	double getFractGlucose() const {return m_fract_glucose;}
-    /*!
-     * @brief returns the BORMOPYRUVATE fraction (quantity / sum of all quantities)
-     */
-	double getFractInhibitor() const {return m_fract_bromopyruvate;}
-    /*!
-     * @brief returns the sum of all quantities
-     */
-	double getTotalConcentration() const {return m_total_concentration;}
+    Substance& operator-=(const Substance& other);
+    Substance& operator*(double scalar);
 
     /*!
-     * @brief multiplies by factor the quantity identied by id
-     */
-    void update(SubstanceId id, double factor);
+    * @brief mulitply the quantity of a substance by c
+    */
+    void update(SubstanceId subId, double c);
 
     /*!
-     * @brief return tue if all the quantities are zero up to SUBSTANCE_PRECISION
-     */
-	bool isNull() const;
-	
-    /*!
-     * @brief takes a fraction of the product identified by id from this and adds it to receiver
-     */
-	void uptakeOnGradient(double fraction, Substance& receiver, SubstanceId id);
-	
-	private:
-	double m_fract_vgef;
-	double m_fract_glucose;
-	double m_fract_bromopyruvate;
-	
-	double m_total_concentration;
-	
+    * @brief updates the concentration of a receiver
+    */
+    void uptakeOnGradient(double fraction, Substance& receiver, SubstanceId id);
+
 };
-double check(double, double minValue = 0.0);
 
 /*!
- * @brief return val clamped between minValue and maxValue
- */
-double check(double val, double minValue , double maxValue);
-Substance operator*(const Substance&,double);
-bool operator==(const Substance&, const Substance&);
-bool operator!=(const Substance&,const Substance&);
-
-std::ostream& operator<<(std::ostream&,const Substance&);
-
+* @brief to cout the concentrations of a Substance
+*/
+std::ostream& operator<<(std::ostream& print, const Substance& sub);

@@ -13,9 +13,7 @@ double TumoralCell::getFractUptake(){
 void TumoralCell::ATPSynthesis(sf::Time dt){
     glycolysis(dt);
 }
-void TumoralCell::Division(){
 
-}
 
 bool TumoralCell::hasCancer(){
     return true;
@@ -31,3 +29,14 @@ double TumoralCell::getKrebsVmax() const{
 double TumoralCell::getFractGlu() const {
     return getAppConfig().cancer_glucose_usage;
 }
+ double TumoralCell::getDivisonEnergy() const {
+    return getAppConfig().cancer_division_energy;
+}
+
+ double TumoralCell::getMinNbCycles()const{
+ return getAppConfig().cancer_time_next_division;
+ }
+
+ double TumoralCell::getNbCyclesRange()const{
+     return getAppConfig().cancer_range_next_division ;
+ }
