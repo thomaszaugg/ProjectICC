@@ -7,7 +7,6 @@ Cell::Cell(CellsLayer* cellsLayer)
 
 Cell::~Cell(){
     delete substance;   //free up allocated memory
-    //std::cout << "I die";
 }
 
 void Cell::addSubstance(Substance newSubstance){
@@ -22,6 +21,9 @@ void Cell::uptakeSubstance(double fraction, Cell* cellType,  SubstanceId id){
     Substance& receiver = *(cellType->substance);
     substance->uptakeOnGradient(fraction, receiver, id);
 }
+void Cell::takeSubstance(double fraction, Cell* donour, SubstanceId id){
+    donour->uptakeSubstance(fraction, this, id);
+}
 
 CellsLayer* Cell::getCellsLayer() const{
     return cellsLayer;
@@ -30,9 +32,19 @@ CellsLayer* Cell::getCellsLayer() const{
 double Cell::getDeltaVGEF() const{
     return cellsLayer->getDeltaVGEF();
 }
+
 double Cell::getDeltaGlucose() const{
     return cellsLayer->getDeltaGlucose();
 }
+
 double Cell::getDeltaBromo() const{
     return cellsLayer->getDeltaBromo();
+}
+
+void Cell::multiplySubstance(SubstanceId id, double multiplier) const{
+   substance->update(id, multiplier);
+}
+
+Cell* Cell::getECM() const{
+    return cellsLayer->getECM();
 }

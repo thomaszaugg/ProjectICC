@@ -6,14 +6,14 @@
 
 
 Organ::Organ(bool generation)
-    { if(generation) generate(); //initialize attributes!!!
+    {if(generation) generate(); //initialize attributes!!!
 }
 
 void Organ::generate(){
-    reloadConfig();
+    reloadConfig();      //create the grid of cellslayers
     initOrganTexture (); //initalize organTexture & initalize vertexes
     createBloodSystem(); //create blood network
-    createOrgan(); //create organ fragment
+    createOrgan();       //create organ fragment
 
     updateRepresentation(true);
 }
@@ -44,7 +44,6 @@ void Organ::initOrganTexture (){
     organCancerVertexes = generateVertexes(getAppConfig().simulation_organ["textures"], nbCells, cellSize);
 }
 
-//5.1
 void Organ::createOrgan(){
     for(int i(0); i < nbCells; ++i){
         for(int j(0); j < nbCells; ++j){
@@ -56,16 +55,18 @@ void Organ::createOrgan(){
     }
 }
 
-//5.1
 void Organ::update(){
     sf::Time dt=sf::seconds(getAppConfig().simulation_fixed_step);
-
+    bool changed = false;
     for(int i(0); i < nbCells; ++i){
         for(int j(0); j < nbCells; ++j){
             cellsLayers[i][j]->update(dt); //function in CellsLayer does the updating of the cells, since there we have access to the cells
         }
     }
-    updateRepresentation(); //do we need that?
+    if(getApp().isConcentrationOn()){
+        changed = true;
+    }
+    updateRepresentation(changed);
 }
 
 void Organ::drawOn(sf::RenderTarget& target){

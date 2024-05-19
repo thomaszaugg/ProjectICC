@@ -61,6 +61,8 @@ public:
     bool hasCancer();
 
     void setCancer();
+
+    Cell* getECM() const;
 };
 
 #endif // CELLSLAYER_HPP

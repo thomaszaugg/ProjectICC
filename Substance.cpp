@@ -53,7 +53,7 @@ double Substance::getTotalConcentration(){
 
 bool Substance::isNull(){
     return ((*this)[VGEF] < SUBSTANCE_PRECISION and (*this)[GLUCOSE]
-            < SUBSTANCE_PRECISION and (*this)[BROMOPYRUVATE] < SUBSTANCE_PRECISION);
+                                                        < SUBSTANCE_PRECISION and (*this)[BROMOPYRUVATE] < SUBSTANCE_PRECISION);
 }
 
 void Substance::operator=(const Substance& sub){
@@ -136,9 +136,9 @@ void Substance::update(SubstanceId subId, double c){
     case BROMOPYRUVATE :
         bro*=c;
         break;
-     default:
+    default:
         throw std::invalid_argument("SubstanceID not found");
-}
+    }
     setSubstance(vf, glu, bro);
 
     return;
@@ -155,22 +155,22 @@ void Substance::uptakeOnGradient(double fraction, Substance& receiver, Substance
     receiver.update(id, quot);*/
 
 
-        //assert(fraction > 0 && fraction < 1);
+    //assert(fraction > 0 && fraction < 1);
 
-        if ((*this)[id] < SUBSTANCE_PRECISION) { // to avoid floating point issues
-            return;
-        }
-        Substance temp;
-        switch(id)
-        {
-        case GLUCOSE : temp = Substance(0,(fraction)*((*this)[id]),0);break;
-        case BROMOPYRUVATE : temp = Substance(0,0,(fraction)*((*this)[id]));break;
-        case VGEF : temp = Substance((fraction)*((*this)[id]),0,0);break;
-        default   : /*nothing to do*/ break;
-        }
-        receiver+=temp;
-        Substance temp2 = (*this);
-        temp2.update(id,1-fraction);
-        (*this) -= temp;
+    if ((*this)[id] < SUBSTANCE_PRECISION) { // to avoid floating point issues
+        return;
+    }
+    Substance temp;
+    switch(id)
+    {
+    case GLUCOSE : temp = Substance(0,(fraction)*((*this)[id]),0);break;
+    case BROMOPYRUVATE : temp = Substance(0,0,(fraction)*((*this)[id]));break;
+    case VGEF : temp = Substance((fraction)*((*this)[id]),0,0);break;
+    default   : /*nothing to do*/ break;
+    }
+    receiver+=temp;
+    Substance temp2 = (*this);
+    temp2.update(id,1-fraction);
+    (*this) -= temp;
 
 }

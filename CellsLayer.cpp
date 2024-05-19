@@ -94,7 +94,6 @@ Cell* CellsLayer::topCell(){
     }else {return ecm;}
 }
 
-//5.1
 void CellsLayer::update(sf::Time dt){
     ecm->update(dt);
     if (hasBloodCell()){
@@ -138,4 +137,8 @@ void CellsLayer::setCancer(){
     }
     organCell = (new TumoralCell(this));
     organ->updateRepresentationAt(position);
+}
+
+Cell* CellsLayer::getECM() const{
+    return ecm; //is this too intrusive?
 }
