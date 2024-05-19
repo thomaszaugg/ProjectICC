@@ -25,6 +25,7 @@ private:
     std::vector<sf::Vertex> bloodVertexes;
     std::vector<sf::Vertex> organVertexes;
     std::vector<sf::Vertex> concentrationVertexes;
+    std::vector<sf::Vertex> organCancerVertexes;
 
     SubstanceId currentSubst;
 
@@ -32,7 +33,7 @@ private:
     std::array<double,3> deltas; //glucose=0, .... (like enumerate type)
 
     //helper for the updateRepresentationAt function
-    void setVertexes1(const std::vector<std::size_t>& indexes, int a_blood, int a_organ,bool concentrationOn=false, double ratio=0.);
+    void setVertexes1(const std::vector<std::size_t>& indexes, int a_blood, int a_organ, int a_cancer, bool concentrationOn=false, double ratio=0.);
 
     //helpers initializeBloodNetwork
     virtual void generateArtery(int& leftColumn, int& rightColumn);
@@ -77,7 +78,7 @@ public:
     int getHeight() const;
 
     //4.2
-    bool isOut(CellCoord position);
+    bool isOut(CellCoord position) const;
 
     virtual CellCoord toCellCoord(const Vec2d& position) const;
 
@@ -96,6 +97,14 @@ public:
 
    double getDelta(SubstanceId id) ;
    SubstanceId getCurrentSubst();
+
+   void setCancerAt(const Vec2d& pos);
+
+   //division
+    bool requestToDivide(CellCoord pos, bool hasCancer);
+    std::vector<CellCoord> getPossiblePositions(CellCoord pos, bool hasCancer)const;
+    bool isDivisonPossible(int x, int y,bool hasCancer) const;
+    bool isInsideLiver(CellCoord pos) const;
 };
 
 #endif // ORGAN_HPP

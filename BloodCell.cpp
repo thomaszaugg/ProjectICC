@@ -4,12 +4,13 @@
 #include <cmath>
 
 BloodCell::BloodCell(CellsLayer* cellslayer, TypeBloodCell type)
-    : Cell(cellslayer), type(type){}        //@lisa ha hie no type drzegfügt dasme o öpis angers cha drigäh
+    : Cell(cellslayer), type(type){}
 
 void BloodCell::update(sf::Time dt) {
     if(type==ARTERY) return; //do nothing if its an artery
 
-    Substance c0(0., getAppConfig().base_glucose, getAppConfig().base_bromo);
+
+    Substance c0(0.+getDeltaVGEF()+100, getAppConfig().base_glucose+getDeltaGlucose(), getAppConfig().base_bromo+getDeltaBromo()+100);
 
     CellCoord position_bloodcell=getCellsLayer()->getPosition(); //main cell that is diffusing its substances
     int x=position_bloodcell.x;
@@ -17,7 +18,7 @@ void BloodCell::update(sf::Time dt) {
     double r=getAppConfig().substance_diffusion_radius;
     double D=getAppConfig().substance_diffusion_constant;
 
-    for(int i(x-r);i<=r+x; ++i){ //iteration trought all the cells in the diffusion radius
+    for(int i(x-r);i<=r+x; ++i){   //iteration trought all the cells in the diffusion radius
         for(int j(y-r);j<=r+y; ++j){
             CellCoord pos_ecm_cell(i,j);
             update(position_bloodcell, pos_ecm_cell, c0, D, dt);

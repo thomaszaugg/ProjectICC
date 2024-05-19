@@ -94,7 +94,6 @@ Cell* CellsLayer::topCell(){
     }else {return ecm;}
 }
 
-//5.1
 void CellsLayer::update(sf::Time dt){
     ecm->update(dt);
     if (hasBloodCell()){
@@ -112,4 +111,38 @@ void CellsLayer::update(sf::Time dt){
 
 void CellsLayer::updateCellsLayerAt(const CellCoord& pos, const Substance& diffusedSubst){
     organ->updateCellsLayerAt( pos, diffusedSubst);
+}
+
+double CellsLayer::getDeltaVGEF() const{
+   return organ->getDelta(VGEF);
+}
+double CellsLayer::getDeltaGlucose() const{
+   return organ->getDelta(GLUCOSE);
+}
+double CellsLayer::getDeltaBromo() const{
+   return organ->getDelta(BROMOPYRUVATE);
+}
+
+bool CellsLayer::hasCancer(){
+    if (hasOrganCell()){
+        return organCell->hasCancer();
+    }
+    else {return false;}
+}
+
+void CellsLayer::setCancer(){
+    if (organCell != nullptr){
+        delete organCell;
+        organCell = nullptr;
+    }
+    organCell = (new TumoralCell(this));
+    organ->updateRepresentationAt(position);
+}
+
+Cell* CellsLayer::getECM() const{
+    return ecm; //is this too intrusive?
+}
+
+bool CellsLayer::requestToDivide(bool hasCancer){
+    return organ->requestToDivide(position, hasCancer);
 }

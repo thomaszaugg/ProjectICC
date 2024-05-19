@@ -158,6 +158,8 @@ public:
     //return NB_SUBST if there is no animal tracked
     SubstanceId getCurrentSubst();
 
+    void setCancerAt(const Vec2d& pos);
+
     };
 
 #endif // LAB_HPP
