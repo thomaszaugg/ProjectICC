@@ -63,6 +63,9 @@ public:
     void setCancer();
 
     Cell* getECM() const;
+
+    //helper divison
+    bool requestToDivide(bool hasCancer);
 };
 
 #endif // CELLSLAYER_HPP

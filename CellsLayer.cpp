@@ -142,3 +142,7 @@ void CellsLayer::setCancer(){
 Cell* CellsLayer::getECM() const{
     return ecm; //is this too intrusive?
 }
+
+bool CellsLayer::requestToDivide(bool hasCancer){
+    return organ->requestToDivide(position, hasCancer);
+}

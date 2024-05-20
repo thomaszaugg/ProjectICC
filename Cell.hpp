@@ -95,6 +95,8 @@ protected:
     */
     Cell* getECM() const;
 
+
+    bool requestToDivide(bool hasCancer);
 };
 
 #endif // CELL_HPP

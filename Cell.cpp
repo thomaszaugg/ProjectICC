@@ -48,3 +48,7 @@ void Cell::multiplySubstance(SubstanceId id, double multiplier) const{
 Cell* Cell::getECM() const{
     return cellsLayer->getECM();
 }
+
+bool Cell::requestToDivide(bool hasCancer){
+    return cellsLayer->requestToDivide(hasCancer);
+}

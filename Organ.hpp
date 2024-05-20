@@ -29,7 +29,7 @@ private:
 
     SubstanceId currentSubst;
 
-//initialized as a vector to not use too unneccesary switch statements
+    //initialized as a vector to not use too unneccesary switch statements
     std::array<double,3> deltas; //glucose=0, .... (like enumerate type)
 
     //helper for the updateRepresentationAt function
@@ -43,14 +43,13 @@ private:
     void generateOneSideCapillary(CellCoord const& direction, int const& column);
 
 protected:
-
-protected:
      void generate(); //virtual (only in debug removed
 
     //helpers generate
     void reloadConfig();
     void initOrganTexture (); //initalize organTexture
     void createOrgan(); //create organ fragment
+    bool organBoundaries(CellCoord pos) const; //helper create organ
     void createBloodSystem(bool generateCapillaries=true); //create blood network
 
     //helper createBloodSystem
@@ -78,7 +77,7 @@ public:
     int getHeight() const;
 
     //4.2
-    bool isOut(CellCoord position);
+    bool isOut(CellCoord position) const;
 
     virtual CellCoord toCellCoord(const Vec2d& position) const;
 
@@ -99,6 +98,12 @@ public:
    SubstanceId getCurrentSubst();
 
    void setCancerAt(const Vec2d& pos);
+
+   //division
+    bool requestToDivide(CellCoord pos, bool hasCancer);
+    std::vector<CellCoord> getPossiblePositions(CellCoord pos, bool hasCancer)const;
+    bool isDivisonPossible(int x, int y,bool hasCancer) const;
+    bool isInsideLiver(CellCoord pos) const;
 };
 
 #endif // ORGAN_HPP
