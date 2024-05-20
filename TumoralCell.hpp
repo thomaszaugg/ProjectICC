@@ -22,6 +22,8 @@ public:
 
     virtual bool hasCancer() override;
 
+    ~TumoralCell()=default;
+
 };
 
 #endif // TUMORALCELL_HPP

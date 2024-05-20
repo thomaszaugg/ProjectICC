@@ -144,5 +144,5 @@ Cell* CellsLayer::getECM() const{
 }
 
 bool CellsLayer::requestToDivide(bool hasCancer){
-    return organ->requestToDivide(position, hasCancer);
+    return organ->requestToDivide(position, hasCancer); //here it is possible to access the position
 }

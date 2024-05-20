@@ -46,6 +46,8 @@ public:
 
     OrganCell(CellsLayer* cellsLayer);
 
+    virtual ~OrganCell()=default;
+
     virtual void update(sf::Time dt) override;
 
     //6

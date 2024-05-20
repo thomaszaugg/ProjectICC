@@ -13,7 +13,7 @@ void OrganCell::update(sf::Time dt){
     uptakeFromECM();
     ATPSynthesis(dt);
     feedingLoss();
-    //Division();
+    Division();
 }
 
 void OrganCell::naturalLoss(sf::Time dt){
@@ -109,6 +109,7 @@ bool OrganCell::hasCancer(){
  *  copy to divison method!
  *
  *  [Question 6.6] What method(s) do you introduce and in which class(es) to implement cell division of the organ fragment (always avoiding introducing overly intrusive getters like getOrgan or getCellsLayers) ? Answer this question in your REPONSES file, justifying your choices and completing the code accordingly.
+
     We coded the method division that handles divison for both organ and tumor cells using polymorphic getters
     If a cell is ready to divide, it sends a request to divide using the requestToDivide(bool hasCancer) method
     that is passed up to Cell, then CellsLayer and finally Organ where the neccessary checks are made

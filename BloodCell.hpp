@@ -29,6 +29,11 @@ public:
     */
     virtual void update(sf::Time dt) override;
 
+    /*!
+    * @brief Destructor
+    */
+    ~BloodCell()=default;
+
 
 
 };

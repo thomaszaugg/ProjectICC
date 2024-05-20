@@ -383,13 +383,17 @@ void Organ::setCancerAt(const Vec2d& position){
 bool Organ::requestToDivide(CellCoord pos, bool hasCancer){
     std::vector<CellCoord> possiblePositions= getPossiblePositions(pos, hasCancer);
 
-    int numberOfPositions=possiblePositions.size();
-    if(numberOfPositions==0) return false;
+    int numberOfPositions = possiblePositions.size();
+    //if(numberOfPositions==0) return false;
+
+    if(possiblePositions.empty()) return false;
+
 
     CellCoord choosenPos=possiblePositions[uniform(0,numberOfPositions-1)];
 
     if(hasCancer){
-        setCancerAt(choosenPos);
+        //setCancerAt(choosenPos);
+        cellsLayers[choosenPos.x][choosenPos.y]->setCancer();
     }else{
         cellsLayers[choosenPos.x][choosenPos.y]->setOrganCell();
     }
@@ -411,6 +415,10 @@ std::vector<CellCoord> Organ::getPossiblePositions(CellCoord pos, bool hasCancer
 }
 
 bool Organ::isDivisonPossible(int x, int y, bool hasCancer)const{
+    CellCoord pos(x,y);
+    //if (hasCancer) return !isOut(pos);
+    //else return isInsideLiver(pos);
+
     return (!isOut(CellCoord(x,y))) and
             (hasCancer or (!cellsLayers[x][y]->hasOrganCell() and isInsideLiver(CellCoord(x,y))));
 }
