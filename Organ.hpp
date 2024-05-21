@@ -29,7 +29,7 @@ private:
 
     SubstanceId currentSubst;
 
-//initialized as a vector to not use too unneccesary switch statements
+    //initialized as a vector to not use too unneccesary switch statements
     std::array<double,3> deltas; //glucose=0, .... (like enumerate type)
 
     //helper for the updateRepresentationAt function
@@ -43,14 +43,13 @@ private:
     void generateOneSideCapillary(CellCoord const& direction, int const& column);
 
 protected:
-
-protected:
      void generate(); //virtual (only in debug removed
 
     //helpers generate
     void reloadConfig();
     void initOrganTexture (); //initalize organTexture
     void createOrgan(); //create organ fragment
+    bool organBoundaries(CellCoord pos) const; //helper create organ
     void createBloodSystem(bool generateCapillaries=true); //create blood network
 
     //helper createBloodSystem

@@ -6,7 +6,8 @@ Cell::Cell(CellsLayer* cellsLayer)
 {}
 
 Cell::~Cell(){
-    delete substance;   //free up allocated memory
+    delete substance;    //free up allocated memory
+    substance = nullptr;
 }
 
 void Cell::addSubstance(Substance newSubstance){

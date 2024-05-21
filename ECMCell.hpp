@@ -10,6 +10,8 @@ public:
     ECMCell(CellsLayer* cellsLayer);
 
     virtual void update(sf::Time dt) override;
+
+    ~ECMCell()=default;
 };
 
 #endif // ECMCELL_HPP

@@ -77,13 +77,13 @@ double Substance::operator[](const SubstanceId index) const{
     switch(index) {
     case GLUCOSE :
         return glucose * totalCon;
-
-    case VGEF :
-        return vgef * totalCon;
-
+        break;
     case BROMOPYRUVATE :
         return bromopyruvate * totalCon;
-
+        break;
+    case VGEF :
+        return  vgef* totalCon;
+        break;
     default :
         return -1;
     }

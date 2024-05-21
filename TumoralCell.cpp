@@ -4,16 +4,16 @@
 TumoralCell::TumoralCell(CellsLayer* cellsLayer)
     : OrganCell(cellsLayer){}
 
+ void TumoralCell::ATPSynthesis(sf::Time dt){
+     glycolysis(dt);}
 
 
-double TumoralCell::getFractUptake(){
+
+
+
+double TumoralCell::getFractUptake() const{
     return getAppConfig().cancer_fract_uptake;
 }
-
-void TumoralCell::ATPSynthesis(sf::Time dt){
-    glycolysis(dt);
-}
-
 
 bool TumoralCell::hasCancer(){
     return true;
@@ -22,6 +22,7 @@ bool TumoralCell::hasCancer(){
 double TumoralCell::getKrebsKm() const{
     return getAppConfig().cancer_km_glycolysis;
 }
+
 double TumoralCell::getKrebsVmax() const{
     return getAppConfig().cancer_km_max_glycolysis;
 }
@@ -33,10 +34,10 @@ double TumoralCell::getFractGlu() const {
     return getAppConfig().cancer_division_energy;
 }
 
- double TumoralCell::getMinNbCycles()const{
- return getAppConfig().cancer_time_next_division;
- }
+double TumoralCell::getMinNbCycles()const{
+    return getAppConfig().cancer_time_next_division;
+}
 
- double TumoralCell::getNbCyclesRange()const{
-     return getAppConfig().cancer_range_next_division ;
- }
+double TumoralCell::getNbCyclesRange()const{
+    return getAppConfig().cancer_range_next_division ;
+}

@@ -4,8 +4,9 @@
 
 
 OrganCell::OrganCell(CellsLayer* cellsLayer)
-    : Cell(cellsLayer), atp(100), N(0), counter(0)//(getAppConfig().initial_atp)
+    : Cell(cellsLayer), atp(100), N(100), counter(0)//(getAppConfig().initial_atp)
     {}
+
 void OrganCell::update(sf::Time dt){
     ++counter;
     naturalLoss(dt);
@@ -21,48 +22,51 @@ void OrganCell::naturalLoss(sf::Time dt){
 
 void OrganCell::uptakeFromECM(){
     double fractUptake=getFractUptake();
-    Cell* ecm=getECM();
+    Cell* ecm=getECM();     //using this getters allows us to make use of uptake substance function
     takeSubstance(fractUptake,ecm, GLUCOSE);
     takeSubstance(fractUptake,ecm, BROMOPYRUVATE);
 }
 
-double OrganCell::getFractUptake(){
+double OrganCell::getFractUptake() const{
     return getAppConfig().organ_fract_uptake;
 }
 
 void OrganCell::ATPSynthesis(sf::Time dt){
-
     //Glycolysis
         glycolysis(dt);
     //KrebsCycle
-        ATP(dt,0.8);    //0.8 = KrebsGlucoseUptake getAppConfig
+       pathway_atp_production(dt,0.8);    //0.8 = KrebsGlucoseUptake getAppConfig
         }
+
 void OrganCell::glycolysis(sf::Time dt){
-        double factor_inhibition=(1+ getQuantitiy(BROMOPYRUVATE)/0.6); //0.6=Ki move to getAppConfig()
 
-        ATP(dt,getFractGlu(),factor_inhibition);
+    double factor_inhibition=(getQuantitiy(BROMOPYRUVATE)/0.6); //0.6=Ki move to getAppConfig()
+    ++factor_inhibition;
+    pathway_atp_production(dt, getFractGlu(), factor_inhibition);
 
-            //only organ cells or both?
-        multiplySubstance(BROMOPYRUVATE,0.6); //0.6 = lossOfInhibiorFactor move to getAppConfig()
-
-}
+    //only organ cells or both? make polymorphic if both
+    if(!hasCancer()){
+    multiplySubstance(BROMOPYRUVATE,0.6); //0.6 = lossOfInhibiorFactor move to getAppConfig()
+}}
 
 double OrganCell::getKrebsKm() const{
     return getAppConfig().organ_km_glycolysis;}
+
 double OrganCell::getKrebsVmax() const{
     return getAppConfig().organ_km_max_glycolysis;
 }
-void OrganCell::ATP(sf::Time dt, double factor_glucoseUptake, double factor_inhibition){
+
+void OrganCell::pathway_atp_production(sf::Time dt, double factor_glucoseUptake, double factor_inhibition){
     double S=getQuantitiy(GLUCOSE)*factor_glucoseUptake;
-   multiplySubstance(GLUCOSE,factor_glucoseUptake);
-
-   double dP=((getKrebsVmax()*S)/(S+(getKrebsKm()*factor_inhibition)))*dt.asSeconds();
-   atp+=dP;
-
+    multiplySubstance(GLUCOSE,factor_glucoseUptake);
+    double dP=((getKrebsVmax()*S)/(S+(getKrebsKm()*factor_inhibition)))*dt.asSeconds();
+    atp+=dP;
 }
+
 double OrganCell::getFractGlu() const{
-        return getAppConfig().organ_glucose_usage;
+    return getAppConfig().organ_glucose_usage;
 }
+
 void OrganCell::feedingLoss(){
     double atp_min = getAppConfig().base_atp_usage;
     double atp_max = atp_min + getAppConfig().range_atp_usage;
@@ -76,26 +80,24 @@ bool OrganCell::isDead(){
 
 void OrganCell::Division(){
     if(atp>=getDivisonEnergy() and counter>N){
-
         if(requestToDivide(hasCancer())){
-        atp-=getAppConfig().organ_division_cost;    //the same for organ and tumor cells
-        counter=0;
-        N = uniform(getMinNbCycles(), getMinNbCycles() + getNbCyclesRange());
+            atp-=getAppConfig().organ_division_cost;    //the same for organ and tumor cells
+            counter=0;
+            N = uniform(getMinNbCycles(), getMinNbCycles() + getNbCyclesRange());
         }
-
-}}
-
-
-    double OrganCell::getMinNbCycles()const{
-   return getAppConfig().organ_time_next_division;
+    }
 }
 
-    double OrganCell::getNbCyclesRange()const{
-       return     getAppConfig().organ_range_next_division;
-    }
+double OrganCell::getMinNbCycles()const{
+    return getAppConfig().organ_time_next_division;
+}
+
+double OrganCell::getNbCyclesRange()const{
+    return getAppConfig().organ_range_next_division;
+}
 
 double OrganCell::getDivisonEnergy() const{
-return getAppConfig().organ_division_energy;
+    return getAppConfig().organ_division_energy;
 }
 
 bool OrganCell::hasCancer(){
@@ -107,6 +109,7 @@ bool OrganCell::hasCancer(){
  *  copy to divison method!
  *
  *  [Question 6.6] What method(s) do you introduce and in which class(es) to implement cell division of the organ fragment (always avoiding introducing overly intrusive getters like getOrgan or getCellsLayers) ? Answer this question in your REPONSES file, justifying your choices and completing the code accordingly.
+
     We coded the method division that handles divison for both organ and tumor cells using polymorphic getters
     If a cell is ready to divide, it sends a request to divide using the requestToDivide(bool hasCancer) method
     that is passed up to Cell, then CellsLayer and finally Organ where the neccessary checks are made

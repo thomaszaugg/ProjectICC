@@ -18,6 +18,8 @@ public:
     Angle getOrientation();
 
     void drawOn(sf::RenderTarget& targetWindow) override;
+
+    ~Icon()=default;
 };
 
 #endif // ICON_HPP

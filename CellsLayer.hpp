@@ -23,7 +23,7 @@ private:
 
 public:
     CellsLayer(CellCoord position, Organ* organ);
-    virtual ~CellsLayer();
+    virtual ~CellsLayer(); //why virtual
     //hierarchy
 
     bool hasECMCell();

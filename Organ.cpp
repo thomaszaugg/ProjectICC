@@ -47,12 +47,18 @@ void Organ::initOrganTexture (){
 void Organ::createOrgan(){
     for(int i(0); i < nbCells; ++i){
         for(int j(0); j < nbCells; ++j){
-            if (pow(i,2) + pow((j-nbCells),2) < pow((nbCells+1),2) && pow((i-nbCells),2) + pow(j,2) < pow((nbCells+1),2)){ //condition for being in organ
-                CellCoord position(i,j);
+            CellCoord position(i,j);
+            if (organBoundaries(position)){
                 updateCellsLayer(position, Kind::Organ); //set the organCell with this function
             }
         }
     }
+}
+
+bool Organ::organBoundaries(CellCoord pos) const{
+    int i = pos.x;
+    int j = pos.y;
+    return pow(i,2) + pow((j-nbCells),2) < pow((nbCells+1),2) && pow((i-nbCells),2) + pow(j,2) < pow((nbCells+1),2); //condition for being in organ
 }
 
 void Organ::update(){
@@ -377,13 +383,17 @@ void Organ::setCancerAt(const Vec2d& position){
 bool Organ::requestToDivide(CellCoord pos, bool hasCancer){
     std::vector<CellCoord> possiblePositions= getPossiblePositions(pos, hasCancer);
 
-    int numberOfPositions=possiblePositions.size();
-    if(numberOfPositions==0) return false;
+    int numberOfPositions = possiblePositions.size();
+    //if(numberOfPositions==0) return false;
+
+    if(possiblePositions.empty()) return false;
+
 
     CellCoord choosenPos=possiblePositions[uniform(0,numberOfPositions-1)];
 
     if(hasCancer){
-        setCancerAt(choosenPos);
+        //setCancerAt(choosenPos);
+        cellsLayers[choosenPos.x][choosenPos.y]->setCancer();
     }else{
         cellsLayers[choosenPos.x][choosenPos.y]->setOrganCell();
     }
@@ -396,20 +406,23 @@ std::vector<CellCoord> Organ::getPossiblePositions(CellCoord pos, bool hasCancer
     std::vector<CellCoord> possiblePositions;
     int x=pos.x;
     int y=pos.y;
-    if(isDivisonPossible(x-1,y-1, hasCancer)) possiblePositions.push_back(CellCoord(x-1,y-1));
-    if(isDivisonPossible(x+1,y-1, hasCancer)) possiblePositions.push_back(CellCoord(x+1,y-1));
-    if(isDivisonPossible(x-1,y+1, hasCancer)) possiblePositions.push_back(CellCoord(x-1,y+1));
-    if(isDivisonPossible(x+1,y+1, hasCancer)) possiblePositions.push_back(CellCoord(x+1,y+1));
+    if(isDivisonPossible(x-1,y, hasCancer)) possiblePositions.push_back(CellCoord(x-1,y));
+    if(isDivisonPossible(x+1,y, hasCancer)) possiblePositions.push_back(CellCoord(x+1,y));
+    if(isDivisonPossible(x,y-1, hasCancer)) possiblePositions.push_back(CellCoord(x,y-1));
+    if(isDivisonPossible(x,y+1, hasCancer)) possiblePositions.push_back(CellCoord(x,y+1));
 
     return possiblePositions;
 }
 
 bool Organ::isDivisonPossible(int x, int y, bool hasCancer)const{
+    CellCoord pos(x,y);
+    //if (hasCancer) return !isOut(pos);
+    //else return isInsideLiver(pos);
+
     return (!isOut(CellCoord(x,y))) and
             (hasCancer or (!cellsLayers[x][y]->hasOrganCell() and isInsideLiver(CellCoord(x,y))));
 }
 
 bool Organ::isInsideLiver(CellCoord pos) const{
-    return true; //this should return true if it is inside the initial bounderies
-                    //@lisa chasch du dini funktion vom kreiere modularisiere dasise hie cha bruche?
+    return organBoundaries(pos); //this should return true if it is inside the initial bounderies
 }
