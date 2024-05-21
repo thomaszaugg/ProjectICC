@@ -69,9 +69,9 @@ void Organ::update(){
             cellsLayers[i][j]->update(dt); //function in CellsLayer does the updating of the cells, since there we have access to the cells
         }
     }
-    if(getApp().isConcentrationOn()){
-        changed = true;
-    }
+
+      //  changed = getApp().isConcentrationOn();
+    //only every 5 times for smooth running
     updateRepresentation(changed);
 }
 

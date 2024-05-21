@@ -44,10 +44,9 @@ void OrganCell::glycolysis(sf::Time dt){
     ++factor_inhibition;
     pathway_atp_production(dt, getFractGlu(), factor_inhibition);
 
-    //only organ cells or both? make polymorphic if both
-    if(!hasCancer()){
+    // both organ and tumor
     multiplySubstance(BROMOPYRUVATE,0.6); //0.6 = lossOfInhibiorFactor move to getAppConfig()
-}}
+}
 
 double OrganCell::getKrebsKm() const{
     return getAppConfig().organ_km_glycolysis;}
