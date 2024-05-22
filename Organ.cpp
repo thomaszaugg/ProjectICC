@@ -69,9 +69,9 @@ void Organ::update(){
             cellsLayers[i][j]->update(dt); //function in CellsLayer does the updating of the cells, since there we have access to the cells
         }
     }
-    if(getApp().isConcentrationOn()){
-        changed = true;
-    }
+
+      //  changed = getApp().isConcentrationOn();
+    //only every 5 times for smooth running
     updateRepresentation(changed);
 }
 
@@ -183,7 +183,7 @@ void Organ::updateRepresentationAt(const CellCoord& coord){
 }
 
 void Organ::updateCellsLayerAt(const CellCoord& pos, const Substance& diffusedSubst){
-    cellsLayers[pos.x][pos.y]->updateSubstance(diffusedSubst); //which one is y and which one x?
+    cellsLayers[pos.x][pos.y]->updateSubstance(diffusedSubst);
 
 }
 
@@ -406,10 +406,10 @@ std::vector<CellCoord> Organ::getPossiblePositions(CellCoord pos, bool hasCancer
     std::vector<CellCoord> possiblePositions;
     int x=pos.x;
     int y=pos.y;
-    if(isDivisonPossible(x-1,y-1, hasCancer)) possiblePositions.push_back(CellCoord(x-1,y-1));
-    if(isDivisonPossible(x+1,y-1, hasCancer)) possiblePositions.push_back(CellCoord(x+1,y-1));
-    if(isDivisonPossible(x-1,y+1, hasCancer)) possiblePositions.push_back(CellCoord(x-1,y+1));
-    if(isDivisonPossible(x+1,y+1, hasCancer)) possiblePositions.push_back(CellCoord(x+1,y+1));
+    if(isDivisonPossible(x-1,y, hasCancer)) possiblePositions.push_back(CellCoord(x-1,y));
+    if(isDivisonPossible(x+1,y, hasCancer)) possiblePositions.push_back(CellCoord(x+1,y));
+    if(isDivisonPossible(x,y-1, hasCancer)) possiblePositions.push_back(CellCoord(x,y-1));
+    if(isDivisonPossible(x,y+1, hasCancer)) possiblePositions.push_back(CellCoord(x,y+1));
 
     return possiblePositions;
 }

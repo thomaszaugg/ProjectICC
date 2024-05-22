@@ -31,9 +31,9 @@ protected:
     void uptakeFromECM();
 
     //4
-    void ATPSynthesis(sf::Time dt);
+   virtual void ATPSynthesis(sf::Time dt);
     void glycolysis(sf::Time dt);
-    void krebsCycle(sf::Time dt,double factor_glucoseUptake, double factor_inhibition=1.);
+    void pathway_atp_production(sf::Time dt,double factor_glucoseUptake, double factor_inhibition=1.);
 
     //5
     void feedingLoss();

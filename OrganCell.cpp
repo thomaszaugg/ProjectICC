@@ -4,7 +4,7 @@
 
 
 OrganCell::OrganCell(CellsLayer* cellsLayer)
-    : Cell(cellsLayer), atp(100), N(0), counter(0)//(getAppConfig().initial_atp)
+    : Cell(cellsLayer), atp(100), N(100), counter(0)//(getAppConfig().initial_atp)
     {}
 
 void OrganCell::update(sf::Time dt){
@@ -22,7 +22,7 @@ void OrganCell::naturalLoss(sf::Time dt){
 
 void OrganCell::uptakeFromECM(){
     double fractUptake=getFractUptake();
-    Cell* ecm=getECM();
+    Cell* ecm=getECM();     //using this getters allows us to make use of uptake substance function
     takeSubstance(fractUptake,ecm, GLUCOSE);
     takeSubstance(fractUptake,ecm, BROMOPYRUVATE);
 }
@@ -35,17 +35,16 @@ void OrganCell::ATPSynthesis(sf::Time dt){
     //Glycolysis
         glycolysis(dt);
     //KrebsCycle
-        if(!hasCancer()){
-            krebsCycle(dt,0.8);    //0.8 = KrebsGlucoseUptake getAppConfig
+       pathway_atp_production(dt,0.8);    //0.8 = KrebsGlucoseUptake getAppConfig
         }
-}
 
 void OrganCell::glycolysis(sf::Time dt){
-    double factor_inhibition=(1+ getQuantitiy(BROMOPYRUVATE)/0.6); //0.6=Ki move to getAppConfig()
 
-    krebsCycle(dt, getFractGlu(), factor_inhibition);
+    double factor_inhibition=(getQuantitiy(BROMOPYRUVATE)/0.6); //0.6=Ki move to getAppConfig()
+    ++factor_inhibition;
+    pathway_atp_production(dt, getFractGlu(), factor_inhibition);
 
-    //only organ cells or both?
+    // both organ and tumor
     multiplySubstance(BROMOPYRUVATE,0.6); //0.6 = lossOfInhibiorFactor move to getAppConfig()
 }
 
@@ -56,7 +55,7 @@ double OrganCell::getKrebsVmax() const{
     return getAppConfig().organ_km_max_glycolysis;
 }
 
-void OrganCell::krebsCycle(sf::Time dt, double factor_glucoseUptake, double factor_inhibition){
+void OrganCell::pathway_atp_production(sf::Time dt, double factor_glucoseUptake, double factor_inhibition){
     double S=getQuantitiy(GLUCOSE)*factor_glucoseUptake;
     multiplySubstance(GLUCOSE,factor_glucoseUptake);
     double dP=((getKrebsVmax()*S)/(S+(getKrebsKm()*factor_inhibition)))*dt.asSeconds();

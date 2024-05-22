@@ -24,6 +24,7 @@ public:
 
     ~TumoralCell()=default;
 
+      virtual void ATPSynthesis(sf::Time dt) override;
 };
 
 #endif // TUMORALCELL_HPP

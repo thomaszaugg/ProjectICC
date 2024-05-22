@@ -12,59 +12,115 @@ class Organ;
 class CellsLayer
 {
 private:
-    CellCoord position; //position in Organ
-    Organ* organ; //damit die Zellen ihre Nachbaren finden können
 
-    //nullptr if not present
-    ECMCell* ecm;
-    OrganCell* organCell;
-    BloodCell* bloodCell;
+    /*!
+    * @brief position in Organ
+    */
+    CellCoord position;
+
+    /*!
+    * @brief pointer to the organ of this CellsLayer
+    */
+    Organ* organ;
+
+    ECMCell* ecm;           //nullptr if not present
+    OrganCell* organCell;   //nullptr if not present
+    BloodCell* bloodCell;   //nullptr if not present
 
 
 public:
-    CellsLayer(CellCoord position, Organ* organ);
-    virtual ~CellsLayer(); //why virtual
-    //hierarchy
 
+    /*!
+    * @brief Constructor: position, pointer to organ and the ECM Cell is initalized
+    */
+    CellsLayer(CellCoord position, Organ* organ);
+
+    /*!
+    * @brief Destructor: does delete and set back to nullptr all its cells
+    */
+    ~CellsLayer(); //why virtual
+
+    /*!
+    * @brief Checkers if the CellsLayer has the according Cell
+    * @return true if its not a nullptr
+    */
     bool hasECMCell();
     bool hasOrganCell();
     bool hasBloodCell();
 
-    //kann nur assigned werden wenn vorher nullptr
+    /*!
+    * @brief Setter for a Cell, one possible to set if there is no cell yet (nullptr)
+    */
     void setECMCell();
     void setOrganCell();
     void setBlood(TypeBloodCell type); //achtung default value
 
-    //put Substance in ECM level -> ev. funktion in ECM aufrufen/ += operator
+    /*!
+    * @brief put Substance in ECM level using method addSubstance on Cell level
+    */
     void updateSubstance(Substance substance);
 
-    //if the cell type asked for doesn't exist: either throw error or return 0(to be decided)
+    /*!
+    * @brief Getters for Substance Quantity
+    * @return Quantity, if the Cell does not exist the value 0 is returned
+    */
     double getECMQuantity(SubstanceId id); //amound not fractions
     double getOrganCellQuantity(SubstanceId id);
     double getBloodCellQuantity(SubstanceId id);
 
+    /*!
+    * @brief Getter for position
+    */
     CellCoord getPosition() const;
 
+    /*!
+    * @brief OrganCell taking from ECM Cell a specified fraction of a SubstanceId, using uptakeSubstance in Cell Class
+    */
     void organCellTakeFromECM(SubstanceId id, double fraction); //with Substance::uptake On Gradient
 
+    /*!
+    * @brief checks whether a position is outside of the organ (square)
+    * @return true if outside
+    */
     bool isOut(const CellCoord& coord);
 
-    Cell* topCell();
-
+    /*!
+    * @brief calls the update functions of each cell
+    */
     void update(sf::Time dt); //has to be named like that
+
+    /*!
+    * @brief updates the diffused Substance on ECM level of this CellsLayer
+    */
     void updateCellsLayerAt(const CellCoord& pos, const Substance& diffusedSubst);
 
+    /*!
+    * @brief Getters for the Delta
+    */
     double getDeltaVGEF() const;
     double getDeltaGlucose() const;
     double getDeltaBromo() const;
 
+    /*!
+    * @brief checker with polymorphic method in OrganCell Class
+    * @return true if the OrganCell of this CellsLayer has Cancer
+    */
     bool hasCancer();
 
+    /*!
+    * @brief Setter for a TumoralCell at the position of the CellsLayer
+    */
     void setCancer();
 
+    /*!
+    * @brief Getter for ECM Cell
+    */
     Cell* getECM() const;
 
-    //helper divison
+    /*!
+    * @brief checks whether it is possible for a cell to divide
+    * @return true if the cell can divide
+    */
     bool requestToDivide(bool hasCancer);
 };
 

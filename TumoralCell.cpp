@@ -4,6 +4,13 @@
 TumoralCell::TumoralCell(CellsLayer* cellsLayer)
     : OrganCell(cellsLayer){}
 
+ void TumoralCell::ATPSynthesis(sf::Time dt){
+     glycolysis(dt);}
+
+
+
+
+
 double TumoralCell::getFractUptake() const{
     return getAppConfig().cancer_fract_uptake;
 }

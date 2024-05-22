@@ -95,7 +95,10 @@ protected:
     */
     Cell* getECM() const;
 
-
+    /*!
+    * @brief checks whether it is possible for a cell to divide
+    * @return true if the cell can divide
+    */
     bool requestToDivide(bool hasCancer);
 };
 
