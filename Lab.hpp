@@ -4,8 +4,8 @@
 #include "Cage.hpp"
 #include "Env/Animal.hpp"
 #include "SFML/Graphics.hpp"
-#include "Drawable.hpp"
-#include "Updatable.hpp"
+#include "Interface/Drawable.hpp"
+#include "Interface/Updatable.hpp"
 #include "Types.hpp"
 #pragma once
 
@@ -25,22 +25,30 @@ private:
     Animal* animal=nullptr; //tracked animal
 
     /*!
-    * @brief Check whether the value nbCagesPerRow is inbetween the min and max barrier
-    * if not, the function does also corrects the value
+    * @brief Check whether the value nbCagesPerRow is inside the min and max barrier
+    * and potentially corrects the value
     */
     void CageNumberCheck(unsigned int& nbCagesPerRow);
 
     /*!
-    * @brief deletes all the cages (entities included) or all the entities
+    * @brief deletes all the cages (entities included)
     */
     void clearCages();
+
+    /*!
+    * @brief deletes all the entities
+    */
     void clearEntities();
 
     /*!
-    * @brief Helper functions that draws the cages and the entities
+    * @brief draws the cages and the entities
     */
-    void drawOnCages(sf::RenderTarget& targetWindow);
-    void drawOnEntities(sf::RenderTarget& targetWindow);
+    void drawOnCages(sf::RenderTarget& targetWindow) const;
+
+    /*!
+    * @brief  draws the entities
+    */
+    void drawOnEntities(sf::RenderTarget& targetWindow) const;
 
     /*!
     * @brief constructs the different cages
@@ -51,6 +59,17 @@ private:
     * @brief assigns the entitiy to a Cage in the Lab
     */
     bool declareEntityCage(Entity* e);
+
+    /*!
+    * @brief defines the maxCageNumber
+    */
+    unsigned int maxCageNumber();
+
+    /*!
+    * @brief changes the number of cages by i
+    */
+    void changeNumberOfCages(int i);
+
 
 public:
     /*!
@@ -63,15 +82,11 @@ public:
     */
     virtual ~Lab();
 
-    /*!
-    * @brief defines the maxCageNumber
-    */
-    unsigned int maxCageNumber();
 
     /*!
     * @brief Getter for attribut nbCagesPerRow
     */
-    unsigned int getNbCagesPerRow();
+    unsigned int getNbCagesPerRow() const;
 
     /*!
     * @brief this function increases the nbCagesPerRow by one (if possible under the constraint)
@@ -88,12 +103,12 @@ public:
     /*!
     * @brief change the contents of the cages over time
     */
-    void update(sf::Time dt);
+    void update(sf::Time dt) override;
 
     /*!
     * @brief Draws the lab
     */
-    void drawOn(sf::RenderTarget& targetWindow);
+    void drawOn(sf::RenderTarget& targetWindow) const override;
 
     /*!
     * @brief partially or totaly reset the lab, if reset = false, only the content of the cages is deleted,
@@ -110,7 +125,6 @@ public:
     * @brief add hamsters and pellets, addAnimal and addPellets call addEntity
     * @attention the lab class is responsible for the freeing of the memory of the pointers
     */
-    //write for every
     bool addEntity(Entity* e);
     bool addAnimal(Hamster* h);
     bool addFood(Pellets* p);
@@ -119,7 +133,7 @@ public:
     * @brief finds the closest eatable entity to e that is in cage c
     * @return either pointer to the eatable entity or nullptr if there is none
     */
-    Entity* getClosesedEatableEntity(Cage* c, Entity* const& e);
+    Entity* getClosesedEatableEntity(Cage* c, Entity* const& e) const;
 
     /*!
     * @brief called by trackAnimal method and sets the animal attribut
@@ -136,7 +150,7 @@ public:
     * @brief checks if an animal of the Lab is tracked
     * @return true if the animal attribut is not a nullptr
     */
-    bool isAnyTrackedAnimal();
+    bool isAnyTrackedAnimal() const;
 
     /*!
     * @brief switching views
@@ -144,28 +158,55 @@ public:
     void switchToView(View view);
 
     /*!
-    * @brief sets animal to nullptr and deletes its organ
+    * @brief sets animal to nullptr
     */
     void stopTrackingAnyEntity();
 
+    /*!
+    * @brief updates the organ of the tracked animal
+    */
     void updateTrackedAnimal();
 
-    void drawTracker(sf::RenderTarget& target);
+    /*!
+    * @brief draws the tracker icon
+    */
+    void drawTracker(sf::RenderTarget& target) const;
 
-    void drawCurrentOrgan(sf::RenderTarget& target);
+    /*!
+    * @brief drawing of the organ
+    */
+    void drawCurrentOrgan(sf::RenderTarget& target) const;
 
-    void drawOnIcon(sf::RenderTarget& target);
-
-    //changes to next substance
+    /*!
+    * @brief changing to the next substance
+    */
     void nextSubstance();
+
+    /*!
+    * @brief increasing of current Substance
+    */
     void increaseCurrentSubst();
+
+    /*!
+    * @brief deceasing of current Substance
+    */
     void decreaseCurrentSubst();
 
-    double getDelta(SubstanceId id) ;
+    /*!
+    * @brief Getter
+    * @return delta value of current Substance (returns 0 if there is no animal tracked)
+    */
+    double getDelta(SubstanceId id) const ;
 
-    //return NB_SUBST if there is no animal tracked
-    SubstanceId getCurrentSubst();
+    /*!
+    * @brief Getter for Current Substance
+    * @return Id of current Substance (if there is no tracked animal ID=0 is returned
+    */
+    SubstanceId getCurrentSubst() const;
 
+    /*!
+    * @brief Setter for Cancer Cell
+    */
     void setCancerAt(const Vec2d& pos);
 
     };

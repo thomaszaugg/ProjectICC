@@ -70,14 +70,11 @@ void Organ::update(){
             cellsLayers[i][j]->update(dt); //function in CellsLayer does the updating of the cells, since there we have access to the cells
         }
     }
-
-      //  changed = getApp().isConcentrationOn();
-    //only every 5 times for smooth running
-
-    updateRepresentation((counter%10)==0);
+    //only every 20 times for smooth running
+    updateRepresentation((counter%20)==0);
 }
 
-void Organ::drawOn(sf::RenderTarget& target){
+void Organ::drawOn(sf::RenderTarget& target) const{
     sf::Sprite image(organTexture.getTexture()); // transform the image into a texture
     target.draw(image); // display the texture
 }
@@ -91,12 +88,11 @@ int Organ::getHeight() const{
 }
 
 void Organ::updateRepresentation(bool changed){
-    if(changed){                                //only if the organ changed
-       counter=0;
+    if(changed){                                //only if the organ changed or counter is at 10
+        counter=0;
         for(int i(0); i < nbCells; ++i){        //iterates through the cells and updates them
             for(int j(0); j < nbCells; ++j){
-                CellCoord coord(i,j);
-                updateRepresentationAt(coord);
+                updateRepresentationAt(CellCoord(i,j));
             }
         }
     }
@@ -148,7 +144,6 @@ void Organ::drawCells(std::string name_cell){
     } else {
          organTexture.draw(concentrationVertexes.data(), concentrationVertexes.size(), sf::Quads, rs);
         }
-
 }
 
 void Organ::setVertexes1(const std::vector<std::size_t>& indexes, int a_blood, int a_organ, int a_cancer, bool concentrationOn, double ratio){
@@ -169,7 +164,6 @@ void Organ::updateRepresentationAt(const CellCoord& coord){
     int j = coord.y;
     std::vector<std::size_t> indexes = indexesForCellVertexes(i, j, nbCells);
 
-    //is this the right place?
     if (cellsLayers[i][j]->hasBloodCell()){
         setVertexes1(indexes, 255, 0, 0);
     }else if (cellsLayers[i][j]->hasOrganCell() && cellsLayers[i][j]->hasCancer()){
@@ -187,7 +181,6 @@ void Organ::updateRepresentationAt(const CellCoord& coord){
 
 void Organ::updateCellsLayerAt(const CellCoord& pos, const Substance& diffusedSubst){
     cellsLayers[pos.x][pos.y]->updateSubstance(diffusedSubst);
-
 }
 
 bool Organ::isOut(CellCoord position)const{
@@ -245,7 +238,6 @@ void Organ::generateArtery(int& leftColumn, int& rightColumn){
     }}
 
 void Organ::generateCapillary(int const& leftColumn, int const& rightColumn){
-
     generateOneSideCapillary({-1,0},  leftColumn);
     generateOneSideCapillary({1,0},  rightColumn);
 }
@@ -282,7 +274,6 @@ std::vector<CellCoord> const Organ::generateStartingPositions(int const& column)
 
 
 void Organ::checkStep(bool& direction_step_possible, bool& empty_neighboor_found, CellCoord current_position, CellCoord dir){
-
     direction_step_possible = (!isOut(dir+current_position) and !cellsLayers[current_position.x+dir.x][current_position.y+dir.y]->hasBloodCell());
     empty_neighboor_found = direction_step_possible;
 }
@@ -335,14 +326,12 @@ void Organ::generateCapillaryFromPosition(CellCoord &current_position , CellCoor
     while(generateCapillaryOneStep(current_position,dir,nbCells, LENGTH_CAPILLARY));
 }
 
-
 double Organ::getConcentrationAt(const CellCoord& pos, SubstanceId id){
     return cellsLayers[pos.x][pos.y]->getECMQuantity(id);
 }
 
 void  Organ::nextSubstance(){
    currentSubst = (SubstanceId)((currentSubst+1)%NB_SUBST);
-
 }
 
 void Organ::changeDeltaSubstance(bool minus){
@@ -391,7 +380,6 @@ bool Organ::requestToDivide(CellCoord pos, bool hasCancer){
 
     if(possiblePositions.empty()) return false;
 
-
     CellCoord choosenPos=possiblePositions[uniform(0,numberOfPositions-1)];
 
     if(hasCancer){
@@ -400,9 +388,7 @@ bool Organ::requestToDivide(CellCoord pos, bool hasCancer){
     }else{
         cellsLayers[choosenPos.x][choosenPos.y]->setOrganCell();
     }
-
     return true;
-
 }
 
 std::vector<CellCoord> Organ::getPossiblePositions(CellCoord pos, bool hasCancer) const{

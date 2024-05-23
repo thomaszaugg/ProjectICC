@@ -18,12 +18,12 @@ public:
     /*!
     * @brief Getters -> specific for hamsters
     */
-    virtual sf::Time getLongevity() override;
+    virtual sf::Time getLongevity() const override;
     virtual double getSize() const override; //3.1 const
-    virtual sf::Texture& getTexture() override;
-    double getMaxSpeed() override ;
-    double getEnergyLoss() override;
-    double getFatigueEnergy() override;
+    virtual sf::Texture& getTexture() const override;
+    double getMaxSpeed() const override ;
+    double getEnergyLoss() const override;
+    double getFatigueEnergy() const override;
     double getMass() const override;
     double getDeceleration() const override;
     double getEnergyBite() const override;

@@ -4,8 +4,8 @@
 #include <SFML/Graphics.hpp>
 #include "Cage.hpp"
 #include "CircularBody.hpp"
-#include "Drawable.hpp"
-#include "Updatable.hpp"
+#include "Interface/Drawable.hpp"
+#include "Interface/Updatable.hpp"
 #pragma once
 
 class Hamster;
@@ -37,13 +37,13 @@ public:
     */
     virtual Vec2d getCenter() const override;
     double getRadius() const override;
-    sf::Time getAge() ;
-    Angle getOrientation() ;
+    sf::Time getAge()  const;
+    Angle getOrientation() const;
     double getEnergy() const ;
-    Cage* getCage() ;
-    virtual sf::Time getLongevity();
+    Cage* getCage() const ;
+    virtual sf::Time getLongevity() const;
     virtual double getSize() const =0;
-    virtual sf::Texture& getTexture()=0;
+    virtual sf::Texture& getTexture() const=0;
 
     /*!
     * @brief Setters
@@ -57,7 +57,7 @@ public:
     *
     * @return true if it contains an animal, false otherwise
     */
-    virtual bool isAnimal();
+    virtual bool isAnimal() const;
 
     /*!
     * @brief substracts a certain amound of energy
@@ -67,12 +67,12 @@ public:
     /*!
     * @brief drawing of entity
     */
-    void drawOn(sf::RenderTarget& targetWindow) override;
+    virtual void drawOn(sf::RenderTarget& targetWindow) const override;
 
     /*!
-    * @brief draws the informations given by debug mode
+    * @brief draws the energy during debug mode
     */
-    virtual  void drawDebug(sf::RenderTarget& target);
+    virtual  void drawDebug(sf::RenderTarget& target)const;
 
     /*!
     * @brief updates the age of an entitiy by time dt
@@ -82,13 +82,13 @@ public:
     /*!
     * @return returns false if the energy is smaller than 0 or the Longevity is reached
     */
-    bool isDead();
+    bool isDead() const;
 
     /*!
     * @brief checks whether an entity can be confined in a cage:
     *        entity not on wall
     */
-    virtual bool canBeConfinedIn(Cage* cage);
+    virtual bool canBeConfinedIn(Cage* cage) const;
 
     /*!
     * @brief adjusts position of the entity (so that no part of it is on the wall)
@@ -100,7 +100,7 @@ protected:
     /*!
     * @return Unit vector pointing in the direction of the entity
     */
-    Vec2d getHeading();
+    Vec2d getHeading() const;
 
     /*!
     * @brief adds step to the current position
@@ -112,7 +112,7 @@ protected:
     *
     * @return returns true if it is collision
     */
-    bool inCollision(Vec2d position);
+    bool inCollision(Vec2d position) const;
 
 
 public:

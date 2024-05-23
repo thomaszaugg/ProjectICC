@@ -37,104 +37,67 @@ public:
     virtual ~Animal() ;
     Animal(Animal& )=delete;    //to prevent cage pointer
 
-    /*!
-    * @brief Getters
-    */
-    Vec2d getSpeedVector();
-    virtual double getFatigueFactor();  //by default the same for all animals, possiblility to override
-    Angle getNewRotation();
-    double getAdjustedMaxSpeed();
-    std::string getStateString();
 
     /*!
     * @brief purely virtual getters
     */
-    virtual double getMaxSpeed()=0;
-    virtual  double getFatigueEnergy()=0;   //energy at which the animal starts to slow down
-    virtual double getEnergyLoss() = 0;
+    virtual double getMaxSpeed() const=0;
+    virtual double getFatigueEnergy() const=0;   //energy at which the animal starts to slow down
+    virtual double getEnergyLoss() const = 0;
     virtual double getMass() const =0;
     virtual double getDeceleration() const =0;
     virtual double getEnergyBite() const=0;
 
     /*!
-    * @brief boolean function to indecate if the entity is an animal
+    * @brief boolean function to indicate if the entity is an animal
     *
     * @return true
     */
-    bool isAnimal() override;
+    bool isAnimal() const override;
 
     /*!
     * @brief checks whether an animal can be confined in a cage
     *
-    * @return true if cage is empty an animal is not placed on wall
+    * @return true if cage is empty and animal is not placed on wall
     */
-    bool canBeConfinedIn(Cage* c) override;
+    bool canBeConfinedIn(Cage* c) const override;
 
     /*!
-    * @brief calls the 3 following update functions
+    * @brief updtes the energy, state and organ of the animal and then acts according to the state
     */
     void  update(sf::Time dt) override;
 
     /*!
-    * @brief updates the speed
-    */
-    void updateState(sf::Time dt, Entity* food);
-
-    /*!
-    * @brief changes the orientation and the position
-    */
-    void move(sf::Time dt);                     //Wandering
-    void move(const Vec2d& force, sf::Time dt, bool feeding); //Targeting and Feeding
-
-    /*!
-    * @brief calculates the new energy of the animal after time dt and lets the animal age
-    */
-    void updateEnergy(sf::Time dt);
-
-    /*!
-    * @return bool indicating whether or not the animal is hungry
-    */
-    bool isHungry();
-
-    /*!
-    * @brief calculates the force, possibly taking into accound deceleration
-    */
-    Vec2d calculateForce(Entity* food, double deceleration=1);
-
-    /*!
-    * @brief modularized eat function
-    */
-    void eatFood(Entity* food);
-
-    /*!
-    * @brief draws energy and state
-    */
-    void drawDebug(sf::RenderTarget& target) override;
-
-    /*!
-    * @return ANIMAL_PRIORITY
-    */
-    DrawingPriority getDepth() override;
-
-    /*!
-    * @brief updating of the organ if the animal has an organ
+    * @brief updates the organ
     */
     void updateOrgan();
 
     /*!
-    * @brief drawing of the organ if the animal has an organ
+    * @return speed Vector of the animal
     */
-    void drawOrgan(sf::RenderTarget& target);
+    Vec2d getSpeedVector() const;
 
     /*!
-    * @brief deleting an organ
+    * @brief draws the organ
     */
-    void deleteOrgan();
+    void drawOrgan(sf::RenderTarget& target) const;
 
     /*!
-    * @brief declaration of transplant organ -> needed for tests
+    * @return bool indicating whether or not the animal is hungry
+    * @attention two different threshholds depending on if the animal is feeding or not
     */
-    void transplant(Organ*);
+    bool isHungry() const;
+
+
+    /*!
+    * @return ANIMAL_PRIORITY
+    */
+    DrawingPriority getDepth() const override;
+
+    /*!
+    * @brief change the organ to newOrgan (needed for tests)
+    */
+    void transplant(Organ* newOrgan);
 
     /*!
     * @brief increasing of the Substance Id of currentSubst in Organ by 1
@@ -142,31 +105,80 @@ public:
     void nextSubstance();
 
     /*!
-    * @brief Increasing of the quantity of the currentSubst
+    * @brief increasing the delta of the currentSubst
     */
     void increaseCurrentSubst();
 
     /*!
-    * @brief Decreasing of the quantity of the currentSubst
+    * @brief decreasing the delta of the currentSubst
     */
     void decreaseCurrentSubst();
 
     /*!
     * @brief Getter
-    * @return delta value of current Substance
+    * @return delta value of currently observed Substance
     */
-    double getDelta(SubstanceId id);
+    double getDelta(SubstanceId id) const;
 
     /*!
     * @brief Getter
-    * @return Substance id of the current Substance
+    * @return SubstanceId of the current Substance
     */
-    SubstanceId getCurrentSubst();
+    SubstanceId getCurrentSubst() const;
 
     /*!
     * @brief setting of a Cancer Cell at the position given with the parameter
     */
     void setCancerAt(const Vec2d& pos);
+
+private:
+    /*!
+    * @brief Internal getters
+    */
+    virtual double getFatigueFactor() const;  //by default the same for all animals, possiblility to override
+    Angle getNewRotation() const;
+    double getAdjustedMaxSpeed() ;
+    std::string getStateString() const;
+
+    /*!
+    * @brief delets the organ
+    */
+    void deleteOrgan();
+
+    /*!
+    * @brief calculates the force, possibly taking into accout deceleration
+    */
+    Vec2d calculateForce(Entity* food, double deceleration=1) ;
+
+    /*!
+    * @brief modularized eat function
+    */
+    void eatFood(Entity* food);
+
+    /*!
+    * @brief draws energy, state and the circle for the debug mode
+    */
+    void drawDebug(sf::RenderTarget& target) const override;
+
+    /*!
+    * @brief switches to the right state
+    */
+    void updateState(sf::Time dt, Entity* food);
+
+    /*!
+    * @brief changes the orientation and the position (STATE: WANDERING)
+    */
+    void move(sf::Time dt);
+
+    /*!
+    * @brief changes the orientation and the position (STATE: TARGETING AND FEEDING)
+    */
+    void move(const Vec2d& force, sf::Time dt, bool feeding);
+
+    /*!
+    * @brief calculates the new age and energy of the animal after time dt
+    */
+    void updateEnergy(sf::Time dt);
 };
 
 #endif // ANIMAL_HPP

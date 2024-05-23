@@ -27,7 +27,7 @@ public:
     * @brief Getters
     */
     virtual double getSize() const override;
-    virtual sf::Texture& getTexture() override;
+    virtual sf::Texture& getTexture() const override;
 
     /*!
     * @brief return true if the entity can consume the entity passed as a parameter
@@ -37,7 +37,7 @@ public:
     /*!
     * @brief returns FOOD_PRIORITY
     */
-    DrawingPriority getDepth()override;
+    DrawingPriority getDepth() const override;
 
     /*!
     * @brief Helpers for the canConsume function

@@ -9,21 +9,15 @@
 
 unsigned int Lab::maxCageNumber(){
     double min_size(getAppConfig().simulation_lab_min_box_size);
-    if(min_size < 2*getAppConfig().hamster_size) {
-        min_size=2*getAppConfig().hamster_size;
-    }
-    unsigned int maxNumber(getAppConfig().simulation_lab_size/min_size);
-    if (maxNumber < 1){
-        maxNumber=1;
-    }
+    min_size = std::min(min_size, 2*getAppConfig().hamster_size ); //makes sure the cage is big enough for the hamster
 
-    return maxNumber;
+     int maxNumber(getAppConfig().simulation_lab_size/min_size);
+    return std::max(maxNumber, 1); //makes sure there is at least one cage
 }
 
 void Lab::CageNumberCheck(unsigned int& nbCagesPerRow){
-    if(maxCageNumber() < nbCagesPerRow){
-        nbCagesPerRow=maxCageNumber();
-    }
+     nbCagesPerRow= std::min( nbCagesPerRow, maxCageNumber());  //makes sure its within the bounds
+
     if(nbCagesPerRow==0){
         throw std::invalid_argument("Zero Cages not possible");
     }
@@ -53,47 +47,45 @@ Lab::Lab()
     animal=nullptr;
 }
 
-unsigned int Lab::getNbCagesPerRow(){
+unsigned int Lab::getNbCagesPerRow() const{
     return cages.size();
 }
 
 
-void Lab::addCageToRow(){
-    unsigned int newNumber(cages.size()+1);
+void Lab::changeNumberOfCages(int i){
+    unsigned int newNumber(cages.size()+i);
     CageNumberCheck(newNumber);
 
     clearCages();
     makeBoxes(newNumber);
 
 }
+void Lab::addCageToRow(){
+    changeNumberOfCages(1);
+}
 
 void Lab::removeCageFromRow(){
-    unsigned int newNumber(cages.size()-1);
-    CageNumberCheck(newNumber);
-
-    clearCages();
-    makeBoxes(newNumber);
+    changeNumberOfCages(-1);
 
 }
 
 
 void Lab::update(sf::Time dt){
-    for (auto& entity: entities){
+    for (auto& entity: entities){   //itterate through all the entities
         if(entity!=nullptr){
             entity->update(dt);
-                if(entity->isDead()){
-                    if(entity==animal)animal=nullptr;
+                if(entity->isDead()){   //if its dead, delete it
+                    if(entity==animal)animal=nullptr;   //check the animal attribute
                     delete entity;
                     entity = nullptr;}
         }
     }
-    entities.erase(std::remove(entities.begin(),            //removing nullptrs only after iteration finished
+    entities.erase(std::remove(entities.begin(),       //removing nullptrs only after iteration finished
                                entities.end(), nullptr), entities.end());
-    if(animal!=nullptr) updateTrackedAnimal();
 }
 
 
-void Lab::drawOn(sf::RenderTarget& targetWindow){
+void Lab::drawOn(sf::RenderTarget& targetWindow) const{
     switch(getApp().getCurrentView()){
     case(ORGAN):{
         drawCurrentOrgan(targetWindow);
@@ -110,34 +102,38 @@ void Lab::drawOn(sf::RenderTarget& targetWindow){
         break;}
     }
 
-void Lab::drawOnCages(sf::RenderTarget& targetWindow){
+void Lab::drawOnCages(sf::RenderTarget& targetWindow) const{
     for (auto& row: cages){
         for (auto& ele: row){
             (*ele).drawOn(targetWindow);
         }
     }
 }
-void Lab::drawOnEntities(sf::RenderTarget& targetWindow){
+void Lab::drawOnEntities(sf::RenderTarget& targetWindow) const{
         // Copy of Entities in a list
     std::list<Entity*> sorted( entities.begin(), entities.end());
+
         // order redefined based on getDepth():
     auto comp([](Entity* a, Entity* b)->bool{ return int(a->getDepth()) < int(b->getDepth()); });
+
         // list sorted
     sorted.sort (comp);
+
         //draw the new list
     for (const auto& entity: sorted){
         if(entity!=nullptr){
             entity->drawOn(targetWindow);
         }
     }
-    if(animal!=nullptr) drawTracker(targetWindow);
+
+    if(animal!=nullptr) drawTracker(targetWindow);  //draws tracker if an animal is tracked
 }
 
 void Lab::reset(bool reset){
     if(isDebugOn()) getAppConfig().switchDebug();
     if (reset){
         clearCages();
-        makeBoxes(getAppConfig().simulation_lab_nb_boxes);
+        makeBoxes(getAppConfig().simulation_lab_nb_boxes);  //starts from default settings
     }else{
         clearEntities();
     }
@@ -155,7 +151,7 @@ void Lab::clearCages(){
     clearEntities();
     for (unsigned int i(0); i < cages.size(); ++i){
         for (unsigned int j(0); j < cages.size(); ++j){
-            delete cages[i][j];
+            delete cages[i][j]; //since the vector is cleared, nullptr assignment not necessary
         }
         cages[i].clear();
     }
@@ -164,12 +160,12 @@ void Lab::clearCages(){
 
 Lab::~Lab(){
     clearCages();
-};
+}
 
 bool Lab::addEntity(Entity* e){
-    if (e!=nullptr and declareEntityCage(e)
+    if (e!=nullptr and declareEntityCage(e) //first checks in which case and then if it can go into the cage
         and  e->canBeConfinedIn(e->getCage())){
-            e->adjustPostition();
+            e->adjustPostition();   //so animal isn't on the walls
             entities.push_back(e);
             return true;
     }
@@ -178,10 +174,10 @@ bool Lab::addEntity(Entity* e){
 
 bool Lab::declareEntityCage(Entity* e){
     Vec2d center = e->getCenter();
-    for (auto& row: cages){
+    for (auto& row: cages){         //itterates through the cages to check in which cage the animal belongs
         for (auto& ele: row){
             if(ele->isPositionInside(center) or ele->isPositionOnWall(center)){
-                e->setCage(ele);
+                e->setCage(ele);        //sets the cage for the entity
                 return true;
             }
         }
@@ -201,14 +197,15 @@ bool Lab::addFood(Pellets* p){
     return addEntity(p);
 }
 
-Entity* Lab::getClosesedEatableEntity(Cage* c, Entity* const& e){
+Entity* Lab::getClosesedEatableEntity(Cage* c, Entity* const& e) const{
 
     Entities vecEntities;   //creates the vector of entites that are in the same cage and eatable for entity e
     for(auto const& entity: entities){
         if(entity!=nullptr and entity->getCage()== c and entity!=e and e->canConsume(entity)) vecEntities.push_back(entity);
     }
 
-    if(vecEntities.empty()) return nullptr;     //for the case there is no eatable entity
+    if(vecEntities.empty()) return nullptr;     //for the case where there is no eatable entity
+
         unsigned int index(0);                  //searches the closest (of all the ones that are eatable and in the same cage
         double MINdistance( (vecEntities[0]->getCenter()- e->getCenter()).length());
         double distance(0);
@@ -232,10 +229,9 @@ void Lab::trackAnimal(const Vec2d& position){
 
 void Lab::trackAnimal(Animal* a){
     animal=a;
-
 }
 
-bool Lab::isAnyTrackedAnimal(){
+bool Lab::isAnyTrackedAnimal() const{
     return animal != nullptr;
 }
 
@@ -249,9 +245,9 @@ void Lab::stopTrackingAnyEntity(){
    animal=nullptr;
 }
 
-void Lab::drawTracker(sf::RenderTarget& target){
+void Lab::drawTracker(sf::RenderTarget& target) const{
     if(animal!=nullptr) {
-        Vec2d  a= animal->getSpeedVector().normalised();      //better placement icon
+        Vec2d  a= animal->getSpeedVector().normalised();      //better placement of icon
         Icon icon(animal->getCenter()+ (a+a.normal())*(-55), animal->getOrientation());
         icon.drawOn(target);
     }
@@ -261,32 +257,32 @@ void Lab::updateTrackedAnimal(){
     if(animal!=nullptr) animal->updateOrgan();
 }
 
-void Lab::drawCurrentOrgan(sf::RenderTarget& target){
+void Lab::drawCurrentOrgan(sf::RenderTarget& target) const{
     if(animal!=nullptr){
         animal->drawOrgan(target);
     }
 }
 
 void Lab::nextSubstance(){
-
-  if(isAnyTrackedAnimal()) animal->nextSubstance();
+    if(isAnyTrackedAnimal()) animal->nextSubstance();
 }
 
 void Lab::increaseCurrentSubst(){
     if(isAnyTrackedAnimal()) animal->increaseCurrentSubst();
 }
+
 void Lab::decreaseCurrentSubst(){
     if(isAnyTrackedAnimal()) animal->decreaseCurrentSubst();
 }
 
-double Lab::getDelta(SubstanceId id){
+double Lab::getDelta(SubstanceId id) const{
     double delta(0);
-  if(isAnyTrackedAnimal()) delta=animal->getDelta(id);
-   return delta;
+    if(isAnyTrackedAnimal()) delta=animal->getDelta(id);
+    return delta;
 }
-SubstanceId Lab::getCurrentSubst(){
-    //indicate error if no animal tracked?
-  if(animal!=nullptr) return animal->getCurrentSubst();
+
+SubstanceId Lab::getCurrentSubst() const{
+    if(animal!=nullptr) return animal->getCurrentSubst();
     return GLUCOSE;
 }
 

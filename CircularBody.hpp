@@ -38,7 +38,7 @@ public:
     /*!
     * @brief drawOn function for the circle or the circular body in debug mode
     */
-    void drawOn(sf::RenderTarget& target);
+    void drawOn(sf::RenderTarget& target) const;
 
 
 };
