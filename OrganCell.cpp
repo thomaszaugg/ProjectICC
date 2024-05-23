@@ -17,7 +17,7 @@ void OrganCell::update(sf::Time dt){
 }
 
 void OrganCell::naturalLoss(sf::Time dt){
-    atp = atp *(1-exp(-getAppConfig().organ_decay_atp*dt.asSeconds()));
+    atp *=(1-exp(-getAppConfig().organ_decay_atp*dt.asSeconds()));
 }
 
 void OrganCell::uptakeFromECM(){

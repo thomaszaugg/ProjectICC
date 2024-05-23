@@ -16,14 +16,13 @@ class Animal;
 
 typedef std::vector<std::vector<Cage*>> Cages;
 typedef std::vector<Entity*> Entities;
-//typedef std::vector<Animal*> Animals;  //to mark the animals tracked 4.1
 
 class Lab : public Drawable, public Updatable
 {
 private:
     Cages cages;
     Entities entities;
-    Animal* animal=nullptr;
+    Animal* animal=nullptr; //tracked animal
 
     /*!
     * @brief Check whether the value nbCagesPerRow is inbetween the min and max barrier
@@ -122,23 +121,32 @@ public:
     */
     Entity* getClosesedEatableEntity(Cage* c, Entity* const& e);
 
-    //4.1
-
-    void setTracked(bool b);
-
-    bool getTracked();
-
+    /*!
+    * @brief called by trackAnimal method and sets the animal attribut
+    */
     void trackAnimal(Animal* a);
 
+    /*!
+    * @brief checks whether there is an animal at the given positon,
+    * if yes, calls trackAnimal(Animal*) method
+    */
     void trackAnimal(const Vec2d& position);
 
+    /*!
+    * @brief checks if an animal of the Lab is tracked
+    * @return true if the animal attribut is not a nullptr
+    */
     bool isAnyTrackedAnimal();
 
+    /*!
+    * @brief switching views
+    */
     void switchToView(View view);
 
+    /*!
+    * @brief sets animal to nullptr and deletes its organ
+    */
     void stopTrackingAnyEntity();
-
-    void stopTrackingEntity();
 
     void updateTrackedAnimal();
 

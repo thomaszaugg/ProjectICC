@@ -6,6 +6,7 @@ Cell::Cell(CellsLayer* cellsLayer)
 {}
 
 Cell::~Cell(){
+    uptakeSubstance(1, getECM(),BROMOPYRUVATE);// after death of a cell, release the inhibitor
     delete substance;    //free up allocated memory
     substance = nullptr;
 }
@@ -18,8 +19,8 @@ double Cell::getQuantitiy(SubstanceId id){
     return (*substance)[id];
 }
 
-void Cell::uptakeSubstance(double fraction, Cell* cellType,  SubstanceId id){
-    Substance& receiver = *(cellType->substance);
+void Cell::uptakeSubstance(double fraction, Cell* receiverCell,  SubstanceId id){
+    Substance& receiver = *(receiverCell->substance);
     substance->uptakeOnGradient(fraction, receiver, id);
 }
 void Cell::takeSubstance(double fraction, Cell* donour, SubstanceId id){

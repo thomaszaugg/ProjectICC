@@ -32,6 +32,8 @@ private:
     //initialized as a vector to not use too unneccesary switch statements
     std::array<double,3> deltas; //glucose=0, .... (like enumerate type)
 
+    int counter;
+
     //helper for the updateRepresentationAt function
     void setVertexes1(const std::vector<std::size_t>& indexes, int a_blood, int a_organ, int a_cancer, bool concentrationOn=false, double ratio=0.);
 

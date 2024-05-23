@@ -86,20 +86,12 @@ bool CellsLayer::isOut(const CellCoord& coord){
     return organ->isOut(coord);
 }
 
-Cell* CellsLayer::topCell(){
-    if (hasBloodCell()){
-        return bloodCell;
-    }else if (hasOrganCell()){
-        return organCell;
-    }else {return ecm;}
-}
-
 void CellsLayer::update(sf::Time dt){
     ecm->update(dt);
     if (hasBloodCell()){
         bloodCell->update(dt);
     }
-    if (hasOrganCell()){
+   if (hasOrganCell()){
         organCell->update(dt);
         if(organCell->isDead()){
             delete organCell;

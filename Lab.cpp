@@ -232,7 +232,7 @@ void Lab::trackAnimal(const Vec2d& position){
 
 void Lab::trackAnimal(Animal* a){
     animal=a;
-    //animal->initializeOrgan(); //already has an organ
+
 }
 
 bool Lab::isAnyTrackedAnimal(){
@@ -246,9 +246,7 @@ void Lab::switchToView(View view){
 }
 
 void Lab::stopTrackingAnyEntity(){
-    if(animal!=nullptr){
-        animal->deleteOrgan();
-        animal=nullptr;}
+   animal=nullptr;
 }
 
 void Lab::drawTracker(sf::RenderTarget& target){

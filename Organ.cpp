@@ -24,6 +24,7 @@ void Organ::reloadConfig(){
     std::vector<CellsLayer*> oneCellsLayers;
     currentSubst=GLUCOSE;
     deltas={0,0,0};
+    counter=0;
 
     for(int i(0); i < nbCells; ++i){
         oneCellsLayers.clear();
@@ -62,8 +63,8 @@ bool Organ::organBoundaries(CellCoord pos) const{
 }
 
 void Organ::update(){
+    ++counter;
     sf::Time dt=sf::seconds(getAppConfig().simulation_fixed_step);
-    bool changed = false;
     for(int i(0); i < nbCells; ++i){
         for(int j(0); j < nbCells; ++j){
             cellsLayers[i][j]->update(dt); //function in CellsLayer does the updating of the cells, since there we have access to the cells
@@ -72,7 +73,8 @@ void Organ::update(){
 
       //  changed = getApp().isConcentrationOn();
     //only every 5 times for smooth running
-    updateRepresentation(changed);
+
+    updateRepresentation((counter%10)==0);
 }
 
 void Organ::drawOn(sf::RenderTarget& target){
@@ -90,6 +92,7 @@ int Organ::getHeight() const{
 
 void Organ::updateRepresentation(bool changed){
     if(changed){                                //only if the organ changed
+       counter=0;
         for(int i(0); i < nbCells; ++i){        //iterates through the cells and updates them
             for(int j(0); j < nbCells; ++j){
                 CellCoord coord(i,j);
@@ -183,7 +186,7 @@ void Organ::updateRepresentationAt(const CellCoord& coord){
 }
 
 void Organ::updateCellsLayerAt(const CellCoord& pos, const Substance& diffusedSubst){
-    cellsLayers[pos.x][pos.y]->updateSubstance(diffusedSubst); //which one is y and which one x?
+    cellsLayers[pos.x][pos.y]->updateSubstance(diffusedSubst);
 
 }
 
