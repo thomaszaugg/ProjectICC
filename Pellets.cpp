@@ -15,7 +15,7 @@ double Pellets::getSize() const{
     return getEnergy();
 }
 
-sf::Texture& Pellets::getTexture(){
+sf::Texture& Pellets::getTexture() const{
     return getAppTexture(getAppConfig().food_texture);
 }
 
@@ -31,6 +31,6 @@ bool Pellets::consumableBy(Hamster const*) const {
     return true;
 }
 
-DrawingPriority Pellets::getDepth(){
+DrawingPriority Pellets::getDepth() const{
     return DrawingPriority::FOOD_PRIORITY;
 }

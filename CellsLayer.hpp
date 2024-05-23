@@ -12,7 +12,6 @@ class Organ;
 class CellsLayer
 {
 private:
-
     /*!
     * @brief position in Organ
     */
@@ -27,9 +26,7 @@ private:
     OrganCell* organCell;   //nullptr if not present
     BloodCell* bloodCell;   //nullptr if not present
 
-
 public:
-
     /*!
     * @brief Constructor: position, pointer to organ and the ECM Cell is initalized
     */
@@ -53,7 +50,7 @@ public:
     */
     void setECMCell();
     void setOrganCell();
-    void setBlood(TypeBloodCell type); //achtung default value
+    void setBlood(TypeBloodCell type);
 
     /*!
     * @brief put Substance in ECM level using method addSubstance on Cell level

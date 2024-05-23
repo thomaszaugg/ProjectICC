@@ -2,7 +2,7 @@
 #define CAGE_HPP
 #include <Utility/Vec2d.hpp>
 #include "SFML/Graphics.hpp"
-#include "Drawable.hpp"
+#include "Interface/Drawable.hpp"
 #pragma once
 
 
@@ -10,6 +10,8 @@ typedef std::pair <Vec2d, Vec2d> Wall; //bottom right corner, top left corner
 typedef std::vector<Wall> Walls;
 
 class Cage: public Drawable{
+
+private:
 
     Vec2d position;
     double width;
@@ -38,18 +40,21 @@ public:
     */
     Cage(const Cage&)=default;
 
+private:
     /*!
     * @brief Getters
     */
-    Vec2d getCenter();
-    double getWidth();
-    double getHeight();
-    double getWallWidth();
+    Vec2d getCenter()const;
+    double getWidth()const;
+    double getHeight()const;
+    double getWallWidth()const;    //we did not use them only once
 
-    Wall getTop();
-    Wall getRight();
-    Wall getBottom();
-    Wall getLeft();
+    Wall getTop()const;
+    Wall getRight()const;
+    Wall getBottom()const;
+    Wall getLeft()const;
+
+public:
 
     /*!
     * @brief getting the coordinate of the inner wall of the Cage (if intern = true)
@@ -57,24 +62,22 @@ public:
     *
     * @return double with x or y value of the wall
     */
-    double getLeftLimit(bool intern = false);
-    double getRightLimit(bool intern = false);
-    double getTopLimit(bool intern = false);
-    double getBottomLimit(bool intern = false);
+    double getLeftLimit(bool intern = false) const;
+    double getRightLimit(bool intern = false)const;
+    double getTopLimit(bool intern = false)const;
+    double getBottomLimit(bool intern = false)const;
 
     /*!
     * @brief check whether a object (point per default) is inside of a Cage (walls excuded)
-    *
     * @return true if point is inside
     */
-    bool isPositionInside(const Vec2d& position, double radius =0);
+    bool isPositionInside(const Vec2d& position, double radius =0)const;
 
     /*!
     * @brief check whether a point is on the wall of the Cage
-    *
     * @return true if point is on the wall
     */
-    bool isPositionOnWall(const Vec2d& position);
+    bool isPositionOnWall(const Vec2d& position)const;
 
     /*!
     * @brief sets the attibut occupied = true (meaning : cage occupied by an animal)
@@ -91,12 +94,12 @@ public:
     *
     * @return ture if empty
     */
-    bool isEmpty();
+    bool isEmpty()const;
 
     /*!
     * @brief Draw a cage
     */
-    void drawOn(sf::RenderTarget& targetWindow) override;
+    void drawOn(sf::RenderTarget& targetWindow) const override;
 
 };
 

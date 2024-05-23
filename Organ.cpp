@@ -70,11 +70,11 @@ void Organ::update(){
             cellsLayers[i][j]->update(dt); //function in CellsLayer does the updating of the cells, since there we have access to the cells
         }
     }
-    //only every 10 times for smooth running
-    updateRepresentation((counter%10)==0);
+    //only every 20 times for smooth running
+    updateRepresentation((counter%20)==0);
 }
 
-void Organ::drawOn(sf::RenderTarget& target){
+void Organ::drawOn(sf::RenderTarget& target) const{
     sf::Sprite image(organTexture.getTexture()); // transform the image into a texture
     target.draw(image); // display the texture
 }
@@ -92,8 +92,7 @@ void Organ::updateRepresentation(bool changed){
         counter=0;
         for(int i(0); i < nbCells; ++i){        //iterates through the cells and updates them
             for(int j(0); j < nbCells; ++j){
-                CellCoord coord(i,j);
-                updateRepresentationAt(coord);
+                updateRepresentationAt(CellCoord(i,j));
             }
         }
     }

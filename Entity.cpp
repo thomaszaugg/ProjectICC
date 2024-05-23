@@ -14,12 +14,12 @@ Entity::Entity(const Vec2d& position, double energy)
 }
 
 Vec2d Entity::getCenter() const {return position;}
-sf::Time Entity::getAge(){return age;}
-Angle Entity::getOrientation(){return orientation;}
+sf::Time Entity::getAge() const{return age;}
+Angle Entity::getOrientation() const{return orientation;}
 double Entity::getEnergy() const {return energy;}
-Cage* Entity::getCage(){return cage;}
+Cage* Entity::getCage() const{return cage;}
 
-void Entity::drawDebug(sf::RenderTarget& target){
+void Entity::drawDebug(sf::RenderTarget& target)const{
 
         auto text = buildText(to_nice_string(energy),
                     position,
@@ -32,7 +32,7 @@ void Entity::drawDebug(sf::RenderTarget& target){
 
 }
 
-sf::Time Entity::getLongevity(){
+sf::Time Entity::getLongevity() const{
     return sf::seconds(1E+9);
 }
 
@@ -40,18 +40,18 @@ void Entity::substractEnergy(double e){
     energy -=e;
 }
 
-void Entity::drawOn(sf::RenderTarget& target){
+void Entity::drawOn(sf::RenderTarget& target)const{
     sf::Sprite  entitySprite = buildSprite( getCenter(), 2*getRadius(),        //getCenter, getRadius, getTexture all virtual
                                          getTexture(), getOrientation()/ DEG_TO_RAD); // conversion degree to radians becauce SFML uses these units
     target.draw(entitySprite);
     if(isDebugOn()) drawDebug(target);
 }
 
-bool Entity::isAnimal(){
+bool Entity::isAnimal() const{
     return false;
 }
 
-bool Entity::canBeConfinedIn(Cage* cage){
+bool Entity::canBeConfinedIn(Cage* cage) const{
     return cage->isPositionInside(getCenter());
 }
 
@@ -88,7 +88,7 @@ void Entity::adjustPostition(){
     position = newPosition;
 }
 
-Vec2d Entity::getHeading(){
+Vec2d Entity::getHeading() const{
     return Vec2d::fromAngle(orientation);
 }
 
@@ -100,7 +100,7 @@ void Entity::setOrientation(Angle angle){
     orientation = angle;
 }
 
-bool Entity::inCollision(Vec2d p){
+bool Entity::inCollision(Vec2d p) const{
     return !getCage()->isPositionInside(p, getRadius());
 }
 
@@ -112,7 +112,7 @@ void Entity::update(sf::Time dt){
     age+=dt;
 }
 
-bool Entity::isDead(){
+bool Entity::isDead() const{
     return (age>= this->getLongevity() or getEnergy()<=0);
 }
 

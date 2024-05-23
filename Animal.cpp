@@ -19,40 +19,38 @@ Animal::~Animal() {
     delete organ;
 }
 
-bool Animal::isAnimal() {
+bool Animal::isAnimal() const {
     return true;
 }
 
-bool Animal::canBeConfinedIn(Cage* cage){
+bool Animal::canBeConfinedIn(Cage* cage) const{
     return cage->isEmpty() and cage->isPositionInside(getCenter());
 }
 
 void Animal::update(sf::Time dt){
-    updateOrgan();
+    updateOrgan();  //updates the Organ
 
-    updateEnergy(dt);
+    updateEnergy(dt);   //the animal loses by default energy
 
-
-    Entity* food(getAppEnv().getClosesedEatableEntity(getCage(), this));
-    updateState( dt, food);
+    Entity* food(getAppEnv().getClosesedEatableEntity(getCage(), this));   //gets the closest food entity
+    updateState( dt, food); //updates the state so the correct action is taken
 
     switch (state){
-       case TARGETING_FOOD :{
+       case TARGETING_FOOD :{   //animal moves to food
             Vec2d force=calculateForce(food);
             move(force, dt, false);
            break;}
 
-       case FEEDING:{
-            Vec2d force=calculateForce(food, getDeceleration());
-            move(force*getDeceleration(), dt, true);
+       case FEEDING:{       //animal decelerates to food
+            Vec2d force=calculateForce(food, getDeceleration());    //the Deceleration will make sure the animal
+            move(force*getDeceleration(), dt, true);                //doesn't walk over his food
             eatFood(food);
            break;}
 
-       case WANDERING:{
+       case WANDERING:{     //animal moves arbitrarily
             move(dt);
            break;}
-       case IDLE:{
-
+       case IDLE:{          //animal sits still
            break;}
     }
 }
@@ -60,15 +58,14 @@ void Animal::update(sf::Time dt){
 void Animal::updateState(sf::Time dt, Entity* food){
     if(state==IDLE and counter < sf::seconds(getAppConfig().animal_rotation_delay*3 )){
             counter+=dt;
-    }else if(isHungry() and food!=nullptr){
+    } else if(state==TARGETING_FOOD and food!=nullptr and this->isColliding(*food)){
+        state=FEEDING;
+    } else if(isHungry() and food!=nullptr){
         state=TARGETING_FOOD;
-        if(this->isColliding(*food)){
-            state=FEEDING;
-        }
-    }else{
+    } else {
         state=WANDERING;
-       if(bernoulli(0.005)) {
-           state=IDLE;
+       if(bernoulli(0.005)) {   //if the hamster is wandering, there is a small chance
+           state=IDLE;          // that the animal will stay idle for a while
            counter=sf::Time::Zero;
        }
     }
@@ -93,22 +90,22 @@ void Animal::changeOrientation(sf::Time dt){
     }
 }
 
-Vec2d Animal::getSpeedVector(){
+Vec2d Animal::getSpeedVector() const{
     return getHeading()*speed;
 }
 
-Angle Animal::getNewRotation(){
+Angle Animal::getNewRotation() const{
     return piecewise_linear(intervals, probabilities)*DEG_TO_RAD;   //piecewise_linear works with degrees
 }
 
-void Animal::updateEnergy(sf::Time dt){
+void Animal::updateEnergy(sf::Time dt){ //animal loses energy according to base consumption and its speed
     double energy_loss = getAppConfig().animal_base_energy_consumption + speed * getEnergyLoss() * dt.asSeconds();
     setEnergy(this->getEnergy()- energy_loss);
-    Entity::update(dt);
-    speed= this->getAdjustedMaxSpeed();
+    Entity::update(dt);           //energy is an attribute of superclass entity
+    speed= this->getAdjustedMaxSpeed(); //speed depends on energy
 }
 
-double Animal::getFatigueFactor(){return 0.25;}
+double Animal::getFatigueFactor() const{return 0.25;} //move to json
 
 double Animal::getAdjustedMaxSpeed(){
     speed=getMaxSpeed();
@@ -117,23 +114,23 @@ double Animal::getAdjustedMaxSpeed(){
 }
 
 void Animal::move(const Vec2d& force, sf::Time dt, bool feeding){     //TARGETING and FEEDING
-    if(feeding){
+    if(feeding){        //additional checking to allow smooth slowing down
         if(force.length()>0.5){
             setOrientation(force.angle());
             takeStep(force*dt.asSeconds());
         }
     }else{
-        Vec2d acceleration = force / getMass();
-        setOrientation(force.angle());
-        Vec2d speedVector = getSpeedVector() + acceleration * dt.asSeconds();
-        if(speedVector.length()>getAdjustedMaxSpeed()){
+        Vec2d acceleration = force / getMass(); //calculate acceleration
+        setOrientation(force.angle());          //sets the right orientation
+        Vec2d speedVector = getSpeedVector() + acceleration * dt.asSeconds();  //calculates speedVector
+        if(speedVector.length()>getAdjustedMaxSpeed()){     //adjusts the speedVector to the possible values
             speedVector=getHeading()*getAdjustedMaxSpeed();
         }
-        takeStep( speedVector * dt.asSeconds());
+        takeStep( speedVector * dt.asSeconds());        //takes the step
     }
 }
 
-bool Animal::isHungry(){
+bool Animal::isHungry() const{
     if(state==FEEDING){
         return getEnergy()<getAppConfig().animal_satiety_max;
     }else{
@@ -141,36 +138,35 @@ bool Animal::isHungry(){
     }
 }
 
-Vec2d Animal::calculateForce(Entity* food, double deceleration){
+Vec2d Animal::calculateForce(Entity* food, double deceleration) {
     Vec2d to_target(food->getCenter()- this->getCenter());
-
-    if(to_target.length()<70) return to_target*0.;
-
     double speed = std::min(to_target.length()/deceleration, getAdjustedMaxSpeed());
-    Vec2d v_wish= to_target.normalised()*speed;
-    return v_wish ;//- getSpeedVector();
+    Vec2d v_wish= to_target.normalised()*speed; //normalised (length=1), not normal(orthogonal)!
+
+    return v_wish ;
 }
 
-void Animal::eatFood(Entity* food){
+void Animal::eatFood(Entity* food){ //can only partially absorb the eaten foods energy
    if(this->canConsume(food)) setEnergy((getEnergy()+getAppConfig().animal_meal_retention*food->provideEnergy(getEnergyBite())));
 }
 
-void Animal::drawDebug(sf::RenderTarget& target) {
+void Animal::drawDebug(sf::RenderTarget& target) const{
+        //draws the energy
     Entity::drawDebug(target);
-
-    Vec2d pos(-120,-120);
-
+        //draws the state
     auto text = buildText(getStateString(),
-                getCenter()+pos,
+                getCenter()+ Vec2d(-120,-120),  //displaced for better optics
                 getAppFont(),
                 getAppConfig().default_debug_text_size*2.5,
                 sf::Color::Blue,
                 0 / DEG_TO_RAD); // to rotate the text
     target.draw(text);
+
+        //draws the circularBody
     CircularBody::drawOn(target);
 }
 
-std::string Animal::getStateString(){
+std::string Animal::getStateString() const{
 
     switch (state) {
        case TARGETING_FOOD :{
@@ -192,7 +188,7 @@ std::string Animal::getStateString(){
     }
 }
 
-DrawingPriority Animal::getDepth(){
+DrawingPriority Animal::getDepth() const{
     return DrawingPriority::ANIMAL_PRIORITY;
 }
 
@@ -201,7 +197,7 @@ void Animal::updateOrgan(){
         organ->update();
     }
 }
-void Animal::drawOrgan(sf::RenderTarget& target){
+void Animal::drawOrgan(sf::RenderTarget& target) const{
     if(organ!=nullptr){
         organ->drawOn(target);
     }
@@ -229,11 +225,11 @@ void Animal::decreaseCurrentSubst(){
     organ->changeDeltaSubstance(true);
 }
 
-double Animal::getDelta(SubstanceId id){
+double Animal::getDelta(SubstanceId id) const{
     return organ->getDelta(id);
 }
 
-SubstanceId Animal::getCurrentSubst(){
+SubstanceId Animal::getCurrentSubst() const{
     return organ->getCurrentSubst();
 }
 

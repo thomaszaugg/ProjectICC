@@ -10,23 +10,10 @@ class CircularBody{
 public:
 
     /*!
-    * @brief Constructor and virtual destructor
-    */
-    CircularBody()=default; //default constructuer since it is an abstract class
-    virtual ~CircularBody()=default;
-
-    /*!
     * @brief Getters
     */
     virtual Vec2d getCenter() const = 0;
     virtual double getRadius() const = 0;
-
-    /*!
-    * @brief checks whether two bodies are colliding
-    *
-    * @return true if they are colliding, false otherwise
-    */
-    bool isColliding(const CircularBody& other) const;
 
     /*!
     * @brief checks whether a point is inside of an circular body
@@ -35,11 +22,23 @@ public:
     */
     bool isPointInside(const Vec2d& point) const;
 
+protected:
+    /*!
+    * @brief Constructor and virtual destructor
+    */
+    CircularBody()=default; //default constructuer since it is an abstract class
+    virtual ~CircularBody()=default;
+
+    /*!
+    * @brief checks whether two bodies are colliding
+    * @return true if they are colliding, false otherwise
+    */
+    bool isColliding(const CircularBody& other) const;
+
     /*!
     * @brief drawOn function for the circle or the circular body in debug mode
     */
-    void drawOn(sf::RenderTarget& target);
-
+    void drawOn(sf::RenderTarget& target) const;
 
 };
 

@@ -34,39 +34,39 @@ Cage::Cage(Vec2d position, double width, double height, double wallWidth)
     walls.push_back(left);
 }
 
-Vec2d Cage::getCenter(){
+Vec2d Cage::getCenter()const{
     return position;
 }
 
-double Cage::getWidth(){
+double Cage::getWidth()const{
     return width;
 }
 
-double Cage::getHeight(){
+double Cage::getHeight()const{
     return height;
 }
 
-double Cage::getWallWidth(){
+double Cage::getWallWidth()const{
     return wallWidth;
 }
 
-Wall Cage::getTop(){
+Wall Cage::getTop()const{
     return walls[0];
 }
 
-Wall Cage::getRight(){
+Wall Cage::getRight()const{
     return walls[1];
 }
 
-Wall Cage::getBottom(){
+Wall Cage::getBottom()const{
     return walls[2];
 }
 
-Wall Cage::getLeft(){
+Wall Cage::getLeft()const{
     return walls[3];
 }
 
-double Cage::getLeftLimit(bool intern){
+double Cage::getLeftLimit(bool intern)const{
     if (intern){
         return position.x()-width/2+wallWidth;
     }else{
@@ -74,7 +74,7 @@ double Cage::getLeftLimit(bool intern){
     }
 }
 
-double Cage::getRightLimit(bool intern){
+double Cage::getRightLimit(bool intern)const{
     if (intern){
         return position.x()+width/2-wallWidth;
     }else{
@@ -82,7 +82,7 @@ double Cage::getRightLimit(bool intern){
     }
 }
 
-double Cage::getTopLimit(bool intern){
+double Cage::getTopLimit(bool intern)const{
     if (intern){
         return position.y()-height/2+wallWidth;
     }else{
@@ -90,7 +90,7 @@ double Cage::getTopLimit(bool intern){
     }
 }
 
-double Cage::getBottomLimit(bool intern){
+double Cage::getBottomLimit(bool intern)const{
     if (intern){
         return position.y()+height/2-wallWidth;
     }else{
@@ -98,7 +98,7 @@ double Cage::getBottomLimit(bool intern){
     }
 }
 
-bool Cage::isPositionInside(const Vec2d& position, double radius){
+bool Cage::isPositionInside(const Vec2d& position, double radius)const{
 
     if (position.x() - radius > getLeftLimit(true) && position.x() + radius < getRightLimit(true) &&
         position.y() - radius > getTopLimit(true) && position.y() + radius < getBottomLimit(true)){
@@ -108,7 +108,7 @@ bool Cage::isPositionInside(const Vec2d& position, double radius){
     }
 }
 
-bool Cage::isPositionOnWall(const Vec2d& position){
+bool Cage::isPositionOnWall(const Vec2d& position)const{
     if (position.x() >= getLeftLimit(false) && position.x() <= getRightLimit(false) &&
         position.y() >= getTopLimit(false) && position.y() <= getBottomLimit(false) && isPositionInside(position) == false){
         return true;
@@ -117,7 +117,7 @@ bool Cage::isPositionOnWall(const Vec2d& position){
     }
 }
 
-void Cage::drawOn(sf::RenderTarget& targetWindow){
+void Cage::drawOn(sf::RenderTarget& targetWindow) const{
 
     sf::RectangleShape top = buildRectangle(this->getTop().second, this->getTop().first, &getAppTexture(getAppConfig().simulation_lab_fence));
     targetWindow.draw(top);
@@ -140,6 +140,6 @@ void Cage::reset(){
     occupied = false;
 }
 
-bool Cage::isEmpty(){
+bool Cage::isEmpty()const{
     return !occupied;
 }

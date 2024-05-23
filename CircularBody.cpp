@@ -24,7 +24,7 @@ bool operator>(const CircularBody& object1, const Vec2d& point){
         return  object1.getRadius() > distance.length();
 }
 
-void CircularBody::drawOn(sf::RenderTarget& target){
+void CircularBody::drawOn(sf::RenderTarget& target) const{
    auto circle(buildCircle(getCenter(), getRadius(), sf::Color(20,150,20,30)));
    target.draw(circle);
 }
