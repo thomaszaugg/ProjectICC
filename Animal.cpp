@@ -162,7 +162,7 @@ void Animal::drawDebug(sf::RenderTarget& target) {
                 getAppFont(),
                 getAppConfig().default_debug_text_size*2.5,
                 sf::Color::Blue,
-                0 / DEG_TO_RAD); // if you want to rotate the text
+                0 / DEG_TO_RAD); // to rotate the text
     target.draw(text);
     CircularBody::drawOn(target);
 }

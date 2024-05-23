@@ -17,13 +17,7 @@ bool operator|(const CircularBody& object1, const CircularBody& object2){
     return object1.getRadius() + object2.getRadius() > distance.length();
 }
 
-//3.1 -> not possible anymore to construct a CircularBody here (abstract class)
-/*
-bool operator>(const CircularBody& object1, const Vec2d& point){
-    CircularBody circlePoint(point, 0.0);           //the point is recreated as a circular body with radius 0
-    return  object1 | circlePoint;                  //so the operator | can be used
-}
-*/
+
 
 bool operator>(const CircularBody& object1, const Vec2d& point){
     Vec2d distance(object1.getCenter() - point);
