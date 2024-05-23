@@ -32,7 +32,6 @@ void Entity::drawDebug(sf::RenderTarget& target){
 
 }
 
-
 sf::Time Entity::getLongevity(){
     return sf::seconds(1E+9);
 }

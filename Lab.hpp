@@ -144,28 +144,55 @@ public:
     void switchToView(View view);
 
     /*!
-    * @brief sets animal to nullptr and deletes its organ
+    * @brief sets animal to nullptr
     */
     void stopTrackingAnyEntity();
 
+    /*!
+    * @brief updates the organ of the tracked animal
+    */
     void updateTrackedAnimal();
 
+    /*!
+    * @brief draws the tracker icon
+    */
     void drawTracker(sf::RenderTarget& target);
 
+    /*!
+    * @brief drawing of the organ
+    */
     void drawCurrentOrgan(sf::RenderTarget& target);
 
-    void drawOnIcon(sf::RenderTarget& target);
-
-    //changes to next substance
+    /*!
+    * @brief changing to the next substance
+    */
     void nextSubstance();
+
+    /*!
+    * @brief increasing of current Substance
+    */
     void increaseCurrentSubst();
+
+    /*!
+    * @brief deceasing of current Substance
+    */
     void decreaseCurrentSubst();
 
+    /*!
+    * @brief Getter
+    * @return delta value of current Substance
+    */
     double getDelta(SubstanceId id) ;
 
-    //return NB_SUBST if there is no animal tracked
+    /*!
+    * @brief Getter for Current Substance
+    * @return Id of current Substance, if there is no tracked animal ID 0 is returned
+    */
     SubstanceId getCurrentSubst();
 
+    /*!
+    * @brief Setter for Cancer Cell
+    */
     void setCancerAt(const Vec2d& pos);
 
     };

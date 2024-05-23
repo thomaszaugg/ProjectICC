@@ -91,7 +91,7 @@ void CellsLayer::update(sf::Time dt){
     if (hasBloodCell()){
         bloodCell->update(dt);
     }
-    if (hasOrganCell()){
+   if (hasOrganCell()){
         organCell->update(dt);
         if(organCell->isDead()){
             delete organCell;

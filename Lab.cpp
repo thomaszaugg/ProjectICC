@@ -164,7 +164,7 @@ void Lab::clearCages(){
 
 Lab::~Lab(){
     clearCages();
-};
+}
 
 bool Lab::addEntity(Entity* e){
     if (e!=nullptr and declareEntityCage(e)
@@ -232,7 +232,6 @@ void Lab::trackAnimal(const Vec2d& position){
 
 void Lab::trackAnimal(Animal* a){
     animal=a;
-    //animal->initializeOrgan(); //already has an organ
 }
 
 bool Lab::isAnyTrackedAnimal(){
@@ -246,14 +245,12 @@ void Lab::switchToView(View view){
 }
 
 void Lab::stopTrackingAnyEntity(){
-    if(animal!=nullptr){
-        animal->deleteOrgan();
-        animal=nullptr;}
+   animal=nullptr;
 }
 
 void Lab::drawTracker(sf::RenderTarget& target){
     if(animal!=nullptr) {
-        Vec2d  a= animal->getSpeedVector().normalised();      //better placement icon
+        Vec2d  a= animal->getSpeedVector().normalised();      //better placement of icon
         Icon icon(animal->getCenter()+ (a+a.normal())*(-55), animal->getOrientation());
         icon.drawOn(target);
     }
@@ -270,25 +267,25 @@ void Lab::drawCurrentOrgan(sf::RenderTarget& target){
 }
 
 void Lab::nextSubstance(){
-
-  if(isAnyTrackedAnimal()) animal->nextSubstance();
+    if(isAnyTrackedAnimal()) animal->nextSubstance();
 }
 
 void Lab::increaseCurrentSubst(){
     if(isAnyTrackedAnimal()) animal->increaseCurrentSubst();
 }
+
 void Lab::decreaseCurrentSubst(){
     if(isAnyTrackedAnimal()) animal->decreaseCurrentSubst();
 }
 
 double Lab::getDelta(SubstanceId id){
     double delta(0);
-  if(isAnyTrackedAnimal()) delta=animal->getDelta(id);
-   return delta;
+    if(isAnyTrackedAnimal()) delta=animal->getDelta(id);
+    return delta;
 }
+
 SubstanceId Lab::getCurrentSubst(){
-    //indicate error if no animal tracked?
-  if(animal!=nullptr) return animal->getCurrentSubst();
+    if(animal!=nullptr) return animal->getCurrentSubst();
     return GLUCOSE;
 }
 

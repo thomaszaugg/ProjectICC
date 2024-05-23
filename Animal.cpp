@@ -28,7 +28,10 @@ bool Animal::canBeConfinedIn(Cage* cage){
 }
 
 void Animal::update(sf::Time dt){
+    updateOrgan();
+
     updateEnergy(dt);
+
 
     Entity* food(getAppEnv().getClosesedEatableEntity(getCage(), this));
     updateState( dt, food);
