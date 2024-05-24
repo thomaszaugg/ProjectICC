@@ -20,13 +20,13 @@ public:
     */
     ~Pellets()=default;
 
-private:
-
     /*!
     * @brief calculating the new energy of a Pellet after the energy qte has been eaten
     * @return Quantity of energy of the Pellet that was actually eaten
     */
     Quantity provideEnergy(Quantity qte) override;
+
+private:
 
     /*!
     * @brief Getters

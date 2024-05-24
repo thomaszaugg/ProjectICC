@@ -163,10 +163,13 @@ void Organ::updateRepresentationAt(const CellCoord& coord){
     int i = coord.x;
     int j = coord.y;
     std::vector<std::size_t> indexes = indexesForCellVertexes(i, j, nbCells);
-
+//nume di oberschti schicht
     if (cellsLayers[i][j]->hasBloodCell()){
+
+        //bloodcell vertex update
         setVertexes1(indexes, 255, 0, 0);
     }else if (cellsLayers[i][j]->hasOrganCell() && cellsLayers[i][j]->hasCancer()){
+        //update cancer vortex
         setVertexes1(indexes, 0, 0, 255);
     }else if (cellsLayers[i][j]->hasOrganCell() && !cellsLayers[i][j]->hasCancer()){
         setVertexes1(indexes, 0, 255, 0);
@@ -376,7 +379,6 @@ bool Organ::requestToDivide(CellCoord pos, bool hasCancer){
     std::vector<CellCoord> possiblePositions= getPossiblePositions(pos, hasCancer);
 
     int numberOfPositions = possiblePositions.size();
-    //if(numberOfPositions==0) return false;
 
     if(possiblePositions.empty()) return false;
 

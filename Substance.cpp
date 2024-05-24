@@ -1,175 +1,252 @@
-#include "Types.hpp"
+#include <algorithm>
 #include <Env/Substance.hpp>
-#include <Utility/Constants.hpp>
 #include <Utility/Utility.hpp>
+#include <Utility/Constants.hpp>
 #include <iostream>
-#include "Application.hpp"
-#include <math.h>
+#include <Application.hpp>
 
-Substance::Substance()
-    :totalCon(.0), vgef(.0), glucose(.0), bromopyruvate(.0){}
 
-Substance::Substance(double VGEF, double GLUCOSE, double BROMOPYRUVATE){
-    setSubstance(VGEF, GLUCOSE, BROMOPYRUVATE);
+
+Substance::Substance() :
+    m_fract_vgef(0.0),
+    m_fract_glucose(0.0),
+    m_fract_bromopyruvate(0.0),
+    m_total_concentration(0)
+{
 }
 
-void Substance::checkCon(double& con){
-    if(con > getAppConfig().substance_max_value){
-        con = getAppConfig().substance_max_value;
+Substance::Substance(double v, double g,double i) :
+    m_fract_vgef(check(v)),
+    m_fract_glucose(check(g)),
+    m_fract_bromopyruvate(check(i))
+
+{
+    m_total_concentration = m_fract_vgef+m_fract_glucose+m_fract_bromopyruvate;
+
+    if 	(!isEqual(m_total_concentration, 0, SUBSTANCE_PRECISION))
+    {
+        m_fract_vgef /= m_total_concentration;
+        m_fract_glucose /= m_total_concentration;
+        m_fract_bromopyruvate  /= m_total_concentration;
     }
-    if(con < SUBSTANCE_PRECISION){
-        con=0;
-    }}
+    else
+    {
+        m_fract_vgef = 0;
+        m_fract_glucose = 0;
+        m_fract_bromopyruvate = 0;
+    }
 
-void Substance::setSubstance(double VGEF, double GLUCOSE, double BROMOPYRUVATE){
-    checkCon(VGEF);
-    checkCon(GLUCOSE);
-    checkCon(BROMOPYRUVATE);
-    totalCon=VGEF+GLUCOSE+BROMOPYRUVATE;
-
-    if (isNull()){
-        totalCon = 0;
-        vgef = 0;
-        glucose = 0;
-        bromopyruvate = 0;
-    }else {
-        vgef = VGEF/totalCon;
-        glucose = GLUCOSE/totalCon;
- }}
-
-
-double Substance::getFractVGEF(){
-    return vgef;}
-
-double Substance::getFractGlucose(){
-    return glucose;}
-
-double Substance::getFractInhibitor(){
-    return bromopyruvate;}
-
-double Substance::getTotalConcentration(){
-    return totalCon;}
-
-bool Substance::isNull(){   //returns true if  every substance is too small
-    return ((*this)[VGEF] < SUBSTANCE_PRECISION and (*this)[GLUCOSE]
-             < SUBSTANCE_PRECISION and (*this)[BROMOPYRUVATE] < SUBSTANCE_PRECISION);
+}
+Substance::Substance(const Substance& n) :
+    m_fract_vgef(n.getFractVGEF()),
+    m_fract_glucose(n.getFractGlucose()),
+    m_fract_bromopyruvate(n.getFractInhibitor()),
+    m_total_concentration(n.getTotalConcentration())
+{
 }
 
-void Substance::operator=(const Substance& sub){
-    totalCon=sub.totalCon;
-    vgef=sub.vgef;
-    glucose=sub.glucose;
-    bromopyruvate=sub.bromopyruvate;
+
+Substance& Substance::operator = (const Substance& n)
+{
+    m_fract_vgef = n.getFractVGEF();
+    m_fract_glucose = n.getFractGlucose();
+    m_fract_bromopyruvate = n.getFractInhibitor();
+    m_total_concentration = n.getTotalConcentration();
+    return (*this);
 }
 
-bool Substance::operator==(const Substance& other) const {  //checks whether the difference between two concentrations is smaller than substance precision
-    return ((fabs((*this)[VGEF]-other[VGEF])< SUBSTANCE_PRECISION) && (fabs((*this)[GLUCOSE]-other[GLUCOSE])< SUBSTANCE_PRECISION)
-            && (fabs((*this)[BROMOPYRUVATE]-other[BROMOPYRUVATE]) < SUBSTANCE_PRECISION));
+Substance::~Substance()
+{
 }
 
-bool Substance::operator!=(const Substance& other) const {
-    return !(*this == other);
+double Substance::operator [] (const SubstanceId n) const
+{
+    switch(n)
+    {
+    case VGEF : return m_total_concentration*m_fract_vgef;
+    case GLUCOSE : return m_total_concentration*m_fract_glucose;
+    case BROMOPYRUVATE : return m_total_concentration*m_fract_bromopyruvate;
+    default : return -1.0;
+    }
 }
 
-double Substance::operator[](const SubstanceId index) const{
 
-    switch(index) {
+
+Substance operator*(const Substance& n, double c)
+{
+    double temp_vgef = n[VGEF]*c;
+    double temp_glucose = n[GLUCOSE]*c;
+    double temp_bromopyruvate = n[BROMOPYRUVATE]*c;
+    Substance temp(temp_vgef,temp_glucose,temp_bromopyruvate);
+
+    return temp;
+}
+
+Substance& Substance::operator +=(const Substance& rhs)
+{
+
+    double temp_vgef = check(m_fract_vgef*m_total_concentration + rhs[VGEF]);
+    double temp_glucose = check(m_fract_glucose*m_total_concentration + rhs[GLUCOSE]);
+    double temp_bromopyruvate = check(m_fract_bromopyruvate*m_total_concentration + rhs[BROMOPYRUVATE]);
+    double temp_total = (temp_glucose+temp_vgef+temp_bromopyruvate);
+    if ((!isEqual(temp_total, 0, SUBSTANCE_PRECISION)))
+    {
+        m_fract_vgef = (temp_vgef)/temp_total;
+        m_fract_glucose = (temp_glucose)/temp_total;
+        m_fract_bromopyruvate = (temp_bromopyruvate)/temp_total;
+        m_total_concentration = temp_total;
+    }
+    else
+    {
+        m_fract_vgef = 0;
+        m_fract_glucose = 0;
+        m_fract_bromopyruvate = 0;
+        m_total_concentration = 0;
+    }
+    return (*this);
+}
+
+Substance& Substance::operator -= (const Substance& rhs)
+{
+    double temp_vgef = check(m_fract_vgef*m_total_concentration - rhs[VGEF]);
+    double temp_glucose = check(m_fract_glucose*m_total_concentration - rhs[GLUCOSE]);
+    double temp_bromopyruvate = check(m_fract_bromopyruvate*m_total_concentration - rhs[BROMOPYRUVATE]);
+    double temp_total = (temp_glucose+temp_vgef+temp_bromopyruvate);
+    if ((!isEqual(temp_total, 0, SUBSTANCE_PRECISION)))
+    {
+        m_fract_vgef = (temp_vgef)/temp_total;
+        m_fract_glucose = (temp_glucose)/temp_total;
+        m_fract_bromopyruvate = (temp_bromopyruvate)/(temp_total);
+        m_total_concentration = temp_total;
+    }
+    else
+    {
+        m_fract_vgef = 0;
+        m_fract_glucose = 0;
+        m_fract_bromopyruvate = 0;
+        m_total_concentration = 0;
+    }
+    return (*this);
+}
+
+void Substance::update(SubstanceId f, double c)
+{
+    double temp_glucose = m_total_concentration*m_fract_glucose;
+    double temp_bromopyruvate = m_total_concentration*m_fract_bromopyruvate;
+    double temp_vgef = m_total_concentration*m_fract_vgef;
+    double temp_total =0;
+    switch(f)
+    {
     case GLUCOSE :
-        return glucose * totalCon;
+        if (isEqual(c, 0, EPSILON)){
+            temp_glucose = 0;
+        }
+        else
+            temp_glucose *=c;
         break;
     case BROMOPYRUVATE :
-        return bromopyruvate * totalCon;
+        if (isEqual(c, 0, EPSILON)){
+            temp_bromopyruvate = 0;
+        }
+        else
+            temp_bromopyruvate *=c;
         break;
     case VGEF :
-        return  vgef* totalCon;
+        if (isEqual(c, 0, EPSILON)){
+            temp_vgef = 0;
+        }
+        else temp_vgef *=c;
         break;
-    default :
-        return -1;
+    default: /*nothing to do*/
+        break;
     }
-}
 
-Substance& Substance::operator+=(const Substance& other){
-    double vf((*this)[VGEF]+other[VGEF]);
-    double glu((*this)[GLUCOSE]+other[GLUCOSE]);
-    double bro((*this)[BROMOPYRUVATE]+other[BROMOPYRUVATE]);
-    setSubstance(vf, glu, bro);
-    return *this;
-}
+    temp_glucose = check(temp_glucose);
+    temp_bromopyruvate = check(temp_bromopyruvate);
+    temp_vgef = check(temp_vgef);
+    temp_total = temp_glucose + temp_bromopyruvate + temp_vgef;
 
-Substance& Substance::operator-=(const Substance& other){
-    double vf((*this)[VGEF]-other[VGEF]);
-    double glu((*this)[GLUCOSE]-other[GLUCOSE]);
-    double bro((*this)[BROMOPYRUVATE]-other[BROMOPYRUVATE]);
-    setSubstance(vf, glu, bro);
-    return *this;
-}
-
-Substance& Substance::operator*(double scalar){
-    totalCon*=scalar;
-    setSubstance((*this)[VGEF], (*this)[GLUCOSE], (*this)[BROMOPYRUVATE]);
-    return *this;
-}
-
-std::ostream& operator<<(std::ostream& print, const Substance& sub){
-    print << "[VGEF] : " << sub[VGEF] << std::endl;
-    print << "[GLUCOSE] : " << sub[GLUCOSE] << std::endl;
-    print << "[BROMOPYRUVATE] : " << sub[BROMOPYRUVATE] << std::endl;
-    return print;
-}
-
-
-void Substance::update(SubstanceId subId, double c){
-    if(c<=EPSILON)   c=0;
-
-    double vf((*this)[VGEF]);
-    double glu((*this)[GLUCOSE]);
-    double bro((*this)[BROMOPYRUVATE]);
-
-    switch(subId) {
-    case GLUCOSE :
-        glu*=c;
-        break;
-    case VGEF :
-        vf*=c;
-        break;
-    case BROMOPYRUVATE :
-        bro*=c;
-        break;
-    default:
-        throw std::invalid_argument("SubstanceID not found");
+    if (!isEqual(temp_total, 0, SUBSTANCE_PRECISION))
+    {
+        m_fract_vgef = (temp_vgef)/temp_total;
+        m_fract_glucose = (temp_glucose)/temp_total;
+        m_fract_bromopyruvate = (temp_bromopyruvate)/temp_total;
+        m_total_concentration = temp_total;
     }
-    setSubstance(vf, glu, bro);
 
-    return;
+    else {
+        m_fract_vgef = 0;
+        m_fract_glucose = 0;
+        m_fract_bromopyruvate = 0;
+        m_total_concentration = 0;
+    }
+
 }
 
-void Substance::uptakeOnGradient(double fraction, Substance& receiver, SubstanceId id){
-    /*double take=(*this)[id]*fraction;
-    if(take< SUBSTANCE_PRECISION) return;
-
-    update(id, (1-fraction));
-
-    double quot((take/receiver[id])+1);    //calculates the multiplier needed for the function update
-
-    receiver.update(id, quot);*/
 
 
+std::ostream& operator<<(std::ostream& out,const Substance& s)
+{
+    out << "[VGEF] = " << s[VGEF] << "\n"
+        << "[GLUCOSE] = " << s[GLUCOSE] << "\n"
+        << "[BROMOPYRUVATE] = " << s[BROMOPYRUVATE] << "\n";
+    return out;
+}
+
+bool operator==(const Substance& lhs,const Substance& rhs)
+{
+    return  isEqual(lhs[VGEF], rhs[VGEF], SUBSTANCE_PRECISION)
+           &&
+           isEqual(lhs[BROMOPYRUVATE], rhs[BROMOPYRUVATE], SUBSTANCE_PRECISION)
+           &&
+           isEqual (lhs[GLUCOSE], rhs[GLUCOSE], SUBSTANCE_PRECISION);
+}
+
+bool operator!=(const Substance& lhs,const Substance& rhs)
+{
+    return !(rhs==lhs);
+}
+
+double check(double value, double minValue, double maxValue)
+{
+    value = std::max(minValue, value);
+    value = std::min(value, maxValue);
+
+    if (value < SUBSTANCE_PRECISION) return 0.;
+    return value;
+}
+
+double check(double value, double minValue)
+{
+    return check(value, minValue, getAppConfig().substance_max_value);
+}
+
+void Substance::uptakeOnGradient(double fraction, Substance& receiver, SubstanceId i)
+{
     //assert(fraction > 0 && fraction < 1);
 
-    if ((*this)[id] < SUBSTANCE_PRECISION) { // to avoid floating point issues
+    if ((*this)[i] < SUBSTANCE_PRECISION) { // to avoid floating point issues
         return;
     }
     Substance temp;
-    switch(id)
+    switch(i)
     {
-    case GLUCOSE : temp = Substance(0,(fraction)*((*this)[id]),0);break;
-    case BROMOPYRUVATE : temp = Substance(0,0,(fraction)*((*this)[id]));break;
-    case VGEF : temp = Substance((fraction)*((*this)[id]),0,0);break;
+    case GLUCOSE : temp = Substance(0,(fraction)*((*this)[i]),0);break;
+    case BROMOPYRUVATE : temp = Substance(0,0,(fraction)*((*this)[i]));break;
+    case VGEF : temp = Substance((fraction)*((*this)[i]),0,0);break;
     default   : /*nothing to do*/ break;
     }
     receiver+=temp;
     Substance temp2 = (*this);
-    temp2.update(id,1-fraction);
+    temp2.update(i,1-fraction);
     (*this) -= temp;
+}
 
+bool Substance::isNull() const
+{
+    return ( (m_fract_vgef*m_total_concentration < SUBSTANCE_PRECISION)
+            &&
+            (m_fract_glucose*m_total_concentration < SUBSTANCE_PRECISION)
+            &&
+            (m_fract_bromopyruvate * m_total_concentration < SUBSTANCE_PRECISION));
 }

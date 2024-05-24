@@ -86,20 +86,10 @@ void Lab::update(sf::Time dt){
 
 
 void Lab::drawOn(sf::RenderTarget& targetWindow) const{
-    switch(getApp().getCurrentView()){
-    case(ORGAN):{
-        drawCurrentOrgan(targetWindow);
-    }
-        break;
-    case(ECM):{}
-        break;
-    case(LAB):{
+
         drawOnCages(targetWindow);
         drawOnEntities(targetWindow);
-    }
-        break;
-    case(CONCENTRATION):{}
-        break;}
+
     }
 
 void Lab::drawOnCages(sf::RenderTarget& targetWindow) const{

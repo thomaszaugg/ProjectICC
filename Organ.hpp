@@ -9,7 +9,7 @@
 #pragma once
 
 
-class Organ: public Drawable /*public Updatable*/ //how to solve this?
+class Organ: public Drawable
 {
 public:
     //should only be usable by the organ

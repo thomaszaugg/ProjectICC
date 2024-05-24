@@ -61,7 +61,7 @@ public:
     bool canBeConfinedIn(Cage* c) const override;
 
     /*!
-    * @brief updtes the energy, state and organ of the animal and then acts according to the state
+    * @brief updtes the energy and state  of the animal and then acts according to the state
     */
     void  update(sf::Time dt) override;
 

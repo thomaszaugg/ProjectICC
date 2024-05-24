@@ -16,10 +16,13 @@ private:
     * @brief polymorphic getters
     */
     virtual double getFractGlu() const;
-    virtual double getKrebsKm() const;
-    virtual double getKrebsVmax() const;
+    virtual double getGlycolysisKm() const;
+    virtual double getGlycolysisVmax() const;
     virtual double getFractUptake() const;//helper 2&3
     virtual double getDivisonEnergy() const;
+
+    double getKrebsKm()const;
+    double getKrebsVmax()const;
 
     /*!
     * @brief polymorphic getters for the division
@@ -30,7 +33,7 @@ private:
     /*!
     * @brief calculation of atp gain during krebs cycle
     */
-    void pathway_atp_production(sf::Time dt,double factor_glucoseUptake, double factor_inhibition=1.);
+    void pathway_atp_production(sf::Time dt, double Km, double Vmax, double factor_glucoseUptake, double factor_inhibition=1.);
 
     /*!
     * @brief loss of atp while eating, attribut updated within this method

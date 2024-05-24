@@ -6,7 +6,7 @@ Cell::Cell(CellsLayer* cellsLayer)
 {}
 
 Cell::~Cell(){
-    uptakeSubstance(1, getECM(),BROMOPYRUVATE);// after death of a cell, release the inhibitor
+  //  uptakeSubstance(1, getECM(),BROMOPYRUVATE);// after death of a cell, release the inhibitor
     delete substance;    //free up allocated memory
     substance = nullptr;
 }

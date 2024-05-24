@@ -7,17 +7,17 @@
           "fixed step" : 0.01
       },
        "substance":{
-           "max" : 20000,
-           "diffusion radius" : 3,
-           "diffusion constant" : 90000,
+           "max" : 200000,
+           "diffusion radius" : 2,
+           "diffusion constant" : 300,
            "glucose": {
-               "base": 20,
+               "base": 8000,
                "range": 600,
-               "delta": 10
+               "delta": 100
            },
            "bromopyruvate":{
                "base" : 0,
-               "delta": 0.5
+               "delta": 30
            },
            "vgef":{
                "diffusion radius" : 2,
@@ -50,19 +50,19 @@
         "hamster":{
             "mass":1,
             "size":180,
-            "longevity":10000,
+            "longevity":100,
             "max speed":1000,
             "view":{
                "range":6.283185307,
                "distance":250
             },
             "energy":{
-               "initial":70,
-               "loss factor":0.001,
-               "bite":3
+               "initial":60,
+               "loss factor":0.03,
+               "bite":10
             },
             "texture":{
-               "brown":"hamster_sick1.png"
+               "brown":"hamster2.png"
             }
          }
       },
@@ -90,35 +90,34 @@
           },
           "atp":{
               "base usage": 0.05,
-              "range" : 0.02,
-              "initial energy" : 100
+              "range" : 0.02
           },
           "blood": {
-              "capillary min dist" : 3,
+              "capillary min dist" : 1,
               "creation start" : 2
           },
           "healthy": {
-              "fract uptake" : 0.3,
-              "time next division" : 50,
+              "fract uptake" : 0.5,
+              "time next division" : 10,
               "range next division" : 5,
-              "km glycolysis" : 24,
-              "km max glycolysis" : 30,
-              "km krebs" : 2,
-              "km max krebs" : 10,
-              "decay atp" : 400,
-              "division cost" : 15,
+              "km glycolysis" : 240,
+              "km max glycolysis" : 300,
+              "km krebs" : 100,
+              "km max krebs" : 450,
+              "decay atp" : 40,
+              "division cost" : 0.5,
               "division radius" : 2,
-              "division energy" : 20,
+              "division energy" : 7,
               "glucose usage"   : 0.4
           },
           "cancer": {
               "fract uptake" : 0.5,
-              "time next division" : 30,
-              "range next division" : 5,
-              "km glycolysis" : 30,
-              "km max glycolysis" : 100,
-              "division energy" : 20,
-              "glucose usage"   : 0.3
+              "time next division" : 15,
+              "range next division" : 4,
+              "km glycolysis" : 220,
+              "km max glycolysis" : 370,
+              "division energy" : 4,
+              "glucose usage"   : 0.01
           },
 
           "debug texture":"lab.png"

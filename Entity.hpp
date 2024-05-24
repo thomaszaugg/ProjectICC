@@ -44,6 +44,7 @@ public:
     double getRadius() const override;
     Angle getOrientation() const;
     Cage* getCage() const;
+    double getEnergy() const;
 
     /*!
     * @brief Setter for the Cage of the Entity
@@ -105,10 +106,6 @@ public:
     virtual double provideEnergy(Quantity qte);
 
 protected:
-    /*!
-    * @brief Getter for energy level
-    */
-    double getEnergy() const;
 
     /*!
     * @brief Setters

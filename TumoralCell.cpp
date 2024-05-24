@@ -15,11 +15,11 @@ bool TumoralCell::hasCancer(){
     return true;
 }
 
-double TumoralCell::getKrebsKm() const{
+double TumoralCell::getGlycolysisKm() const{
     return getAppConfig().cancer_km_glycolysis;
 }
 
-double TumoralCell::getKrebsVmax() const{
+double TumoralCell::getGlycolysisVmax() const{
     return getAppConfig().cancer_km_max_glycolysis;
 }
 

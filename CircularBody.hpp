@@ -22,18 +22,19 @@ public:
     */
     bool isPointInside(const Vec2d& point) const;
 
-protected:
-    /*!
-    * @brief Constructor and virtual destructor
-    */
-    CircularBody()=default; //default constructuer necessary
-    virtual ~CircularBody()=default;
-
     /*!
     * @brief checks whether two bodies are colliding
     * @return true if they are colliding, false otherwise
     */
     bool isColliding(const CircularBody& other) const;
+
+protected:
+
+    /*!
+    * @brief Constructor and virtual destructor
+    */
+    CircularBody()=default; //default constructuer necessary
+    virtual ~CircularBody()=default;
 
     /*!
     * @brief drawOn function for the circle or the circular body in debug mode

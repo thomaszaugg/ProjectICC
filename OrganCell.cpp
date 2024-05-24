@@ -35,30 +35,38 @@ void OrganCell::ATPSynthesis(sf::Time dt){
     //Glycolysis
         glycolysis(dt);
     //KrebsCycle
-       pathway_atp_production(dt,0.8);    //0.8 = KrebsGlucoseUptake getAppConfig
+       pathway_atp_production(dt, getKrebsKm(), getKrebsVmax(), 0.8);    //0.8 = KrebsGlucoseUptake getAppConfig
         }
 
 void OrganCell::glycolysis(sf::Time dt){
     double factor_inhibition=(getQuantitiy(BROMOPYRUVATE)/0.6); //0.6=Ki move to getAppConfig()
     ++factor_inhibition;
-    pathway_atp_production(dt, getFractGlu(), factor_inhibition);
+    pathway_atp_production(dt, getGlycolysisKm(), getGlycolysisVmax(), getFractGlu(), factor_inhibition);
 
     // both organ and tumor
     multiplySubstance(BROMOPYRUVATE,0.6); //0.6 = lossOfInhibiorFactor move to getAppConfig()
 }
 
-double OrganCell::getKrebsKm() const{
+void OrganCell::pathway_atp_production(sf::Time dt, double Km, double Vmax, double factor_glucoseUptake, double factor_inhibition){
+    double S=getQuantitiy(GLUCOSE)*factor_glucoseUptake;
+    multiplySubstance(GLUCOSE,factor_glucoseUptake);
+    double dP=((Vmax*S)/(S+(Km*factor_inhibition)))*dt.asSeconds();
+    atp+=dP;
+}
+
+double OrganCell::getGlycolysisKm() const{
     return getAppConfig().organ_km_glycolysis;}
 
-double OrganCell::getKrebsVmax() const{
+double OrganCell::getGlycolysisVmax() const{
     return getAppConfig().organ_km_max_glycolysis;
 }
 
-void OrganCell::pathway_atp_production(sf::Time dt, double factor_glucoseUptake, double factor_inhibition){
-    double S=getQuantitiy(GLUCOSE)*factor_glucoseUptake;
-    multiplySubstance(GLUCOSE,factor_glucoseUptake);
-    double dP=((getKrebsVmax()*S)/(S+(getKrebsKm()*factor_inhibition)))*dt.asSeconds();
-    atp+=dP;
+double OrganCell::getKrebsKm()const{
+    return getAppConfig().organ_km_krebs;
+}
+
+double OrganCell::getKrebsVmax()const{
+    return getAppConfig().organ_km_max_krebs;
 }
 
 double OrganCell::getFractGlu() const{

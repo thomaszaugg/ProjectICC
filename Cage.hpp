@@ -41,13 +41,6 @@ public:
     Cage(const Cage&)=default;
 
 private:
-    /*!
-    * @brief Getters
-    */
-    Vec2d getCenter()const;
-    double getWidth()const;
-    double getHeight()const;
-    double getWallWidth()const;    //we did not use them only once
 
     Wall getTop()const;
     Wall getRight()const;
@@ -65,6 +58,13 @@ private:
     double getWallWidthIf(bool width) const;
 
 public:
+    /*!
+    * @brief Getters
+    */
+    double getWidth()const;
+    double getHeight()const;
+    double getWallWidth()const;    //we did not use them only once
+    Vec2d getCenter()const;
 
     /*!
     * @brief getting the coordinate of the inner wall of the Cage (if intern = true)

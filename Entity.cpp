@@ -68,7 +68,8 @@ void Entity::adjustPostition(){
     double x = position.x();
     double y = position.y();
 
-        //modularization not worth it because of the operator involved
+    //modularization not worth it because of the operator involved
+    //using return type auto as suggensted in the instructions
     auto topWall(cage->getTopLimit(true));
     if (position.y() - r < topWall){
         y = topWall + r * 1.5;
