@@ -41,9 +41,9 @@ public:
     * @brief Checkers if the CellsLayer has the according Cell
     * @return true if its not a nullptr
     */
-    bool hasECMCell() const;
-    bool hasOrganCell() const;
-    bool hasBloodCell() const;
+    bool hasECMCell();
+    bool hasOrganCell();
+    bool hasBloodCell();
 
     /*!
     * @brief Setter for a Cell, one possible to set if there is no cell yet (nullptr)
@@ -61,9 +61,9 @@ public:
     * @brief Getters for Substance Quantity
     * @return Quantity, if the Cell does not exist the value 0 is returned
     */
-    double getECMQuantity(SubstanceId id) const; //amound not fractions
-    double getOrganCellQuantity(SubstanceId id) const;
-    double getBloodCellQuantity(SubstanceId id) const;
+    double getECMQuantity(SubstanceId id); //amound not fractions
+    double getOrganCellQuantity(SubstanceId id);
+    double getBloodCellQuantity(SubstanceId id);
 
     /*!
     * @brief Getter for position
@@ -79,7 +79,7 @@ public:
     * @brief checks whether a position is outside of the organ (square)
     * @return true if outside
     */
-    bool isOut(const CellCoord& coord) const;
+    bool isOut(const CellCoord& coord);
 
     /*!
     * @brief calls the update functions of each cell
@@ -102,7 +102,7 @@ public:
     * @brief checker with polymorphic method in OrganCell Class
     * @return true if the OrganCell of this CellsLayer has Cancer
     */
-    bool hasCancer() const;
+    bool hasCancer();
 
     /*!
     * @brief Setter for a TumoralCell at the position of the CellsLayer
@@ -116,7 +116,7 @@ public:
 
     /*!
     * @brief checks whether it is possible for a cell to divide
-    * @return true if the cell has successfully divide
+    * @return true if the cell can divide
     */
     bool requestToDivide(bool hasCancer);
 };

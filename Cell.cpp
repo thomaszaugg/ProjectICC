@@ -15,7 +15,7 @@ void Cell::addSubstance(Substance newSubstance){
     *substance += newSubstance;
 }
 
-double Cell::getQuantitiy(SubstanceId id) const{
+double Cell::getQuantitiy(SubstanceId id){
     return (*substance)[id];
 }
 
@@ -51,6 +51,6 @@ Cell* Cell::getECM() const{
     return cellsLayer->getECM();
 }
 
-bool Cell::requestToDivide(bool hasCancer) const{
+bool Cell::requestToDivide(bool hasCancer){
     return cellsLayer->requestToDivide(hasCancer);
 }

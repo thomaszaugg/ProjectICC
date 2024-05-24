@@ -44,7 +44,6 @@ void Animal::update(sf::Time dt){
             Vec2d force=calculateForce(food, getDeceleration());    //the Deceleration will make sure the animal
             move(force*getDeceleration(), dt, true);                //doesn't walk over his food
             eatFood(food);
-
            break;}
 
        case WANDERING:{     //animal moves arbitrarily
@@ -65,10 +64,10 @@ void Animal::updateState(sf::Time dt, Entity* food){
             }
         }else{
             state=WANDERING;
-           if(bernoulli(0.005)) {   //if the hamster is wandering, there is a small chance
+            if(bernoulli(0.005)) {   //if the hamster is wandering, there is a small chance
                state=IDLE;          // that the animal will stay idle for a while
                counter=sf::Time::Zero;
-           }
+            }
 
 }}
 
@@ -106,7 +105,7 @@ void Animal::updateEnergy(sf::Time dt){ //animal loses energy according to base 
     speed= this->getAdjustedMaxSpeed(); //speed depends on energy
 }
 
-double Animal::getFatigueFactor() const{return getAppConfig().animal_fatigue_factor; }
+double Animal::getFatigueFactor() const{return 0.25;} //move to json
 
 double Animal::getAdjustedMaxSpeed(){
     speed=getMaxSpeed();

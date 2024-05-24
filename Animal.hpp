@@ -86,7 +86,6 @@ public:
     */
     bool isHungry() const;
 
-
     /*!
     * @return ANIMAL_PRIORITY
     */

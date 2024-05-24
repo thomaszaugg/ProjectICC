@@ -16,15 +16,15 @@ CellsLayer::~CellsLayer(){
     bloodCell=nullptr;
 }
 
-bool CellsLayer::hasECMCell() const{
+bool CellsLayer::hasECMCell(){
     return ecm!=nullptr;
 }
 
-bool CellsLayer::hasOrganCell() const{
+bool CellsLayer::hasOrganCell(){
     return organCell!=nullptr;
 }
 
-bool CellsLayer::hasBloodCell() const{
+bool CellsLayer::hasBloodCell(){
     return bloodCell!=nullptr;
 }
 
@@ -54,19 +54,19 @@ void CellsLayer::updateSubstance(Substance substance){
     }
 }
 
-double CellsLayer::getECMQuantity(SubstanceId id) const{
+double CellsLayer::getECMQuantity(SubstanceId id){
     if (hasECMCell()){
         return ecm->getQuantitiy(id);
     } else {return 0;}
 }// return 0 when there is no quantiy
 
-double CellsLayer::getOrganCellQuantity(SubstanceId id) const{
+double CellsLayer::getOrganCellQuantity(SubstanceId id){
     if (hasOrganCell()){
         return organCell->getQuantitiy(id);
     } else {return 0;}
 }
 
-double CellsLayer::getBloodCellQuantity(SubstanceId id) const{
+double CellsLayer::getBloodCellQuantity(SubstanceId id){
     if (hasBloodCell()){
         return bloodCell->getQuantitiy(id);
     } else {return 0;}
@@ -82,7 +82,7 @@ void CellsLayer::organCellTakeFromECM(SubstanceId id, double fraction){
     }
 }
 
-bool CellsLayer::isOut(const CellCoord& coord) const{
+bool CellsLayer::isOut(const CellCoord& coord){
     return organ->isOut(coord);
 }
 
@@ -115,7 +115,7 @@ double CellsLayer::getDeltaBromo() const{
    return organ->getDelta(BROMOPYRUVATE);
 }
 
-bool CellsLayer::hasCancer() const{
+bool CellsLayer::hasCancer(){
     if (hasOrganCell()){
         return organCell->hasCancer();
     }
@@ -132,7 +132,7 @@ void CellsLayer::setCancer(){
 }
 
 Cell* CellsLayer::getECM() const{
-    return ecm;
+    return ecm; //is this too intrusive?
 }
 
 bool CellsLayer::requestToDivide(bool hasCancer){

@@ -6,6 +6,7 @@
 #include "Config.hpp"
 #include "Icon.hpp"
 #include <algorithm>
+#include "Cheese.hpp"
 
 unsigned int Lab::maxCageNumber(){
     double min_size(getAppConfig().simulation_lab_min_box_size);
@@ -185,6 +186,10 @@ bool Lab::addAnimal(Hamster* h){
 
 bool Lab::addFood(Pellets* p){
     return addEntity(p);
+}
+
+bool Lab::addCheese(Cheese* c){
+    return addEntity(c);
 }
 
 Entity* Lab::getClosesedEatableEntity(Cage* c, Entity* const& e) const{

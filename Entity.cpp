@@ -5,6 +5,7 @@
 #include "Application.hpp"
 #include "Hamster.hpp"
 #include "Pellets.hpp"
+#include "Cheese.hpp"
 
 
 
@@ -48,6 +49,10 @@ void Entity::drawOn(sf::RenderTarget& target)const{
 }
 
 bool Entity::isAnimal() const{
+    return false;
+}
+
+bool Entity::isCheese() const{
     return false;
 }
 

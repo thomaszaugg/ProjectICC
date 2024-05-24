@@ -87,13 +87,13 @@ public:
     * @brief checking if atp level is below zero
     * @return true if the atp < 0, which means that the cell is dead
     */
-    bool isDead() const;
+    bool isDead();
 
     /*!
     * @brief polymorphic boolean function indicating whether the Cell has Cancer
     * @return false
     */
-    virtual bool hasCancer() const;
+    virtual bool hasCancer();
 
 };
 

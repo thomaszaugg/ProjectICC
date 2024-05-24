@@ -10,6 +10,7 @@
 
 class Hamster;
 class Pellets;
+class Cheese;
 
 class Entity: public CircularBody, public Drawable, public Updatable
 {
@@ -53,10 +54,15 @@ public:
 
     /*!
     * @brief boolean function to indecate if the entity is an animal
-    *
     * @return true if it contains an animal, false otherwise
     */
     virtual bool isAnimal() const;
+
+    /*!
+    * @brief boolean function to indecate if the entity is a cheese
+    * @return true if it is a cheese, false otherwise
+    */
+    virtual bool isCheese() const;
 
     /*!
     * @brief drawing of entity
@@ -99,6 +105,7 @@ public:
     */
     virtual bool consumableBy(Pellets const*) const =0;
     virtual bool consumableBy(Hamster const*) const =0;
+    virtual bool consumableBy(Cheese const*) const =0;
 
     /*!
     * @brief empty function that can be changed in subclasses for implementation of eating

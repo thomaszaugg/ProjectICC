@@ -43,12 +43,16 @@ bool Hamster::consumableBy(Hamster const*) const {
     return false;
 }
 
+bool Hamster::consumableBy(Cheese const*) const{
+    return false;
+}
+
 double Hamster::getMass()const{
     return getAppConfig().hamster_mass ;
 }
 
 double Hamster::getDeceleration() const {
-    return getAppConfig().hamster_deceleration;
+    return 0.3; //getAppConfig().hamster_deceleration; how to add to AppConfig
 }
 
 double Hamster::getEnergyBite() const{

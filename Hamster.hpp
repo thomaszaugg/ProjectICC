@@ -41,6 +41,7 @@ private:
     */
     bool consumableBy(Pellets const*) const override;
     bool consumableBy(Hamster const*) const override;
+    bool consumableBy(Cheese const*) const override;
 
 };
 #endif // HAMSTER_HPP

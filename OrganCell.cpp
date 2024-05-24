@@ -4,7 +4,7 @@
 
 
 OrganCell::OrganCell(CellsLayer* cellsLayer)
-    : Cell(cellsLayer), atp(100), N(getAppConfig().initial_atp), counter(0)
+    : Cell(cellsLayer), atp(100), N(100), counter(0)//(getAppConfig().initial_atp)
     {}
 
 void OrganCell::update(sf::Time dt){
@@ -35,7 +35,7 @@ void OrganCell::ATPSynthesis(sf::Time dt){
     //Glycolysis
         glycolysis(dt);
     //KrebsCycle
-       pathway_atp_production(dt, getKrebsKm(), getKrebsVmax(), 0.8);
+       pathway_atp_production(dt, getKrebsKm(), getKrebsVmax(), 0.8);    //0.8 = KrebsGlucoseUptake getAppConfig
         }
 
 void OrganCell::glycolysis(sf::Time dt){
@@ -80,7 +80,7 @@ void OrganCell::feedingLoss(){
     atp = atp - feedingloss;
 }
 
-bool OrganCell::isDead() const{
+bool OrganCell::isDead(){
     return atp <= 0.0;
 }
 
@@ -106,7 +106,7 @@ double OrganCell::getDivisonEnergy() const{
     return getAppConfig().organ_division_energy;
 }
 
-bool OrganCell::hasCancer() const{
+bool OrganCell::hasCancer(){
     return false;
 }
 
