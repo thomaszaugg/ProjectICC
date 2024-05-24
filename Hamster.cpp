@@ -48,7 +48,7 @@ double Hamster::getMass()const{
 }
 
 double Hamster::getDeceleration() const {
-    return 0.3; //getAppConfig().hamster_deceleration; how to add to AppConfig
+    return getAppConfig().hamster_deceleration;
 }
 
 double Hamster::getEnergyBite() const{

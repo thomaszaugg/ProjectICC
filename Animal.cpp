@@ -44,6 +44,7 @@ void Animal::update(sf::Time dt){
             Vec2d force=calculateForce(food, getDeceleration());    //the Deceleration will make sure the animal
             move(force*getDeceleration(), dt, true);                //doesn't walk over his food
             eatFood(food);
+
            break;}
 
        case WANDERING:{     //animal moves arbitrarily
@@ -105,7 +106,7 @@ void Animal::updateEnergy(sf::Time dt){ //animal loses energy according to base 
     speed= this->getAdjustedMaxSpeed(); //speed depends on energy
 }
 
-double Animal::getFatigueFactor() const{return 0.25;} //move to json
+double Animal::getFatigueFactor() const{return getAppConfig().animal_fatigue_factor; }
 
 double Animal::getAdjustedMaxSpeed(){
     speed=getMaxSpeed();

@@ -11,7 +11,7 @@ double TumoralCell::getFractUptake() const{
     return getAppConfig().cancer_fract_uptake;
 }
 
-bool TumoralCell::hasCancer(){
+bool TumoralCell::hasCancer() const{
     return true;
 }
 
