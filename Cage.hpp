@@ -41,30 +41,57 @@ public:
     Cage(const Cage&)=default;
 
 private:
-    /*!
-    * @brief Getters
-    */
-    Vec2d getCenter()const;
-    double getWidth()const;
-    double getHeight()const;
-    double getWallWidth()const;    //we did not use them only once
 
     Wall getTop()const;
     Wall getRight()const;
     Wall getBottom()const;
     Wall getLeft()const;
 
+    /*!
+    * @brief Initializes one wall and adds it to walls
+    */
+    void initializeOneWall(Vec2d position, double h1_x, double h1_y, double h2_x, double h2_y);
+
+    /*!
+    * @return the wall width if parameter true, otherwise 0
+    */
+    double getWallWidthIf(bool width) const;
+
 public:
+    /*!
+    * @brief Getters
+    */
+    double getWidth()const;
+    double getHeight()const;
+    double getWallWidth()const;    //we did not use them only once
+    Vec2d getCenter()const;
 
     /*!
     * @brief getting the coordinate of the inner wall of the Cage (if intern = true)
     *        or getting the coordinate of the outer wall (if intern = false)
-    *
     * @return double with x or y value of the wall
     */
     double getLeftLimit(bool intern = false) const;
+
+    /*!
+    * @brief getting the coordinate of the inner wall of the Cage (if intern = true)
+    *        or getting the coordinate of the outer wall (if intern = false)
+    * @return double with x or y value of the wall
+    */
     double getRightLimit(bool intern = false)const;
+
+    /*!
+    * @brief getting the coordinate of the inner wall of the Cage (if intern = true)
+    *        or getting the coordinate of the outer wall (if intern = false)
+    * @return double with x or y value of the wall
+    */
     double getTopLimit(bool intern = false)const;
+
+    /*!
+    * @brief getting the coordinate of the inner wall of the Cage (if intern = true)
+    *        or getting the coordinate of the outer wall (if intern = false)
+    * @return double with x or y value of the wall
+    */
     double getBottomLimit(bool intern = false)const;
 
     /*!

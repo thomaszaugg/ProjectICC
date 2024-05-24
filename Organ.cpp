@@ -376,7 +376,6 @@ bool Organ::requestToDivide(CellCoord pos, bool hasCancer){
     std::vector<CellCoord> possiblePositions= getPossiblePositions(pos, hasCancer);
 
     int numberOfPositions = possiblePositions.size();
-    //if(numberOfPositions==0) return false;
 
     if(possiblePositions.empty()) return false;
 

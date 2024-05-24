@@ -22,7 +22,7 @@ private:
     * @brief Getters -> specific for hamsters
     */
     virtual sf::Time getLongevity() const override;
-    virtual double getSize() const override; //3.1 const
+    virtual double getSize() const override;
     virtual sf::Texture& getTexture() const override;
     double getMaxSpeed() const override ;
     double getEnergyLoss() const override;

@@ -13,10 +13,9 @@ bool CircularBody::isPointInside(const Vec2d& point) const {
 }
 
 bool operator|(const CircularBody& object1, const CircularBody& object2){
-    Vec2d distance(object1.getCenter() -object2.getCenter());            // vector between centers of circular objects
+    Vec2d distance(object1.getCenter() - object2.getCenter());            // vector between centers of circular objects
     return object1.getRadius() + object2.getRadius() > distance.length();
 }
-
 
 
 bool operator>(const CircularBody& object1, const Vec2d& point){

@@ -25,6 +25,7 @@ private:
     virtual double getSize() const =0;
     virtual sf::Texture& getTexture() const=0;
 
+
 public:
     /*!
     * @brief Constuctor
@@ -43,6 +44,7 @@ public:
     double getRadius() const override;
     Angle getOrientation() const;
     Cage* getCage() const;
+    double getEnergy() const;
 
     /*!
     * @brief Setter for the Cage of the Entity
@@ -62,7 +64,7 @@ public:
     virtual void drawOn(sf::RenderTarget& targetWindow) const override;
 
     /*!
-    * @brief draws the energy during debug mode
+    * @brief draws the energy
     */
     virtual  void drawDebug(sf::RenderTarget& target)const;
 
@@ -104,10 +106,6 @@ public:
     virtual double provideEnergy(Quantity qte);
 
 protected:
-    /*!
-    * @brief Getter for energy level
-    */
-    double getEnergy() const;
 
     /*!
     * @brief Setters

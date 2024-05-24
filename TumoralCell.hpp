@@ -11,8 +11,8 @@ private:
     * @brief polymorphic getters
     */
     virtual double getFractUptake() const override;
-    virtual double getKrebsKm() const override;
-    virtual double getKrebsVmax() const override;
+    virtual double getGlycolysisKm() const override;
+    virtual double getGlycolysisVmax() const override;
     virtual double getFractGlu() const override;
     virtual double getDivisonEnergy() const override;
 

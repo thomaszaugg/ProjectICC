@@ -140,6 +140,8 @@ bool Animal::isHungry() const{
 
 Vec2d Animal::calculateForce(Entity* food, double deceleration) {
     Vec2d to_target(food->getCenter()- this->getCenter());
+    if(to_target.length()<50) return to_target*0.; //so the animal stops before shooting the object
+
     double speed = std::min(to_target.length()/deceleration, getAdjustedMaxSpeed());
     Vec2d v_wish= to_target.normalised()*speed; //normalised (length=1), not normal(orthogonal)!
 
