@@ -10,19 +10,19 @@ private:
     Vec2d position;
     Angle orientation;
 
-public:
-
-    /*!
-    * @brief Constructor
-    */
-    Icon(Vec2d position, Angle orientation);
-
     /*!
     * @brief Getters specific for Icon
     */
     sf::Texture& getTexture() const;
     double getSize() const;
     Angle getOrientation() const;
+
+public:
+
+    /*!
+    * @brief Constructor
+    */
+    Icon(Vec2d position, Angle orientation);
 
     /*!
     * @brief drawing method

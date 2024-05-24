@@ -12,7 +12,7 @@ Entity::Entity(const Vec2d& position, double energy)
     : position(position), age(sf::Time::Zero), energy(energy), cage(nullptr){
     orientation = uniform(0.0, TAU);
 }
-
+//getter Block
 Vec2d Entity::getCenter() const {return position;}
 sf::Time Entity::getAge() const{return age;}
 Angle Entity::getOrientation() const{return orientation;}
@@ -20,7 +20,7 @@ double Entity::getEnergy() const {return energy;}
 Cage* Entity::getCage() const{return cage;}
 
 void Entity::drawDebug(sf::RenderTarget& target)const{
-
+            //draws the energy
         auto text = buildText(to_nice_string(energy),
                     position,
                     getAppFont(),
@@ -52,7 +52,7 @@ bool Entity::isAnimal() const{
 }
 
 bool Entity::canBeConfinedIn(Cage* cage) const{
-    return cage->isPositionInside(getCenter());
+    return cage->isPositionInside(getCenter()); //can be confinded if position is inside cage
 }
 
 double Entity::getRadius() const{
@@ -64,29 +64,31 @@ void  Entity::setCage(Cage* c){
 }
 
 void Entity::adjustPostition(){
-    double size(this->getSize());
+    double r = getRadius();
     double x = position.x();
     double y = position.y();
 
+        //modularization not worth it because of the operator involved
     auto topWall(cage->getTopLimit(true));
-    if (position.y() - size/2 < topWall){
-        y = topWall + size/2 * 1.5;
+    if (position.y() - r < topWall){
+        y = topWall + r * 1.5;
     }
     auto bottomWall(cage->getBottomLimit(true));
-    if (position.y() + size/2 > bottomWall){
-        y = bottomWall - size/2 * 1.5;
+    if (position.y() + r > bottomWall){
+        y = bottomWall - r * 1.5;
     }
     auto rightWall(cage->getRightLimit(true));
-    if (position.x() + size/2 > rightWall){
-        x = rightWall - size/2 * 1.5;
+    if (position.x() + r > rightWall){
+        x = rightWall - r * 1.5;
     }
     auto leftWall(cage->getLeftLimit(true));
-    if (position.x() - size/2 < leftWall){
-        x = leftWall + size/2 * 1.5;
+    if (position.x() - r < leftWall){
+        x = leftWall + r * 1.5;
     }
-    Vec2d newPosition (x,y);
-    position = newPosition;
+
+    position = Vec2d(x,y);
 }
+
 
 Vec2d Entity::getHeading() const{
     return Vec2d::fromAngle(orientation);

@@ -20,6 +20,11 @@ private:
     double energy;
     Cage* cage;
 
+    sf::Time getAge()  const;
+    virtual sf::Time getLongevity() const;
+    virtual double getSize() const =0;
+    virtual sf::Texture& getTexture() const=0;
+
 
 public:
     /*!
@@ -37,20 +42,13 @@ public:
     */
     virtual Vec2d getCenter() const override;
     double getRadius() const override;
-    sf::Time getAge()  const;
     Angle getOrientation() const;
-    double getEnergy() const ;
-    Cage* getCage() const ;
-    virtual sf::Time getLongevity() const;
-    virtual double getSize() const =0;
-    virtual sf::Texture& getTexture() const=0;
+    Cage* getCage() const;
 
     /*!
-    * @brief Setters
+    * @brief Setter for the Cage of the Entity
     */
     void setCage(Cage* c);
-    void setOrientation(Angle angle);
-    void setEnergy(double);
 
     /*!
     * @brief boolean function to indecate if the entity is an animal
@@ -60,17 +58,12 @@ public:
     virtual bool isAnimal() const;
 
     /*!
-    * @brief substracts a certain amound of energy
-    */
-    void substractEnergy(double e);
-
-    /*!
     * @brief drawing of entity
     */
     virtual void drawOn(sf::RenderTarget& targetWindow) const override;
 
     /*!
-    * @brief draws the energy during debug mode
+    * @brief draws the energy
     */
     virtual  void drawDebug(sf::RenderTarget& target)const;
 
@@ -95,7 +88,33 @@ public:
     */
     void adjustPostition();
 
+    /*!
+    * @brief return true if the entity can consume the entity passed as a parameter
+    */
+    virtual bool canConsume(Entity const* entity) const = 0;
+
+    /*!
+    * @brief Helpers for the canConsume function
+    */
+    virtual bool consumableBy(Pellets const*) const =0;
+    virtual bool consumableBy(Hamster const*) const =0;
+
+    /*!
+    * @brief empty function that can be changed in subclasses for implementation of eating
+    */
+    virtual double provideEnergy(Quantity qte);
+
 protected:
+    /*!
+    * @brief Getter for energy level
+    */
+    double getEnergy() const;
+
+    /*!
+    * @brief Setters
+    */
+    void setOrientation(Angle angle);
+    void setEnergy(double);
 
     /*!
     * @return Unit vector pointing in the direction of the entity
@@ -114,23 +133,11 @@ protected:
     */
     bool inCollision(Vec2d position) const;
 
-
-public:
     /*!
-    * @brief return true if the entity can consume the entity passed as a parameter
+    * @brief substracts a certain amound of energy
     */
-    virtual bool canConsume(Entity const* entity) const = 0;
+    void substractEnergy(double e);
 
-    /*!
-    * @brief Helpers for the canConsume function
-    */
-    virtual bool consumableBy(Pellets const*) const =0;
-    virtual bool consumableBy(Hamster const*) const =0;
-
-    /*!
-    * @brief empty function that can be changed in subclasses for implementation of eating
-    */
-    virtual double provideEnergy(Quantity qte);
 };
 
 #endif // ENTITY_HPP

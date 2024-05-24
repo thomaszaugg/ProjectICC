@@ -27,17 +27,16 @@ void Substance::setSubstance(double VGEF, double GLUCOSE, double BROMOPYRUVATE){
     checkCon(BROMOPYRUVATE);
     totalCon=VGEF+GLUCOSE+BROMOPYRUVATE;
 
-    if (totalCon != 0){
-        vgef = VGEF/totalCon;
-        glucose = GLUCOSE/totalCon;
-        bromopyruvate = BROMOPYRUVATE/totalCon;
-    }
-    if ((*this).isNull()){
+    if (isNull()){
         totalCon = 0;
         vgef = 0;
         glucose = 0;
         bromopyruvate = 0;
-    }}
+    }else {
+        vgef = VGEF/totalCon;
+        glucose = GLUCOSE/totalCon;
+ }}
+
 
 double Substance::getFractVGEF(){
     return vgef;}
@@ -51,9 +50,9 @@ double Substance::getFractInhibitor(){
 double Substance::getTotalConcentration(){
     return totalCon;}
 
-bool Substance::isNull(){
+bool Substance::isNull(){   //returns true if  every substance is too small
     return ((*this)[VGEF] < SUBSTANCE_PRECISION and (*this)[GLUCOSE]
-                                                        < SUBSTANCE_PRECISION and (*this)[BROMOPYRUVATE] < SUBSTANCE_PRECISION);
+             < SUBSTANCE_PRECISION and (*this)[BROMOPYRUVATE] < SUBSTANCE_PRECISION);
 }
 
 void Substance::operator=(const Substance& sub){

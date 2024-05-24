@@ -32,7 +32,6 @@ void Animal::update(sf::Time dt){
 
     updateEnergy(dt);   //the animal loses by default energy
 
-
     Entity* food(getAppEnv().getClosesedEatableEntity(getCage(), this));   //gets the closest food entity
     updateState( dt, food); //updates the state so the correct action is taken
 
@@ -52,7 +51,6 @@ void Animal::update(sf::Time dt){
             move(dt);
            break;}
        case IDLE:{          //animal sits still
-
            break;}
     }
 }

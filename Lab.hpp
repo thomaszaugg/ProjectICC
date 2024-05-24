@@ -70,6 +70,15 @@ private:
     */
     void changeNumberOfCages(int i);
 
+    /*!
+    * @brief draws the tracker icon
+    */
+    void drawTracker(sf::RenderTarget& target) const;
+
+    /*!
+    * @brief switching views
+    */
+    void switchToView(View view);
 
 public:
     /*!
@@ -81,7 +90,6 @@ public:
     * @brief deconstructer
     */
     virtual ~Lab();
-
 
     /*!
     * @brief Getter for attribut nbCagesPerRow
@@ -136,26 +144,21 @@ public:
     Entity* getClosesedEatableEntity(Cage* c, Entity* const& e) const;
 
     /*!
-    * @brief called by trackAnimal method and sets the animal attribut
-    */
-    void trackAnimal(Animal* a);
-
-    /*!
     * @brief checks whether there is an animal at the given positon,
     * if yes, calls trackAnimal(Animal*) method
     */
     void trackAnimal(const Vec2d& position);
 
     /*!
+    * @brief called by trackAnimal method and sets the animal attribut
+    */
+    void trackAnimal(Animal* a);
+
+    /*!
     * @brief checks if an animal of the Lab is tracked
     * @return true if the animal attribut is not a nullptr
     */
     bool isAnyTrackedAnimal() const;
-
-    /*!
-    * @brief switching views
-    */
-    void switchToView(View view);
 
     /*!
     * @brief sets animal to nullptr
@@ -166,11 +169,6 @@ public:
     * @brief updates the organ of the tracked animal
     */
     void updateTrackedAnimal();
-
-    /*!
-    * @brief draws the tracker icon
-    */
-    void drawTracker(sf::RenderTarget& target) const;
 
     /*!
     * @brief drawing of the organ

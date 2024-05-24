@@ -68,6 +68,22 @@ private:
     */
     bool isInsideLiver(CellCoord pos) const;
 
+    /*!
+    * @brief Getters
+    */
+    int getWidth () const;
+    int getHeight() const;
+
+    /*!
+    * @brief drawing of the according texture of the Cell
+    */
+    void drawCells(std::string name_cell);
+
+    /*!
+    * @brief drawing of the correct layers of the organ
+    */
+    void drawRepresentation();
+
 protected:
 
     /*!
@@ -104,7 +120,6 @@ protected:
     */
     virtual void updateCellsLayer(const CellCoord& pos, Kind kind);
 
-
 public:
 
     /*!
@@ -138,12 +153,6 @@ public:
     virtual void updateRepresentationAt(const CellCoord&);
 
     /*!
-    * @brief Getters
-    */
-    int getWidth () const;
-    int getHeight() const;
-
-    /*!
     * @brief Checking if a position is outside of the organ
     * @return true if the positon is outside
     */
@@ -154,16 +163,6 @@ public:
     * @return coordinate in type CellCoord
     */
     virtual CellCoord toCellCoord(const Vec2d& position) const;
-
-    /*!
-    * @brief drawing of the according texture of the Cell
-    */
-    void drawCells(std::string name_cell);
-
-    /*!
-    * @brief drawing of the correct layers of the organ
-    */
-    void drawRepresentation();
 
     /*!
     * @brief updating of the substance at ECM level

@@ -50,14 +50,12 @@ public:
 
     /*!
     * @brief boolean function to indicate if the entity is an animal
-    *
     * @return true
     */
     bool isAnimal() const override;
 
     /*!
     * @brief checks whether an animal can be confined in a cage
-    *
     * @return true if cage is empty and animal is not placed on wall
     */
     bool canBeConfinedIn(Cage* c) const override;

@@ -8,7 +8,6 @@ class CellsLayer;
 class Cell
 {
 private:
-
     /*!
     * @brief pointer to the CellLayer this Cell belongs to
     */
@@ -20,7 +19,6 @@ private:
     Substance* substance;
 
 public:
-
     /*!
     * @brief Constructor
     */
@@ -48,6 +46,7 @@ public:
     */
     void uptakeSubstance(double fraction, Cell* cellType, SubstanceId id);
 
+protected:
     /*!
     * @brief taking a part of a substance from the donor cell given by parameter
     */
@@ -81,8 +80,6 @@ public:
     * @return delta value of Bromopyruvate
     */
     double getDeltaBromo() const;
-
-protected:
 
     /*!
     * @brief multiplication of a Substance, using update method of Substance Class

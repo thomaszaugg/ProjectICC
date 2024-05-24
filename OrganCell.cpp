@@ -39,7 +39,6 @@ void OrganCell::ATPSynthesis(sf::Time dt){
         }
 
 void OrganCell::glycolysis(sf::Time dt){
-
     double factor_inhibition=(getQuantitiy(BROMOPYRUVATE)/0.6); //0.6=Ki move to getAppConfig()
     ++factor_inhibition;
     pathway_atp_production(dt, getFractGlu(), factor_inhibition);

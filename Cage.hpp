@@ -11,6 +11,8 @@ typedef std::vector<Wall> Walls;
 
 class Cage: public Drawable{
 
+private:
+
     Vec2d position;
     double width;
     double height;
@@ -38,13 +40,14 @@ public:
     */
     Cage(const Cage&)=default;
 
+private:
     /*!
     * @brief Getters
     */
     Vec2d getCenter()const;
     double getWidth()const;
     double getHeight()const;
-    double getWallWidth()const;
+    double getWallWidth()const;    //we did not use them only once
 
     Wall getTop()const;
     Wall getRight()const;
@@ -52,26 +55,53 @@ public:
     Wall getLeft()const;
 
     /*!
+    * @brief Initializes one wall and adds it to walls
+    */
+    void initializeOneWall(Vec2d position, double h1_x, double h1_y, double h2_x, double h2_y);
+
+    /*!
+    * @return the wall width if parameter true, otherwise 0
+    */
+    double getWallWidthIf(bool width) const;
+
+public:
+
+    /*!
     * @brief getting the coordinate of the inner wall of the Cage (if intern = true)
     *        or getting the coordinate of the outer wall (if intern = false)
-    *
     * @return double with x or y value of the wall
     */
     double getLeftLimit(bool intern = false) const;
+
+    /*!
+    * @brief getting the coordinate of the inner wall of the Cage (if intern = true)
+    *        or getting the coordinate of the outer wall (if intern = false)
+    * @return double with x or y value of the wall
+    */
     double getRightLimit(bool intern = false)const;
+
+    /*!
+    * @brief getting the coordinate of the inner wall of the Cage (if intern = true)
+    *        or getting the coordinate of the outer wall (if intern = false)
+    * @return double with x or y value of the wall
+    */
     double getTopLimit(bool intern = false)const;
+
+    /*!
+    * @brief getting the coordinate of the inner wall of the Cage (if intern = true)
+    *        or getting the coordinate of the outer wall (if intern = false)
+    * @return double with x or y value of the wall
+    */
     double getBottomLimit(bool intern = false)const;
 
     /*!
     * @brief check whether a object (point per default) is inside of a Cage (walls excuded)
-    *
     * @return true if point is inside
     */
     bool isPositionInside(const Vec2d& position, double radius =0)const;
 
     /*!
     * @brief check whether a point is on the wall of the Cage
-    *
     * @return true if point is on the wall
     */
     bool isPositionOnWall(const Vec2d& position)const;

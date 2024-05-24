@@ -11,15 +11,20 @@ class Pellets : public Entity
 {
 public:
     /*!
-    * @brief Constructor and destructor
+    * @brief Constructor
     */
     Pellets(Vec2d position);
+
+    /*!
+    * @brief Destructor
+    */
     ~Pellets()=default;
+
+private:
 
     /*!
     * @brief calculating the new energy of a Pellet after the energy qte has been eaten
-    *
-    * @return Quantity (double) of energy of the Pellet
+    * @return Quantity of energy of the Pellet that was actually eaten
     */
     Quantity provideEnergy(Quantity qte) override;
 
