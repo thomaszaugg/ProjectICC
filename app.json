@@ -17,7 +17,7 @@
            },
            "bromopyruvate":{
                "base" : 0,
-               "delta": 40
+               "delta": 20
            },
            "vgef":{
                "diffusion radius" : 2,
@@ -35,8 +35,8 @@
       "cheese":{
          "texture":"cheese.png",
          "energy":{
-            "initial":20,
-            "max":30
+            "initial":1,
+            "max":10
          }
       },
 
@@ -132,7 +132,7 @@
               "km max glycolysis" : 130,
               "division energy" : 20,
               "glucose usage"   : 0.3,
-	      "threshold" : 120
+	      "threshold" : 300
           },
 
           "debug texture":"lab.png"
