@@ -121,11 +121,13 @@ void Entity::update(sf::Time dt){
 }
 
 bool Entity::isDead() const{
-    return (age>= this->getLongevity() or getEnergy()<=0);
+    return (age>=this->getLongevity() or (getEnergy()<=0) or deathDueToCancer());
 }
 
 double Entity::provideEnergy(Quantity ){
     return 0;
 }
 
-
+bool Entity::deathDueToCancer() const{
+    return false;
+}

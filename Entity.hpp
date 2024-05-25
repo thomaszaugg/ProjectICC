@@ -143,6 +143,12 @@ protected:
     */
     void substractEnergy(double e);
 
+    /*!
+    * @brief determines, dependent on the amound of CancerCells of the Animal, whether the animal dies
+    * @return true if the Animal dies
+    */
+    virtual bool deathDueToCancer() const;
+
 };
 
 #endif // ENTITY_HPP

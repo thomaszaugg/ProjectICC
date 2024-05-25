@@ -444,10 +444,6 @@ void Organ::decreaseCounter(){
     --counterCancer;
 }
 
-int Organ::getCounterCancer(){
-    return counterCancer;
-}
-
 bool Organ::isSick() const{
     return counterCancer > getThreshold();
 }
@@ -456,4 +452,6 @@ int Organ::getThreshold() const{
     return getAppConfig().cancer_threshold;
 }
 
-
+int Organ::deathDueToCancer() const{
+    return counterCancer > 5*getAppConfig().cancer_threshold;
+}

@@ -249,3 +249,7 @@ void Animal::eatingCheese(){
         increaseCurrentSubst();
     }else{nextSubstance();}
 }
+
+bool Animal::deathDueToCancer() const{
+    return organ->deathDueToCancer();
+}

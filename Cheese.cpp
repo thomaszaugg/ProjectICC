@@ -6,7 +6,7 @@ Cheese::Cheese(Vec2d position)
 {}
 
 double Cheese::getSize() const{
-    return getEnergy()*10;
+    return getEnergy()*200;
 }
 
 sf::Texture& Cheese::getTexture() const{

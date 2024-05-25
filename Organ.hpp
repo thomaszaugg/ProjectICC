@@ -254,11 +254,6 @@ public:
     void decreaseCounter();
 
     /*!
-    * @brief Getter for the counter of CancerCells
-    */
-    int getCounterCancer();
-
-    /*!
     * @brief determines, dependent on the amound of CancerCells of the Organ, whether it is sick or not
     * @return true if the Organ is sick
     */
@@ -269,7 +264,11 @@ public:
     */
     int getThreshold() const;
 
-
+    /*!
+    * @brief determines, dependent on the amound of CancerCells of the Organ, whether the animal dies
+    * @return true if the Animal dies
+    */
+    int deathDueToCancer() const;
 
 };
 
