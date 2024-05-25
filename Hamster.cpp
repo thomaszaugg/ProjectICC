@@ -16,10 +16,12 @@ double Hamster::getSize() const{
 }
 
 sf::Texture& Hamster::getTexture() const{
-    return getAppTexture(getAppConfig().hamster_texture_brown);
+    if(isSick()){return getAppTexture(getAppConfig().hamster_texture_sick);}
+    else {return getAppTexture(getAppConfig().hamster_texture_brown);}
 }
 
 double Hamster::getMaxSpeed() const{
+    if(isSick()){return 0.6*getAppConfig().hamster_max_speed;}
     return getAppConfig().hamster_max_speed;
 }
 
@@ -43,12 +45,16 @@ bool Hamster::consumableBy(Hamster const*) const {
     return false;
 }
 
+bool Hamster::consumableBy(Cheese const*) const{
+    return false;
+}
+
 double Hamster::getMass()const{
     return getAppConfig().hamster_mass ;
 }
 
 double Hamster::getDeceleration() const {
-    return 0.3; //getAppConfig().hamster_deceleration; how to add to AppConfig
+    return getAppConfig().hamster_deceleration;
 }
 
 double Hamster::getEnergyBite() const{

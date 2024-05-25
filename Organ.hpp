@@ -9,11 +9,9 @@
 #pragma once
 
 
-class Organ: public Drawable /*public Updatable*/ //how to solve this?
+class Organ: public Drawable
 {
 public:
-    //should only be usable by the organ
-
     enum class Kind : short { ECM, Organ, Artery, Capillary };
 
 private:
@@ -29,25 +27,41 @@ private:
 
     SubstanceId currentSubst;
 
-    //initialized as a vector to not use too unneccesary switch statements
-    std::array<double,3> deltas; //glucose=0, .... (like enumerate type)
+    //initialized as a vector to not use too many switch statements
+    std::array<double,3> deltas; //   in the order of: GLUCOSE, BROMOPYRUVATE,VGEF (like SubstanceId)
 
-    int counter; //counter for updating the visual representation
-
-    /*!
-    * @brief helper for the updateRepresentationAt function
-    */
-    void setVertexes1(const std::vector<std::size_t>& indexes, int a_blood, int a_organ, int a_cancer, bool concentrationOn=false, double ratio=0.);
+    //counter for the Cancer Cells in a Organ
+    int counterCancer;
 
     //helpers initializeBloodNetwork
+
+    /*!
+    * @brief generates an artary from scratch
+    */
     virtual void generateArtery(int& leftColumn, int& rightColumn);
+
+    /*!
+    * @brief generates all Capillaries
+    */
     void generateCapillary(int const& leftColumn, int const& rightColumn);
+
+    /*!
+    * @brief checks if the given step is possible
+    */
     void checkStep(bool& direction_step_possible, bool& empty_neighboor_found,CellCoord  current_position, CellCoord  dir);
-    std::vector<CellCoord> const generateStartingPositions(int const& column);
+
+    /*!
+    * @brief generates the starting positions for the capillaries
+    */
+    std::vector<CellCoord> const generateStartingPositions(int const& column) const;
+
+    /*!
+    * @brief generates the capillaries on one side of the artery
+    */
     void generateOneSideCapillary(CellCoord const& direction, int const& column);
 
     /*!
-    * @brief defintion of organ boundaries
+    * @brief returns true if inside the organ bounderies
     */
     bool organBoundaries(CellCoord pos) const;
 
@@ -61,7 +75,7 @@ private:
     * @brief checks if the condition for a division are fullfilled
     * @return true if Cell can divide
     */
-    bool isDivisonPossible(int x, int y,bool hasCancer) const;
+    bool isDivisonPossible(int x, int y, bool hasCancer) const;
 
     /*!
     * @brief checking whether a position is inside the organ boundaries
@@ -142,6 +156,8 @@ public:
     */
     void drawOn(sf::RenderTarget& target) const override;
 
+    //update representation functions
+
     /*!
     * @brief updating the visual representation of the organ
     */
@@ -151,6 +167,28 @@ public:
     * @brief updating the visual representation at a given position
     */
     virtual void updateRepresentationAt(const CellCoord&);
+
+    /*!
+    * @brief updating the visual representation of the blood vertex
+    */
+    void updateRepresentationAtBlood(CellCoord coord, int val);
+
+    /*!
+    * @brief updating the visual representation of the organ vertex
+    */
+    void updateRepresentationAtOrgan(CellCoord coord, int val);
+
+    /*!
+    * @brief updating the visual representation of the cancer vertex
+    */
+    void updateRepresentationAtCancer(CellCoord coord, int val);
+
+    /*!
+    * @brief updating the visual representation of the concentration vertex
+    */
+    void updateRepresentationAtConcentration(CellCoord coord);
+
+    //------------------------------------------
 
     /*!
     * @brief Checking if a position is outside of the organ
@@ -204,6 +242,34 @@ public:
     * @brief checks with different helper function if a division is possible
     */
     bool requestToDivide(CellCoord pos, bool hasCancer);
+
+    /*!
+    * @brief increasing the counter of CancerCells by one
+    */
+    void increaseCounter();
+
+    /*!
+    * @brief decreasing the counter of CancerCells by one
+    */
+    void decreaseCounter();
+
+    /*!
+    * @brief Getter for the counter of CancerCells
+    */
+    int getCounterCancer();
+
+    /*!
+    * @brief determines, dependent on the amound of CancerCells of the Organ, whether it is sick or not
+    * @return true if the Organ is sick
+    */
+    bool isSick() const;
+
+    /*!
+    * @brief Getter for Cancer Threshold (amound of CancerCell needed to be considered sick)
+    */
+    int getThreshold() const;
+
+
 
 };
 

@@ -61,9 +61,9 @@ public:
     bool canBeConfinedIn(Cage* c) const override;
 
     /*!
-    * @brief updtes the energy, state and organ of the animal and then acts according to the state
+    * @brief updtes the energy and state  of the animal and then acts according to the state
     */
-    void  update(sf::Time dt) override;
+    void update(sf::Time dt) override;
 
     /*!
     * @brief updates the organ
@@ -85,7 +85,6 @@ public:
     * @attention two different threshholds depending on if the animal is feeding or not
     */
     bool isHungry() const;
-
 
     /*!
     * @return ANIMAL_PRIORITY
@@ -128,6 +127,12 @@ public:
     * @brief setting of a Cancer Cell at the position given with the parameter
     */
     void setCancerAt(const Vec2d& pos);
+
+    /*!
+    * @brief determines, dependent on the amound of CancerCells of the Animal, whether it is sick or not
+    * @return true if the Animal is sick
+    */
+    bool isSick() const;
 
 private:
     /*!
@@ -177,6 +182,11 @@ private:
     * @brief calculates the new age and energy of the animal after time dt
     */
     void updateEnergy(sf::Time dt);
+
+    /*!
+    * @brief extension: if the animal is eating cheese, call increase Bromopyruvate function in Organ
+    */
+    void eatingCheese();
 };
 
 #endif // ANIMAL_HPP

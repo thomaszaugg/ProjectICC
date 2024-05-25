@@ -38,7 +38,7 @@ public:
     * @brief polymorphic boolean function indicating whether the Cell has Cancer
     * @return true
     */
-    virtual bool hasCancer() override;
+    virtual bool hasCancer() const override;
 
 protected:
 

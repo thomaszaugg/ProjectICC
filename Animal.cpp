@@ -28,7 +28,6 @@ bool Animal::canBeConfinedIn(Cage* cage) const{
 }
 
 void Animal::update(sf::Time dt){
-    updateOrgan();  //updates the Organ
 
     updateEnergy(dt);   //the animal loses by default energy
 
@@ -45,6 +44,7 @@ void Animal::update(sf::Time dt){
             Vec2d force=calculateForce(food, getDeceleration());    //the Deceleration will make sure the animal
             move(force*getDeceleration(), dt, true);                //doesn't walk over his food
             eatFood(food);
+
            break;}
 
        case WANDERING:{     //animal moves arbitrarily
@@ -57,19 +57,20 @@ void Animal::update(sf::Time dt){
 
 void Animal::updateState(sf::Time dt, Entity* food){
     if(state==IDLE and counter < sf::seconds(getAppConfig().animal_rotation_delay*3 )){
-            counter+=dt;
-    } else if(state==TARGETING_FOOD and food!=nullptr and this->isColliding(*food)){
-        state=FEEDING;
-    } else if(isHungry() and food!=nullptr){
-        state=TARGETING_FOOD;
-    } else {
-        state=WANDERING;
-       if(bernoulli(0.005)) {   //if the hamster is wandering, there is a small chance
-           state=IDLE;          // that the animal will stay idle for a while
-           counter=sf::Time::Zero;
-       }
-    }
-}
+                counter+=dt;
+        }else if(isHungry() and food!=nullptr){
+            state=TARGETING_FOOD;
+            if(this->isColliding(*food)){
+                state=FEEDING;
+            }
+        }else{
+            state=WANDERING;
+           if(bernoulli(0.005)) {   //if the hamster is wandering, there is a small chance
+               state=IDLE;          // that the animal will stay idle for a while
+               counter=sf::Time::Zero;
+           }
+
+}}
 
 void Animal::move(sf::Time dt){     //Wandering
     changeOrientation(dt);          //happens when counter is high enough
@@ -77,7 +78,7 @@ void Animal::move(sf::Time dt){     //Wandering
     //change of position
     Vec2d step=getSpeedVector()*dt.asSeconds();
         if(inCollision(step+getCenter())){
-            setOrientation((-getHeading()).angle());
+            setOrientation((-DEG_TO_RAD*getHeading()).angle());
         }
     takeStep(step);
 }
@@ -105,7 +106,7 @@ void Animal::updateEnergy(sf::Time dt){ //animal loses energy according to base 
     speed= this->getAdjustedMaxSpeed(); //speed depends on energy
 }
 
-double Animal::getFatigueFactor() const{return 0.25;} //move to json
+double Animal::getFatigueFactor() const{return getAppConfig().animal_fatigue_factor; }
 
 double Animal::getAdjustedMaxSpeed(){
     speed=getMaxSpeed();
@@ -115,7 +116,7 @@ double Animal::getAdjustedMaxSpeed(){
 
 void Animal::move(const Vec2d& force, sf::Time dt, bool feeding){     //TARGETING and FEEDING
     if(feeding){        //additional checking to allow smooth slowing down
-        if(force.length()>0.5){
+        if(force.length()>70){        //so the animal stops before shooting the object
             setOrientation(force.angle());
             takeStep(force*dt.asSeconds());
         }
@@ -140,7 +141,6 @@ bool Animal::isHungry() const{
 
 Vec2d Animal::calculateForce(Entity* food, double deceleration) {
     Vec2d to_target(food->getCenter()- this->getCenter());
-    if(to_target.length()<50) return to_target*0.; //so the animal stops before shooting the object
 
     double speed = std::min(to_target.length()/deceleration, getAdjustedMaxSpeed());
     Vec2d v_wish= to_target.normalised()*speed; //normalised (length=1), not normal(orthogonal)!
@@ -150,6 +150,7 @@ Vec2d Animal::calculateForce(Entity* food, double deceleration) {
 
 void Animal::eatFood(Entity* food){ //can only partially absorb the eaten foods energy
    if(this->canConsume(food)) setEnergy((getEnergy()+getAppConfig().animal_meal_retention*food->provideEnergy(getEnergyBite())));
+   if(food->isCheese()){eatingCheese();}
 }
 
 void Animal::drawDebug(sf::RenderTarget& target) const{
@@ -237,4 +238,14 @@ SubstanceId Animal::getCurrentSubst() const{
 
 void Animal::setCancerAt(const Vec2d& pos){
     return organ->setCancerAt(pos);
+}
+
+bool Animal::isSick() const{
+    return organ->isSick();
+}
+
+void Animal::eatingCheese(){
+    if(getCurrentSubst() == BROMOPYRUVATE){
+        increaseCurrentSubst();
+    }else{nextSubstance();}
 }

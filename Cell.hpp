@@ -38,7 +38,7 @@ public:
     * @brief Getter
     * @return quantity of a Substance given by parameter
     */
-    double getQuantitiy(SubstanceId id);
+    double getQuantitiy(SubstanceId id) const;
 
     /*!
     * @brief giving a part of the substance of this cell to the substance of another cell,
@@ -96,7 +96,7 @@ protected:
     * @brief checks whether it is possible for a cell to divide
     * @return true if the cell can divide
     */
-    bool requestToDivide(bool hasCancer);
+    bool requestToDivide(bool hasCancer) const;
 };
 
 #endif // CELL_HPP

@@ -6,6 +6,7 @@
 #include "Config.hpp"
 #include "Icon.hpp"
 #include <algorithm>
+#include "Cheese.hpp"
 
 unsigned int Lab::maxCageNumber(){
     double min_size(getAppConfig().simulation_lab_min_box_size);
@@ -86,20 +87,10 @@ void Lab::update(sf::Time dt){
 
 
 void Lab::drawOn(sf::RenderTarget& targetWindow) const{
-    switch(getApp().getCurrentView()){
-    case(ORGAN):{
-        drawCurrentOrgan(targetWindow);
-    }
-        break;
-    case(ECM):{}
-        break;
-    case(LAB):{
+
         drawOnCages(targetWindow);
         drawOnEntities(targetWindow);
-    }
-        break;
-    case(CONCENTRATION):{}
-        break;}
+
     }
 
 void Lab::drawOnCages(sf::RenderTarget& targetWindow) const{
@@ -195,6 +186,10 @@ bool Lab::addAnimal(Hamster* h){
 
 bool Lab::addFood(Pellets* p){
     return addEntity(p);
+}
+
+bool Lab::addCheese(Cheese* c){
+    return addEntity(c);
 }
 
 Entity* Lab::getClosesedEatableEntity(Cage* c, Entity* const& e) const{

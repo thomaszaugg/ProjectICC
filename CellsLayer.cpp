@@ -16,15 +16,15 @@ CellsLayer::~CellsLayer(){
     bloodCell=nullptr;
 }
 
-bool CellsLayer::hasECMCell(){
+bool CellsLayer::hasECMCell() const{
     return ecm!=nullptr;
 }
 
-bool CellsLayer::hasOrganCell(){
+bool CellsLayer::hasOrganCell() const{
     return organCell!=nullptr;
 }
 
-bool CellsLayer::hasBloodCell(){
+bool CellsLayer::hasBloodCell() const{
     return bloodCell!=nullptr;
 }
 
@@ -54,19 +54,19 @@ void CellsLayer::updateSubstance(Substance substance){
     }
 }
 
-double CellsLayer::getECMQuantity(SubstanceId id){
+double CellsLayer::getECMQuantity(SubstanceId id) const{
     if (hasECMCell()){
         return ecm->getQuantitiy(id);
     } else {return 0;}
 }// return 0 when there is no quantiy
 
-double CellsLayer::getOrganCellQuantity(SubstanceId id){
+double CellsLayer::getOrganCellQuantity(SubstanceId id) const{
     if (hasOrganCell()){
         return organCell->getQuantitiy(id);
     } else {return 0;}
 }
 
-double CellsLayer::getBloodCellQuantity(SubstanceId id){
+double CellsLayer::getBloodCellQuantity(SubstanceId id) const{
     if (hasBloodCell()){
         return bloodCell->getQuantitiy(id);
     } else {return 0;}
@@ -82,7 +82,7 @@ void CellsLayer::organCellTakeFromECM(SubstanceId id, double fraction){
     }
 }
 
-bool CellsLayer::isOut(const CellCoord& coord){
+bool CellsLayer::isOut(const CellCoord& coord) const{
     return organ->isOut(coord);
 }
 
@@ -91,9 +91,12 @@ void CellsLayer::update(sf::Time dt){
     if (hasBloodCell()){
         bloodCell->update(dt);
     }
-   if (hasOrganCell()){
+    if (hasOrganCell()){
         organCell->update(dt);
         if(organCell->isDead()){
+            if(organCell->hasCancer()){
+                organ->decreaseCounter();
+            }
             delete organCell;
             organCell = nullptr;
             organ->updateRepresentationAt(position); //after the cell is killed, the texture is updated
@@ -115,7 +118,7 @@ double CellsLayer::getDeltaBromo() const{
    return organ->getDelta(BROMOPYRUVATE);
 }
 
-bool CellsLayer::hasCancer(){
+bool CellsLayer::hasCancer() const{
     if (hasOrganCell()){
         return organCell->hasCancer();
     }
@@ -124,15 +127,19 @@ bool CellsLayer::hasCancer(){
 
 void CellsLayer::setCancer(){
     if (organCell != nullptr){
+        if(organCell->hasCancer()){
+            organ->decreaseCounter();
+        }
         delete organCell;
         organCell = nullptr;
     }
     organCell = (new TumoralCell(this));
     organ->updateRepresentationAt(position);
+    organ->increaseCounter();
 }
 
 Cell* CellsLayer::getECM() const{
-    return ecm; //is this too intrusive?
+    return ecm;
 }
 
 bool CellsLayer::requestToDivide(bool hasCancer){

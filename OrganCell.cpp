@@ -4,7 +4,7 @@
 
 
 OrganCell::OrganCell(CellsLayer* cellsLayer)
-    : Cell(cellsLayer), atp(100), N(100), counter(0)//(getAppConfig().initial_atp)
+    : Cell(cellsLayer), atp(getAppConfig().initial_atp), N(getMinNbCycles()), counter(0)
     {}
 
 void OrganCell::update(sf::Time dt){
@@ -35,16 +35,16 @@ void OrganCell::ATPSynthesis(sf::Time dt){
     //Glycolysis
         glycolysis(dt);
     //KrebsCycle
-       pathway_atp_production(dt, getKrebsKm(), getKrebsVmax(), 0.8);    //0.8 = KrebsGlucoseUptake getAppConfig
+       pathway_atp_production(dt, getKrebsKm(), getKrebsVmax(), 0.8);
         }
 
 void OrganCell::glycolysis(sf::Time dt){
-    double factor_inhibition=(getQuantitiy(BROMOPYRUVATE)/0.6); //0.6=Ki move to getAppConfig()
+    double factor_inhibition=(getQuantitiy(BROMOPYRUVATE)/getAppConfig().organ_K_inhibitor);
     ++factor_inhibition;
     pathway_atp_production(dt, getGlycolysisKm(), getGlycolysisVmax(), getFractGlu(), factor_inhibition);
 
     // both organ and tumor
-    multiplySubstance(BROMOPYRUVATE,0.6); //0.6 = lossOfInhibiorFactor move to getAppConfig()
+    multiplySubstance(BROMOPYRUVATE,0.6);
 }
 
 void OrganCell::pathway_atp_production(sf::Time dt, double Km, double Vmax, double factor_glucoseUptake, double factor_inhibition){
@@ -80,7 +80,7 @@ void OrganCell::feedingLoss(){
     atp = atp - feedingloss;
 }
 
-bool OrganCell::isDead(){
+bool OrganCell::isDead() const{
     return atp <= 0.0;
 }
 
@@ -106,7 +106,7 @@ double OrganCell::getDivisonEnergy() const{
     return getAppConfig().organ_division_energy;
 }
 
-bool OrganCell::hasCancer(){
+bool OrganCell::hasCancer() const{
     return false;
 }
 

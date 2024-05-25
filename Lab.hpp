@@ -13,6 +13,7 @@ class Pellets;
 class Hamster;
 class Entity;
 class Animal;
+class Cheese;
 
 typedef std::vector<std::vector<Cage*>> Cages;
 typedef std::vector<Entity*> Entities;
@@ -136,6 +137,7 @@ public:
     bool addEntity(Entity* e);
     bool addAnimal(Hamster* h);
     bool addFood(Pellets* p);
+    bool addCheese(Cheese* c);
 
     /*!
     * @brief finds the closest eatable entity to e that is in cage c
