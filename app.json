@@ -7,17 +7,17 @@
           "fixed step" : 0.01
       },
        "substance":{
-           "max" : 200000,
-           "diffusion radius" : 2,
-           "diffusion constant" : 300,
+           "max" : 20000,
+           "diffusion radius" : 3,
+           "diffusion constant" : 10000,
            "glucose": {
-               "base": 8000,
+               "base": 1600,
                "range": 600,
                "delta": 100
            },
            "bromopyruvate":{
                "base" : 0,
-               "delta": 30
+               "delta": 40
            },
            "vgef":{
                "diffusion radius" : 2,
@@ -31,12 +31,22 @@
             "max":250
          }
       },
+
+      "cheese":{
+         "texture":"cheese.png",
+         "energy":{
+            "initial":20,
+            "max":30
+         }
+      },
+
       "animal":{
          "random walk low energy":false,
          "meal retention":0.7,
          "feed time":0.4,
          "base consumption" : 0.0,
          "min energy" : 5,
+         "fatigue factor" : 0.25,
         "idle":{
             "min":3,
             "max":5,
@@ -50,19 +60,21 @@
         "hamster":{
             "mass":1,
             "size":180,
-            "longevity":100,
+            "longevity":10000,
             "max speed":1000,
+            "hamster_deceleration" : 0.3,
             "view":{
                "range":6.283185307,
                "distance":250
             },
             "energy":{
-               "initial":60,
-               "loss factor":0.03,
-               "bite":10
+               "initial":50,
+               "loss factor":0.001,
+               "bite":3
             },
             "texture":{
-               "brown":"hamster2.png"
+               "brown":"hamster2.png",
+	       "sick": "hamster_sick1.png"
             }
          }
       },
@@ -90,34 +102,37 @@
           },
           "atp":{
               "base usage": 0.05,
-              "range" : 0.02
+              "range" : 0.02,
+              "initial energy" : 25
           },
           "blood": {
-              "capillary min dist" : 1,
+              "capillary min dist" : 3,
               "creation start" : 2
           },
           "healthy": {
-              "fract uptake" : 0.5,
-              "time next division" : 10,
-              "range next division" : 5,
-              "km glycolysis" : 240,
-              "km max glycolysis" : 300,
-              "km krebs" : 100,
-              "km max krebs" : 450,
-              "decay atp" : 40,
-              "division cost" : 0.5,
+              "fract uptake" : 0.3,
+              "time next division" : 40,
+              "range next division" : 15,
+              "km glycolysis" : 15,
+              "km max glycolysis" : 30,
+              "km krebs" : 50,
+              "km max krebs" : 30,
+              "decay atp" : 400,
+              "division cost" : 18,
               "division radius" : 2,
-              "division energy" : 7,
-              "glucose usage"   : 0.4
+              "division energy" : 20,
+              "glucose usage"   : 0.4,
+              "K inhibitor"	: 0.7
           },
           "cancer": {
-              "fract uptake" : 0.5,
-              "time next division" : 15,
-              "range next division" : 4,
-              "km glycolysis" : 220,
-              "km max glycolysis" : 370,
-              "division energy" : 4,
-              "glucose usage"   : 0.01
+              "fract uptake" : 0.6,
+              "time next division" : 30,
+              "range next division" : 20,
+              "km glycolysis" : 15,
+              "km max glycolysis" : 130,
+              "division energy" : 20,
+              "glucose usage"   : 0.3,
+	      "threshold" : 120
           },
 
           "debug texture":"lab.png"
